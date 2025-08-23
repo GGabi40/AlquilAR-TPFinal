@@ -1,14 +1,15 @@
-Trabajo Final Integrador
-Tecnicatura Universitaria en Programación - UTN FRRo
-👥 Integrantes:
+# Trabajo Final Integrador
+## Tecnicatura Universitaria en Programación - UTN FRRo
 
-    Baptista Carvalho, Gabriela
-    Calvo, Celeste
-    Ríos, Elena
+### 👥 Integrantes:
 
-💻 Tecnologías:
+* Baptista Carvalho, Gabriela
+* Calvo, Celeste
+* Ríos, Elena
 
-    React JS (FrontEnd)
-    Express (Backend)
-    Sequelize (ORM)
-    SQLite (DB)
+### 💻 Tecnologías:
+
+* React JS (FrontEnd)
+* Express (Backend)
+* Sequelize (ORM)
+* SQLite (DB)
