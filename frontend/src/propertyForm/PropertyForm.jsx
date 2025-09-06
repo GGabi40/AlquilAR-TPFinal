@@ -72,7 +72,7 @@ const PropertyForm = () => {
                     onChange={handleDireccionChange}
                 />
 
-                <button type="button" className='btn-outline-primary'>
+                <button type="button" className='btn-outline-primary' onClick={() => navigate("/propertyFeatures")}>
                     Continuar
                 </button>
             </div>
