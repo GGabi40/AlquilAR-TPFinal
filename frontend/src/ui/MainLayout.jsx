@@ -7,7 +7,7 @@ const MainLayout = () => {
     <>
         <Nav />
     </>
-  )
+ )
 }
 
 export default MainLayout
