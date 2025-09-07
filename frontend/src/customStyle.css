@@ -41,6 +41,12 @@ img.logo-alquilAR {
   transform: translateY(-6px);
 }
 
+.login-form ::placeholder,
+.register-form ::placeholder {
+  color: #636b74 !important;
+}
+
+
 /* Footer */
 
 footer p {

@@ -1,6 +1,7 @@
 import React from "react";
 import LoginImage from "/illustrations/login/login-illustration.webp";
 
+import { Link } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 
@@ -56,7 +57,7 @@ const Login = () => {
                   />
                 </div>
                 <small className="d-block mt-1">
-                  <a href="#">¿Olvidaste tu contraseña?</a>
+                  <Link to="/password-recovery">¿Olvidaste tu contraseña?</Link>
                 </small>
               </div>
 
@@ -65,7 +66,7 @@ const Login = () => {
               </div>
 
               <p className="text-center mt-3">
-                ¿No tienes cuenta? <a href="#">Crear cuenta</a>
+                ¿No tienes cuenta? <Link to="/create-account">Crear cuenta</Link>
               </p>
             </div>
           </div>
