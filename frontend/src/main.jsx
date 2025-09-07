@@ -4,6 +4,7 @@ import App from './App.jsx'
 import "bootswatch/dist/minty/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import './bootstrap.css';
+import './customStyle.css';
 
 
 

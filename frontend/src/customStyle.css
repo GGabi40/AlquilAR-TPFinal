@@ -1,4 +1,46 @@
-.navbar-brand img {
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+
+img.logo-alquilAR {
     height: 100px;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
+}
+
+
+/* Footer */
+
+footer p {
+    color: #244C42;
+    text-decoration: underline;
+}
+
+ul.footer-terms-conditions > li {
+    text-align: left;
+}
+
+ul.footer-terms-conditions > li > a {
+    color: #244C42;
+    text-decoration: none;
+    
+}
+
+.social-links .social-link {
+    color: #244C42;
+    transition: transform 0.2s ease-in-out;
+}
+
+.social-links a:hover {
+    color: #ffdd57 !important;
+    transform: scale(1.2);
 }

@@ -9,7 +9,7 @@ const Nav = () => {
     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
         <Link to="/" className="navbar-brand">
-          <img src={LOGO} alt="Logo AlquilAR" />
+          <img src={LOGO} className="logo-alquilAR" alt="Logo AlquilAR" />
         </Link>
         <button
           className="navbar-toggler collapsed"
@@ -26,18 +26,13 @@ const Nav = () => {
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <Link to="/" className="nav-link active" href="#">
-                Inicio
+                Publicar
                 <span className="visually-hidden">(current)</span>
               </Link>
             </li>
             <li className="nav-item">
               <Link to="/login" className="nav-link">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/create-account" className="nav-link" href="#">
-                Registrarse
+                Acceder
               </Link>
             </li>
           </ul>
