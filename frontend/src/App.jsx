@@ -1,4 +1,4 @@
-import { useState } from "react";
+import Home from "./components/home/Home.jsx";
 
 function App() {
   return (
@@ -83,6 +83,8 @@ function App() {
           </div>
         </div>
       </nav>
+
+      <Home />
     </>
   );
 }
