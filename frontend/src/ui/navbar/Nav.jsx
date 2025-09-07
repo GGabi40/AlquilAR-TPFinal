@@ -1,5 +1,5 @@
 import React from "react";
-import '../customStyle.css';
+import '../../customStyle.css';
 
 import { Link } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
@@ -9,7 +9,7 @@ const Nav = () => {
     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
         <Link to="/" className="navbar-brand">
-          <img src={LOGO} alt="Logo AlquilAR" />
+          <img src={LOGO} className="logo-alquilAR" alt="Logo AlquilAR" />
         </Link>
         <button
           className="navbar-toggler collapsed"
@@ -26,19 +26,14 @@ const Nav = () => {
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
               <Link to="/" className="nav-link active" href="#">
-                Inicio
+                Publicar
                 <span className="visually-hidden">(current)</span>
               </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Login
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">
-                Registrarse
-              </a>
+              <Link to="/login" className="nav-link">
+                Acceder
+              </Link>
             </li>
           </ul>
         </div>
