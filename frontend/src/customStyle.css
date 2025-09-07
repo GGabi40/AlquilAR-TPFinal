@@ -1,50 +1,78 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
 
-
 img.logo-alquilAR {
-    height: 100px;
-    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
+  height: 100px;
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
+}
+
+/* Illustrations */
+.illustration-login {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1),
+    0 12px 24px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.illustration-login:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 12px 24px rgba(0, 0, 0, 0.15),
+    0 18px 36px rgba(0, 0, 0, 0.15);
+}
+
+.login-form {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-form:hover {
+  transform: translateY(-6px);
+}
+
+.login-form ::placeholder,
+.register-form ::placeholder {
+  color: #636b74 !important;
 }
 
 
 /* Footer */
 
 footer p {
-    color: #244C42;
-    text-decoration: underline;
+  color: #244c42;
+  text-decoration: underline;
 }
 
 ul.footer-terms-conditions > li {
-    text-align: left;
+  text-align: left;
 }
 
 ul.footer-terms-conditions > li > a {
-    color: #244C42;
-    text-decoration: none;    
+  color: #244c42;
+  text-decoration: none;
 }
 
 ul.footer-terms-conditions > li > a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-
 .social-links a {
-    color: #244C42;
-    transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
+  color: #244c42;
+  transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
 }
 
 .social-links a:hover {
-    color: #102721 !important;
-    transform: scale(1.2);
+  color: #102721 !important;
+  transform: scale(1.2);
 }
