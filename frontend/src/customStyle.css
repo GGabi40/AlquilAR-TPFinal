@@ -31,16 +31,20 @@ ul.footer-terms-conditions > li {
 
 ul.footer-terms-conditions > li > a {
     color: #244C42;
-    text-decoration: none;
-    
+    text-decoration: none;    
 }
 
-.social-links .social-link {
+ul.footer-terms-conditions > li > a:hover {
+    text-decoration: underline;
+}
+
+
+.social-links a {
     color: #244C42;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
 }
 
 .social-links a:hover {
-    color: #ffdd57 !important;
+    color: #102721 !important;
     transform: scale(1.2);
 }
