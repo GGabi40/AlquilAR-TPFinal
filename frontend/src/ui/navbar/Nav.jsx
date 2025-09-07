@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../customStyle.css";
 
 import { Link } from "react-router";
+import { useLocation } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
 
 const Nav = () => {
+  const [showButton, setShowButton] = useState(true);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (
+      location.pathname !== "/login" ||
+      location.pathname !== "/create-account"
+    ) {
+      setShowButton(false);
+    } else {
+      setShowButton(true);
+    }
+  }, [location.pathname]);
+
   return (
     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
@@ -31,19 +46,19 @@ const Nav = () => {
                 Publicar
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                to="/login"
-                className="nav-link text-white d-lg-none">
-                Acceder
-              </Link>
-
-              <Link
-                to="/login"
-                className="btn btn-outline-light ms-3 px-3 py-1 d-none d-lg-inline-block">
-                Acceder
-              </Link>
-            </li>
+            {showButton && (
+              <li className="nav-item">
+                <Link to="/login" className="nav-link text-white d-lg-none">
+                  Acceder
+                </Link>
+                <Link
+                  to="/login"
+                  className="btn btn-outline-light ms-3 px-3 py-1 d-none d-lg-inline-block"
+                >
+                  Acceder
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

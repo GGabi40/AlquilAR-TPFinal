@@ -24,7 +24,7 @@ const Login = () => {
         <div className="col-md-5 login-form">
           <div className="card shadow h-100">
             <div className="card-body d-flex flex-column justify-content-center text-dark">
-              <h4 className="card-title text-center mb-4">Login</h4>
+              <h4 className="card-title text-center mb-4">Iniciar sesión</h4>
 
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
