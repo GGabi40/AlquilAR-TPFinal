@@ -13,7 +13,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/propertyform" element={<PropertyForm />} />
+          <Route path="/add-property" element={<PropertyForm />} />
         </Route>
       </Routes>
     </BrowserRouter>
