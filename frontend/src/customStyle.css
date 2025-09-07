@@ -12,48 +12,47 @@ body {
 }
 
 /* NAV BAR */
-.navbar {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
 
 img.logo-alquilAR {
   height: 100px;
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
 }
 
-.navbar .nav-link {
-  position: relative;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.navbar .nav-link::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 0;
-  height: 2px;
-  border-radius: 100%;
-  background-color: #fff;
-  transition: width 0.2s ease;
-}
-
-.navbar .nav-link:hover::after {
-  width: 10%;
-}
-
-.navbar .btn-outline-light:hover {
-  background-color: #fff;
-  color: #ff9800;
-  transition: all 0.3s ease;
+@media (min-width: 1000px) {
+  .navbar .nav-link {
+    position: relative;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    border-radius: 100%;
+    background-color: #fff;
+    transition: width 0.2s ease;
+  }
+  
+  .navbar .nav-link:hover::after {
+    width: 10%;
+  }
+  
+  .navbar .btn-outline-light:hover {
+    background-color: #fff;
+    color: #ff9800;
+    transition: all 0.3s ease;
+  } 
 }
 
 /* Illustrations */
 .illustration-login {
   width: 100%;
   height: auto;
+  aspect-ratio: 1;
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1),
