@@ -1,5 +1,5 @@
 import React from "react";
-import '../../customStyle.css';
+import "../../customStyle.css";
 
 import { Link } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
@@ -11,6 +11,7 @@ const Nav = () => {
         <Link to="/" className="navbar-brand">
           <img src={LOGO} className="logo-alquilAR" alt="Logo AlquilAR" />
         </Link>
+
         <button
           className="navbar-toggler collapsed"
           type="button"
@@ -22,16 +23,24 @@ const Nav = () => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="navbar-collapse collapse" id="navbarColor01">
-          <ul className="navbar-nav me-auto">
+
+        <div className="collapse navbar-collapse" id="navbarColor01">
+          <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link to="/" className="nav-link active" href="#">
+              <Link to="/" className="nav-link text-white">
                 Publicar
-                <span className="visually-hidden">(current)</span>
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/login" className="nav-link">
+              <Link
+                to="/login"
+                className="nav-link text-white d-lg-none">
+                Acceder
+              </Link>
+
+              <Link
+                to="/login"
+                className="btn btn-outline-light ms-3 px-3 py-1 d-none d-lg-inline-block">
                 Acceder
               </Link>
             </li>
