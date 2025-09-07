@@ -1,5 +1,5 @@
 import React from "react";
-import '../customStyle.css';
+import '../../customStyle.css';
 
 import { Link } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
@@ -31,14 +31,14 @@ const Nav = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
+              <Link to="/login" className="nav-link">
                 Login
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
+              <Link to="/create-account" className="nav-link" href="#">
                 Registrarse
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
