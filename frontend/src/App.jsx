@@ -8,6 +8,7 @@ import PropertyForm from "./propertyForm/PropertyForm";
 import PropertyFeatures from "./propertyForm/PropertyFeatures";
 import Register from "./register/Register";
 import OwnerDashboard from "./ownerDashboard/OwnerDashboard.jsx";
+import PropertyDetail from "./PropertyDetail/PropertyDetail.jsx";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/add-property" element={<PropertyForm />} />
           <Route path="/property-features" element={<PropertyFeatures />} />
           <Route path="/owner-dashboard" element={<OwnerDashboard />} />
+          <Route path="/property/:id" element={<PropertyDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>
