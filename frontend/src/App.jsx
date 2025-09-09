@@ -6,6 +6,7 @@ import MainLayout from "./ui/MainLayout";
 import Home from "./home/Home.jsx";
 import PropertyForm from "./propertyForm/PropertyForm";
 import Register from "./register/Register";
+import OwnerDashboard from "./ownerDashboard/OwnerDashboard.jsx";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
           <Route path="/add-property" element={<PropertyForm />} />
+          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

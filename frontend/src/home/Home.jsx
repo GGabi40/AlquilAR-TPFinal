@@ -15,7 +15,7 @@ export default function Home() {
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
         <a className="navbar-brand fw-bold" href="#">AlquiAR</a>
         <div className="ms-auto">
-          <a href="/publicar" className="btn btn-light me-2">Publicar</a>
+          <a href="propertyForm\PropertyForm.jsx" className="btn btn-light me-2">Publicar</a>
           <a href="./components/login/Login.jsx" className="btn btn-outline-light">Acceder</a>
         </div>
       </nav>
