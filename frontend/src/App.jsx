@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 
 import Login from "./login/Login";
 import MainLayout from "./ui/MainLayout";
-import Home from "./home/Home";
+import Home from "./home/Home.jsx";
 import PropertyForm from "./propertyForm/PropertyForm";
 
 function App() {
