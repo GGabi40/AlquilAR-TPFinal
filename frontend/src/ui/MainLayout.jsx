@@ -6,11 +6,11 @@ import Footer from './footer/Footer'
 const MainLayout = () => {
   return (
     <>
-        <Nav />
-        <Outlet />
-        <Footer/>
+      <Nav />
+      <Outlet />
+      <Footer />
     </>
- )
+  );
 }
 
 export default MainLayout
