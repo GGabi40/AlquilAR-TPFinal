@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router";
+import LOGO from "/logo/techo-amarillo-blanco.webp";
 import "../../customStyle.css";
 
-import { Link } from "react-router";
-import { useLocation } from "react-router";
-import LOGO from "/logo/techo-amarillo-blanco.webp";
-
 const Nav = () => {
-  const [showButton, setShowButton] = useState(true);
+  const navigate = useNavigate();
   const location = useLocation();
+  const [showButton, setShowButton] = useState(true);
+
 
   useEffect(() => {
-    if (
-      location.pathname !== "/login" ||
-      location.pathname !== "/create-account"
-    ) {
+    if (location.pathname !== "/login" && location.pathname !== "/create-account") {
       setShowButton(false);
     } else {
       setShowButton(true);
@@ -23,9 +20,13 @@ const Nav = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
       <div className="container-fluid">
-        <Link to="/" className="navbar-brand">
-          <img src={LOGO} className="logo-alquilAR" alt="Logo AlquilAR" />
-        </Link>
+        <img
+          src={LOGO}
+          className="logo-alquilAR"
+          alt="Logo AlquilAR"
+          style={{ cursor: "pointer" }}
+          onClick={() => navigate("/")}
+        />
 
         <button
           className="navbar-toggler collapsed"
@@ -42,21 +43,21 @@ const Nav = () => {
         <div className="collapse navbar-collapse" id="navbarColor01">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link to="/" className="nav-link text-white">
+              <button
+                className="btn btn-light nav-link px-3 py-1"
+                onClick={() => navigate("/add-property")}
+              >
                 Publicar
-              </Link>
+              </button>
             </li>
             {showButton && (
               <li className="nav-item">
-                <Link to="/login" className="nav-link text-white d-lg-none">
-                  Acceder
-                </Link>
-                <Link
-                  to="/login"
-                  className="btn btn-outline-light ms-3 px-3 py-1 d-none d-lg-inline-block"
+                <button
+                  className="btn btn-outline-light ms-3 px-3 py-1"
+                  onClick={() => navigate("/login")}
                 >
                   Acceder
-                </Link>
+                </button>
               </li>
             )}
           </ul>
