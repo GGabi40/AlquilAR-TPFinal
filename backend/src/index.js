@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import userRoutes from './routes/users.js';
 
 import { port, sequelize } from './config/db.js';
 
@@ -12,8 +13,8 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
-
 app.use(express.json());
+app.use('/api/users', userRoutes);
 
 try {
     await sequelize.sync();
@@ -21,5 +22,5 @@ try {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });
 } catch(e) {
-    console.error('Error al inicializar servidor: ', error);
+    console.error('Error al inicializar servidor: ', e);
 }

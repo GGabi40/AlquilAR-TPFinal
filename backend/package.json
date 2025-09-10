@@ -13,8 +13,8 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "nodemon index.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
