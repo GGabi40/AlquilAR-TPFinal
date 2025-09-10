@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function UserDashboard() {
-    const user = "Elena";
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const savedUser = JSON.parse(localStorage.getItem("user"));
+        setUser(savedUser);
+    }, []);
+
     const property = {
         direccion: "7 de Julio 1288",
         ambientes: 2,
@@ -11,6 +17,8 @@ export default function UserDashboard() {
         expensas: 100000,
         rating: 4.8,
     };
+
+    if (!user) return <p>Cargando datos...</p>;
 
     return (
         <div className="container py-4">
@@ -28,7 +36,7 @@ export default function UserDashboard() {
                 </div>
             </nav>
 
-            <h2 className="mb-4">Bienvenido/a {user},</h2>
+            <h2 className="mb-4">Bienvenido/a {user.name},</h2>
 
             <div className="card shadow">
                 <div className="row g-0">

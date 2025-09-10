@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Nav, Navbar, Container, Tab, Tabs, Table, Button } from "react-bootstrap";
 
 
 export default function SuperadminDashboard() {
     const [key, setKey] = useState("usuarios");
-
-    const usuarios = [
-        { id: 1, nombre: "Juan", apellido: "Pérez", correo: "juan@mail.com", rol: "Inquilino" },
-        { id: 2, nombre: "María", apellido: "Gómez", correo: "maria@mail.com", rol: "Propietario" },
-    ];
+    const [usuarios, serUsuarios] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const propiedades = [
         { id: 1, ubicacion: "San Martín 123", correo: "prop1@mail.com", disponible: "Sí", reportes: 2 },
@@ -19,6 +17,30 @@ export default function SuperadminDashboard() {
         { id: 1, fecha: "01/09/2025", documento: "Contrato.pdf", propietario: "Pedro López" },
         { id: 2, fecha: "05/09/2025", documento: "Escritura.pdf", propietario: "Ana Torres" },
     ];
+
+    useEffect(() => {
+        const fetchUsuarios = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("http://localhost:3000/api/users", {
+                    headers: {
+                        Autorization: `Bearer ${token}`,
+                    },
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message);
+
+                setUsuarios(data);
+            } catch (err) {
+                setError(err.message);
+            }finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsuarios();
+    }, []);
 
     return (
         <div>
@@ -35,13 +57,13 @@ export default function SuperadminDashboard() {
             <Container className="mt-4">
                 <h3>Bienvenido/a Super Admin,</h3>
 
-                <Tabs
-                    id="superadmin-tabs"
-                    activeKey={key}
-                    onSelect={(k) => setKey(k)}
-                    className="mt-3 mb-3"
-                >
+                <Tabs id="superadmin-tabs" activeKey={key} onSelect={(k) => setKey(k)} className="mt-3 mb-3">
                     <Tab eventKey="usuarios" title="Usuarios">
+                        {loading ? (
+                            <p>Cargando usuarios...</p>
+                        ) : error ? (
+                            <p className="text-danger">{error}</p>
+                        ) : (
                         <Table striped bordered hover responsive>
                             <thead>
                                 <tr>
@@ -67,6 +89,7 @@ export default function SuperadminDashboard() {
                                 ))}
                             </tbody>
                         </Table>
+                        )}
                     </Tab>
 
                     <Tab eventKey="propiedades" title="Propiedades">
