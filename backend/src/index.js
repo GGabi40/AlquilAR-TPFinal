@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import userRoutes from './routes/users.js';
+import propertyRoutes from './routes/properties.js';
 
 import { port, sequelize } from './config/db.js';
 
@@ -15,6 +16,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/api/users', userRoutes);
+app.use("/api/properties", propertyRoutes);
 
 try {
     await sequelize.sync();
