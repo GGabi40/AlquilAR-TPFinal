@@ -1,29 +1,23 @@
 import { useState } from "react";
 import { Container, Row, Col, Nav, Card, Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router";
 
 export default function Home() {
-    const [tipo, setTipo] = useState("casas");
+  const [tipo, setTipo] = useState("casas");
+  const navigate = useNavigate();
 
-    const propiedades = [
-        { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
-        { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
-        { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" }        
-    ]; 
+  const propiedades = [
+    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
+    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
+    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" }
+  ];
 
-    return (
-    <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
-        <a className="navbar-brand fw-bold" href="#">AlquiAR</a>
-        <div className="ms-auto">
-          <a href="propertyForm\PropertyForm.jsx" className="btn btn-light me-2">Publicar</a>
-          <a href="./components/login/Login.jsx" className="btn btn-outline-light">Acceder</a>
-        </div>
-      </nav>
-
+  return (
+    <Container>
       <Container className="text-center my-5">
         <Form className="d-flex justify-content-center">
           <Form.Control type="text" placeholder="Buscador" className="w-50 me-2" />
-          <Button variant="success">Buscar</Button>
+          <Button variant="success" onClick={() => navigate("/propiedades")}>Buscar</Button>
         </Form>
       </Container>
 
@@ -53,7 +47,13 @@ export default function Home() {
                   <Card.Text className="text-success fw-bold">
                     ${p.precio} - {p.hab} Hab.
                   </Card.Text>
-                  <Button variant="primary" size="sm">Ver más</Button>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => navigate(`/propiedad/${p.id}`)}
+                  >
+                    Ver más
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
@@ -63,23 +63,10 @@ export default function Home() {
 
       <Container className="text-center my-5">
         <p className="lead">Donde los dueños encuentran inquilinos, y los inquilinos encuentran hogar.</p>
-        <Button variant="success" size="lg">Sumate a AlquiAR</Button>
+        <Button variant="success" size="lg" onClick={() => navigate("/create-account")}>
+          Sumate a AlquiAR
+        </Button>
       </Container>
-
-      <footer className="bg-dark text-light py-4 mt-5">
-        <Container className="d-flex justify-content-between">
-          <div>
-            <a href="#" className="text-light me-3"><i className="bi bi-facebook"></i></a>
-            <a href="#" className="text-light me-3"><i className="bi bi-instagram"></i></a>
-            <a href="#" className="text-light"><i className="bi bi-twitter"></i></a>
-          </div>
-          <div>
-            <a href="#" className="text-light me-3">FAQ</a>
-            <a href="#" className="text-light me-3">Términos</a>
-            <a href="#" className="text-light">Política</a>
-          </div>
-        </Container>
-      </footer>
-    </>
+    </Container>
   );
 }
