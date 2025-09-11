@@ -28,7 +28,7 @@ const PropertyTabs = () => {
         className={`btn btn-link mx-2 ${isActive("/add-property/images") ? "active-tab" : ""}`}
         onClick={() => navigate("/add-property/images")}
       >
-        Imágenes
+        Imágenes Y Documentación
       </button>
     </div>
   );
