@@ -2,7 +2,7 @@ import { use } from 'react';
 import React, { useState } from 'react';
 import { useNavigate } from "react-router";
 import PropertyImage from "/illustrations/property-register/reg-prop-1.1.jpg";
-
+import PropertyTabs from './PropertyTabs';
 
 const PropertyForm = () => {
 
@@ -55,7 +55,7 @@ const PropertyForm = () => {
                             <div className="card shadow h-100">
                                 <div className="card-body d-flex flex-column justify-content-center text-dark">
                                     <h2 className="card-title text-center mb-4">Registra tu Propiedad</h2>
-
+                                    <PropertyTabs />
                                     <div className="mb-3">
                                         <label className="form-label">Provincia:</label>
                                         <input
@@ -104,7 +104,7 @@ const PropertyForm = () => {
 
 
                                     <div className="d-flex justify-content-center">
-                                        <button type="button" className="btn btn-primary w-50" onClick={() => navigate("/property-features")}>
+                                        <button type="button" className="btn btn-primary w-50" onClick={() => navigate("/add-property/features")}>
                                             Continuar
                                         </button>
                                     </div>
