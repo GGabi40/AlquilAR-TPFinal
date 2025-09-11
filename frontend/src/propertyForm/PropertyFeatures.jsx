@@ -16,6 +16,9 @@ const PropertyFeatures = () => {
     const handleRestar = (setter, valor) => {
         if (valor > 0) setter(valor - 1);
     };
+    const handleRestarBase = (setter, valor) => {
+        if (valor > 1) setter(valor - 1);
+    };
 
     return (
         <div className="container my-5">
@@ -40,163 +43,172 @@ const PropertyFeatures = () => {
                             <div className='card shadow h-100'>
                                 <div className='card-body d-flex flex-column justify-content-center text-dark'>
                                     <h2 className='card-title text-center mb-4'>Características de la Propiedad</h2>
-                                    <label className="form-label d-block">Elija su propiedad:</label>
+
 
                                     <div className='row mb-3'>
-                                        <div className='col-md-10'>
+                                        <div className='col-md-6'>
                                             <div>
+                                                <label className="form-label d-block">Elija su propiedad:</label>
                                                 <input
                                                     type="radio"
                                                     name="tipoPropiedad"
                                                     id="casa"
-                                                    className="form-check-input me-1"
+                                                    className="form-check-input"
                                                 />
-                                                <label htmlFor="casa">
+                                                <label htmlFor="casa" className='me-3'>
                                                     Casa
                                                 </label>
                                                 <input
                                                     type="radio"
                                                     name="tipoPropiedad"
                                                     id="departamento"
-                                                    className="form-check-input me-1"
+                                                    className="form-check-input"
                                                 />
                                                 <label htmlFor="departamento">
                                                     Departamento
                                                 </label>
                                             </div>
                                         </div>
+                                        <br />
 
-                                        <label className="form-label d-block">¿Cómo te gustaría alquilar?:</label>
-                                        <div className='col-md-10'>
+                                        <div className='col-md-6'>
+                                            <label className="form-label d-block">¿Cómo te gustaría alquilar?:</label>
                                             <div>
                                                 <input
                                                     type='checkbox'
                                                     name="alquiler"
                                                     id="alquilercompleto"
-                                                    className='form-check-label me-1'/>
+                                                    className='form-check-label' />
                                                 <label htmlFor="alquilercompleto" className="me-3">Alquiler completo</label>
+                                                <br />
                                                 <input
                                                     type='checkbox'
                                                     name="alquiler"
                                                     id="alquilertemporario"
-                                                    className='form-check-label me-1'/>
+                                                    className='form-check-label' />
                                                 <label htmlFor="alquilertemporario">Alquiler temporario</label>
                                             </div>
                                         </div>
+                                        <br />
+
                                     </div>
 
-                                    <label>¿Tiene cochera?:</label>
-                                    <div className="mb-3">
-                                        <input
-                                            type="radio"
-                                            name="cochera"
-                                            id="tienecochera"
-                                            className='form-check-label' />
-                                        <label className="form-check-label" htmlFor="si">
-                                            Sí
-                                        </label>
-                                        <input
-                                            type="radio"
-                                            name="cochera"
-                                            id="notienecochera"
-                                            className='form-check-label' />
-                                        <label className="form-check-label" htmlFor="no">
-                                            No
-                                        </label>
+                                    <div className='row mb-3'>
+                                        <div className='col-md-3'>
+                                            <label className='d-block me-3'>Cochera:</label>
+                                            <input
+                                                type="radio"
+                                                name="cochera"
+                                                id="tienecochera"
+                                                className='form-check-input' />
+                                            <label htmlFor="si" className="me-3">
+                                                Sí
+                                            </label>
+                                            <input
+                                                type="radio"
+                                                name="cochera"
+                                                id="notienecochera"
+                                                className='form-check-input' />
+                                            <label htmlFor="no">
+                                                No
+                                            </label>
+                                        </div>
+
+                                        <div className='col-md-3'>
+                                            <label>Habitaciones:</label> <br />
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary btn-sm ms-2"
+                                                onClick={() => handleRestar(setHabitaciones, habitaciones)}
+                                            >
+                                                -
+                                            </button>
+                                            <span className="mx-2">{habitaciones}</span>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-primary btn-sm"
+                                                onClick={() => handleSumar(setHabitaciones, habitaciones)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+
+                                        <div className='col-md-3'>
+                                            <label>Ambientes:</label> <br />
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary btn-sm ms-2"
+                                                onClick={() => handleRestarBase(setAmbientes, ambientes)}
+                                            >
+                                                -
+                                            </button>
+                                            <span className='mx-2'>{ambientes}</span>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-primary btn-sm"
+                                                onClick={() => handleSumar(setAmbientes, ambientes)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+
+                                        <div className='col-md-3'>
+                                            <label>Baños:</label> <br />
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary btn-sm ms-2"
+                                                onClick={() => handleRestarBase(setBanios, banios)}
+                                            >
+                                                -
+                                            </button>
+                                            <span className='mx-2'>{banios}</span>
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-primary btn-sm"
+                                                onClick={() => handleSumar(setBanios, banios)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+
                                     </div>
 
-
-
-
-
-                                    <div>
-                                        <label>Habitaciones:</label>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary me-2"
-                                            onClick={() => handleRestar(setHabitaciones, habitaciones)}
-                                        >
-                                            -
-                                        </button>
-                                        <span>{habitaciones}</span>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary ms-2"
-                                            onClick={() => handleSumar(setHabitaciones, habitaciones)}
-                                        >
-                                            +
-                                        </button>
+                                    <div className='row mb-3'>
+                                        <div className='col-md-6'>
+                                            <label>Superficie(mts<sup>2</sup>): </label>
+                                            <input type="number" name="superficie" id="superficie" className='form-control' />
+                                        </div>
+                                        <div className='col-md-6'>
+                                            <label>Antigüedad(años): </label>
+                                            <input type="number" name="antiguedad" id="antiguedad" className='form-control' />
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label>Ambientes:</label>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary me-2"
-                                            onClick={() => handleRestar(setAmbientes, ambientes)}
-                                        >
-                                            -
-                                        </button>
-                                        <span>{ambientes}</span>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary ms-2"
-                                            onClick={() => handleSumar(setAmbientes, ambientes)}
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-
-                                    <div>
-                                        <label>Baños:</label>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-secondary me-2"
-                                            onClick={() => handleRestar(setBanios, banios)}
-                                        >
-                                            -
-                                        </button>
-                                        <span>{banios}</span>
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary ms-2"
-                                            onClick={() => handleSumar(setBanios, banios)}
-                                        >
-                                            +
-                                        </button>
-                                    </div>
-
-                                    <div>
-                                        <label>Superficie: (mts<sup>2</sup>)</label>
-                                        <input type="number" name="superficie" id="superficie" />
-                                    </div>
-
-                                    <div>
-                                        <label>Antiguedad: (años)</label>
-                                        <input type="number" name="antiguedad" id="antiguedad" />
-                                    </div>
-
-                                    <div>
-                                        <label>Precio Alquiler:</label>
-                                        <input type="number" name="precioalquiler" id="precioalquiler" />
-                                    </div>
-
-                                    <div>
-                                        <label>Precio Expensas:</label>
-                                        <input type="number" name="precioexpensas" id="precioexpensas" />
+                                    <div className='row mb-3'>
+                                        <div className='col-md-6'>
+                                            <label>Precio Alquiler:</label>
+                                            <input type="number" name="precioalquiler" id="precioalquiler" className='form-control' />
+                                        </div>
+                                        <div className='col-md-6'>
+                                            <label>Precio Expensas:</label>
+                                            <input type="number" name="precioexpensas" id="precioexpensas" className='form-control' />
+                                        </div>
                                     </div>
 
                                     <div>
                                         <label>Más Información:</label>
-                                        <textarea name="masinformacion" id="masinformacion" rows="8" cols="50" maxLength={300} placeholder='Ingrese los datos que crea importantes sobre el inmueble...' />
+                                        <textarea name="masinformacion" id="masinformacion" rows="8" cols="50" maxLength={300} placeholder='Ingrese los datos que crea importantes sobre el inmueble...' className='form-control' />
+                                    </div> <br />
+
+                                    <div className='d-flex justify-content-center gap-3 mt-2'>
+                                        <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property")}>
+                                            Volver
+                                        </button>
+                                        <button type="button" className="btn btn-primary w-25" onClick={() => navigate("/propertyImages")}>
+                                            Continuar
+                                        </button>
                                     </div>
 
-                                    <button type="button" className="btn btn-secondary w-50" onClick={() => navigate("/add-property")}>
-                                        Volver
-                                    </button>
-                                    <button type="button" className="btn btn-primary w-50" onClick={() => navigate("/propertyImages")}>
-                                        Continuar
-                                    </button>
                                 </div>
                             </div>
                         </div>
