@@ -45,7 +45,7 @@ const Nav = () => {
             <li className="nav-item">
               <button
                 className="btn btn-light nav-link px-3 py-1"
-                onClick={() => navigate("/add-property")}
+                onClick={() => navigate("/add-property/location")}
               >
                 Publicar
               </button>

@@ -6,6 +6,7 @@ import MainLayout from "./ui/MainLayout";
 import Home from "./home/Home.jsx";
 import PropertyForm from "./propertyForm/PropertyForm";
 import PropertyFeatures from "./propertyForm/PropertyFeatures";
+import PropertyImages from "./propertyForm/PropertyImages";
 import Register from "./register/Register";
 import OwnerDashboard from "./ownerDashboard/OwnerDashboard.jsx";
 import PropertyDetail from "./PropertyDetail/PropertyDetail.jsx";
@@ -20,8 +21,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
-          <Route path="/add-property" element={<PropertyForm />} />
-          <Route path="/property-features" element={<PropertyFeatures />} />
+          <Route path="/add-property/location" element={<PropertyForm />} />
+          <Route path="/add-property/features" element={<PropertyFeatures />} />
+          <Route path="/add-property/images" element={<PropertyImages />} />
           <Route path="/owner-dashboard" element={<OwnerDashboard />} />
           <Route path="/property/:id" element={<PropertyDetail />} />
           <Route path="/user" element={<UserDashboard />} />

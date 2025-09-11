@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router";
 import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
-
+import PropertyTabs from './PropertyTabs';
 
 const PropertyFeatures = () => {
 
@@ -22,6 +22,7 @@ const PropertyFeatures = () => {
 
     return (
         <div className="container my-5">
+
             <div className="row justify-content-center align-items-center">
 
                 <div className="col-md-6 d-flex justify-content-center align-items-center">
@@ -42,7 +43,9 @@ const PropertyFeatures = () => {
                         <div className='register-form'>
                             <div className='card shadow h-100'>
                                 <div className='card-body d-flex flex-column justify-content-center text-dark'>
-                                    <h2 className='card-title text-center mb-4'>Características de la Propiedad</h2>
+                                    <h2 className='card-title text-center mb-4'>Registro de tu Propiedad</h2>
+                                    <PropertyTabs />
+                                    
 
 
                                     <div className='row mb-3'>
@@ -201,10 +204,10 @@ const PropertyFeatures = () => {
                                     </div> <br />
 
                                     <div className='d-flex justify-content-center gap-3 mt-2'>
-                                        <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property")}>
+                                        <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property/location")}>
                                             Volver
                                         </button>
-                                        <button type="button" className="btn btn-primary w-25" onClick={() => navigate("/propertyImages")}>
+                                        <button type="button" className="btn btn-primary w-25" onClick={() => navigate("/add-property/images")}>
                                             Continuar
                                         </button>
                                     </div>
