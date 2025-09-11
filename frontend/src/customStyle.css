@@ -124,3 +124,15 @@ ul.footer-terms-conditions > li > a:hover {
   font-weight: bold;
   color: #2eb7c1; 
 }
+
+.preview-images {
+  width: 100%;
+}
+
+.preview-images::-webkit-scrollbar {
+  height: 6px;
+}
+.preview-images::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}

@@ -45,7 +45,7 @@ const PropertyFeatures = () => {
                                 <div className='card-body d-flex flex-column justify-content-center text-dark'>
                                     <h2 className='card-title text-center mb-4'>Registro de tu Propiedad</h2>
                                     <PropertyTabs />
-                                    
+
 
 
                                     <div className='row mb-3'>
@@ -82,14 +82,14 @@ const PropertyFeatures = () => {
                                                     name="alquiler"
                                                     id="alquilercompleto"
                                                     className='form-check-label' />
-                                                <label htmlFor="alquilercompleto" className="me-3">Alquiler completo</label>
+                                                <label htmlFor="alquilercompleto" className="me-3">Alquiler Permanente</label>
                                                 <br />
                                                 <input
                                                     type='checkbox'
                                                     name="alquiler"
                                                     id="alquilertemporario"
                                                     className='form-check-label' />
-                                                <label htmlFor="alquilertemporario">Alquiler temporario</label>
+                                                <label htmlFor="alquilertemporario">Alquiler Temporal</label>
                                             </div>
                                         </div>
                                         <br />
