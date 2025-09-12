@@ -24,10 +24,16 @@ function App() {
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
-          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
-          <Route path="/property/:id" element={<PropertyDetail />} />
-          <Route path="/user" element={<UserDashboard />} />
-          <Route path="/superadmin" element={<SuperadminDashboard />} />
+
+          {/* Owner */}
+          <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+          <Route path="/owner/property/:id" element={<PropertyDetail />} />
+
+          <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
+
+          {/* User */}
+          <Route path="/user/dashboard" element={<UserDashboard />} />
+          {/* Agg path para /property/:id -> inquilino ingresa a detalles */}
         </Route>
       </Routes>
     </BrowserRouter>
