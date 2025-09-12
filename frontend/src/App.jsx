@@ -8,10 +8,10 @@ import PropertyForm from "./propertyForm/PropertyForm";
 import PropertyFeatures from "./propertyForm/PropertyFeatures";
 import PropertyImages from "./propertyForm/PropertyImages";
 import Register from "./register/Register";
-import OwnerDashboard from "./ownerDashboard/OwnerDashboard.jsx";
+import OwnerDashboard from "./dashboards/ownerDashboard/OwnerDashboard.jsx";
 import PropertyDetail from "./PropertyDetail/PropertyDetail.jsx";
-import UserDashboard from "./userDashboard/UserDashboard.jsx";
-import SuperadminDashboard from "./superadminDashboard/SuperadminDashboard.jsx";
+import UserDashboard from "./dashboards/userDashboard/UserDashboard.jsx";
+import SuperadminDashboard from "./dashboards/superadminDashboard/SuperadminDashboard.jsx";
 
 function App() {
   return (
