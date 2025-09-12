@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,26 +10,55 @@ import {
   isValidEmail,
   hasSQLInjection,
   hasScriptInjection,
-  sanitizeInput
+  hasMinLength,
 } from "../utils/validations";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [userData, setUserData] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleEmailChange = (e) =>
+    setUserData({ ...userData, email: e.target.value });
+  const handlePasswordChange = (e) =>
+    setUserData({ ...userData, password: e.target.value });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    let allErrors = {};
 
-    try {
-      const res = await fetch("http://localhost:3000/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    if (isEmpty(userData.email)) {
+      allErrors.email = "El email es obligatorio.";
+      emailRef.current.focus();
+      emailRef.current.classList.add("is-invalid");
+    } else if (!isValidEmail(userData.email)) {
+      allErrors.email = "El formato de email es inválido.";
+      emailRef.current.focus();
+      emailRef.current.classList.add("is-invalid");
+    }
 
+    if (
+      hasSQLInjection(userData.password) ||
+      hasScriptInjection(userData.password)
+    ) {
+      allErrors.password = "Entrada inválida";
+    } else if (!hasMinLength(userData.password, 6)) {
+      allErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    }
+
+    setErrors(allErrors);
+
+    if (Object.keys(allErrors).length === 0) {
+      console.log("Todo listo!", userData);
+    } else {
+      console.log("Algo pasó", allErrors);
+    }
+
+    /* try {
+      
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message);
@@ -46,7 +75,7 @@ const Login = () => {
       }
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
-    }
+    } */
   };
 
   return (
@@ -67,7 +96,7 @@ const Login = () => {
           <div className="card shadow h-100">
             <div className="card-body d-flex flex-column justify-content-center text-dark">
               <h4 className="card-title text-center mb-4">Iniciar sesión</h4>
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">
                     Correo electrónico
@@ -78,8 +107,9 @@ const Login = () => {
                       type="email"
                       className="form-control"
                       id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={userData.email}
+                      onChange={handleEmailChange}
+                      ref={emailRef}
                       placeholder="ejemplo@mail.com"
                       required
                     />
@@ -98,8 +128,9 @@ const Login = () => {
                       type="password"
                       className="form-control"
                       id="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={userData.password}
+                      onChange={handlePasswordChange}
+                      ref={passwordRef}
                       placeholder="********"
                       required
                     />
@@ -111,7 +142,12 @@ const Login = () => {
                   </small>
                 </div>
 
-                {error && <div className="alert alert-danger">{error}</div>}
+                {errors.email && (
+                  <div className="alert alert-danger">{errors.email}</div>
+                )}
+                {errors.password && (
+                  <div className="alert alert-danger">{errors.password}</div>
+                )}
 
                 <div className="d-grid">
                   <button className="btn btn-primary" type="submit">
