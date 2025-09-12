@@ -1,23 +1,11 @@
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
-import express from "express";
-import bcrypt from 'bcryptjs';
+import { Router } from "express";
+import { verifyToken, roleMiddleware } from '../middleware/authMiddleware.js';
+import { getAllUsers } from "../services/auth.services.js";
 
-import { User } from '../models/User.js';
-import { authenticate, authorizeRoles } from '../middleware/auth.js';
+const router = Router();
 
-const router = express.Router();
-
-router.get('/', authenticate, authorizeRoles('superadmin'), async (req, res) => {
-    try {
-        const users = await User.findAll({ attributes: { exclude: ['password'] } });
-        res.json(users);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error al obtener usuarios' });
-    }
-});
+// SuperAdmin Routes
+router.get('/', verifyToken, roleMiddleware('superadmin'), getAllUsers);
 
 router.post('/', async (req, res) => {
     try {
