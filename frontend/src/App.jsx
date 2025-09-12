@@ -8,10 +8,10 @@ import PropertyForm from "./propertyForm/PropertyForm";
 import PropertyFeatures from "./propertyForm/PropertyFeatures";
 import PropertyImages from "./propertyForm/PropertyImages";
 import Register from "./register/Register";
-import OwnerDashboard from "./ownerDashboard/OwnerDashboard.jsx";
+import OwnerDashboard from "./dashboards/ownerDashboard/OwnerDashboard.jsx";
 import PropertyDetail from "./PropertyDetail/PropertyDetail.jsx";
-import UserDashboard from "./userDashboard/UserDashboard.jsx";
-import SuperadminDashboard from "./superadminDashboard/SuperadminDashboard.jsx";
+import UserDashboard from "./dashboards/userDashboard/UserDashboard.jsx";
+import SuperadminDashboard from "./dashboards/superadminDashboard/SuperadminDashboard.jsx";
 
 function App() {
   return (
@@ -24,10 +24,16 @@ function App() {
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
-          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
-          <Route path="/property/:id" element={<PropertyDetail />} />
-          <Route path="/user" element={<UserDashboard />} />
-          <Route path="/superadmin" element={<SuperadminDashboard />} />
+
+          {/* Owner */}
+          <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+          <Route path="/owner/property/:id" element={<PropertyDetail />} />
+
+          <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
+
+          {/* User */}
+          <Route path="/user/dashboard" element={<UserDashboard />} />
+          {/* Agg path para /property/:id -> inquilino ingresa a detalles */}
         </Route>
       </Routes>
     </BrowserRouter>
