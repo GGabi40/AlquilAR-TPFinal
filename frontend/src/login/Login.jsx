@@ -4,11 +4,9 @@ import { useNavigate, Link } from "react-router";
 import Notifications, {
   toastSuccess,
   toastError,
-  toastInfo,
 } from "../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 import LoginImage from "/illustrations/login/login-illustration.webp";
 import {
@@ -20,47 +18,48 @@ import {
 } from "../utils/validations";
 
 const Login = () => {
-  const [userData, setUserData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
   const navigate = useNavigate();
 
-  const handleEmailChange = (e) =>
-    setUserData({ ...userData, email: e.target.value });
-  const handlePasswordChange = (e) =>
-    setUserData({ ...userData, password: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const validations = () => {
     let allErrors = {};
 
-    if (isEmpty(userData.email)) {
-      toastError("El email es obligatorio.");
+    if (isEmpty(formData.email)) {
       allErrors.email = "El email es obligatorio.";
-      emailRef.current.focus();
       emailRef.current.classList.add("is-invalid");
-    } else if (!isValidEmail(userData.email)) {
-      toastError("El formato de email es inválido.");
+      emailRef.current.classList.remove("is-valid");
+    } else if (!isValidEmail(formData.email)) {
       allErrors.email = "El formato de email es inválido.";
-      emailRef.current.focus();
       emailRef.current.classList.add("is-invalid");
+      emailRef.current.classList.remove("is-valid");
+    } else {
+      emailRef.current.classList.remove("is-invalid");
+      emailRef.current.classList.add("is-valid");
     }
 
     if (
-      hasSQLInjection(userData.password) ||
-      hasScriptInjection(userData.password)
+      hasSQLInjection(formData.password) ||
+      hasScriptInjection(formData.password)
     ) {
-      allErrors.password = "Entrada inválida";
-    } else if (!hasMinLength(userData.password, 6)) {
-      allErrors.password = "La contraseña debe tener al menos 6 caracteres.";
-      passwordRef.current.focus();
+      allErrors.password = "Entrada inválida.";
       passwordRef.current.classList.add("is-invalid");
+      passwordRef.current.classList.remove("is-valid");
+    } else {
+      passwordRef.current.classList.remove("is-invalid");
+      passwordRef.current.classList.add("is-valid");
     }
 
     setErrors(allErrors);
 
     if (Object.keys(allErrors).length !== 0) {
+      toastError("Revisa los errores del formulario.");
       return false;
     }
 
@@ -70,36 +69,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isValid = validations();
+    if (!validations()) return;
 
-    if(isValid)
-    {
-      emailRef.current.classList.remove("is-invalid");
-      passwordRef.current.classList.remove("is-invalid");
+    toastSuccess("Sesión iniciada correctamente ✅");
+    console.log("Datos de login:", formData);
 
-      toastSuccess('Sesión iniciada correctamente.');
-      // CONECTAR
-      // HACER TOAST DE SUCESS
-      /* try {
-      
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.message);
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      if (data.user.role === "superadmin") {
-        navigate("/superadmin");
-      } else if (data.user.role === "owner") {
-        navigate("/owner-dashboard");
-      } else {
-        navigate("/user-dashboard");
-      }
-    } catch (err) {
-      setError(err.message || "Error al iniciar sesión");
-    } */
-    }
+    /* 
+    AXIOS
+    REDIRECCIÓN
+    JWT TOKEN
+    CREDENCIALES INVÁLIDAS
+    */
   };
 
   return (
@@ -130,31 +110,34 @@ const Login = () => {
                     <span className="input-group-text">@</span>
                     <input
                       type="email"
+                      name="email"
                       className="form-control"
                       id="email"
-                      value={userData.email}
-                      onChange={handleEmailChange}
+                      value={formData.email}
+                      onChange={handleChange}
                       ref={emailRef}
                       placeholder="ejemplo@mail.com"
-                      required
                     />
                   </div>
+                  {errors.email && (
+                    <div className="invalid-feedback d-block">
+                      {errors.email}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     Contraseña
-                    <div className="tooltip-container ms-2">
-                      <span
-                        className="ms-2 text-primary d-none d-md-block"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top"
-                        title="Debe tener al menos 6 caracteres"
-                        style={{ cursor: "pointer" }}
-                      >
-                        <FontAwesomeIcon icon={faInfoCircle} />
-                      </span>
-                    </div>
+                    <span
+                      className="ms-2 text-primary d-none d-md-inline"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title="Debe tener al menos 6 caracteres"
+                      style={{ cursor: "pointer" }}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} />
+                    </span>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text">
@@ -162,28 +145,26 @@ const Login = () => {
                     </span>
                     <input
                       type="password"
+                      name="password"
                       className="form-control"
                       id="password"
-                      value={userData.password}
-                      onChange={handlePasswordChange}
+                      value={formData.password}
+                      onChange={handleChange}
                       ref={passwordRef}
                       placeholder="********"
-                      required
                     />
                   </div>
+                  {errors.password && (
+                    <div className="invalid-feedback d-block">
+                      {errors.password}
+                    </div>
+                  )}
                   <small className="d-block mt-1">
                     <Link to="/password-recovery">
                       ¿Olvidaste tu contraseña?
                     </Link>
                   </small>
                 </div>
-
-                {errors.email && (
-                  <div className="alert alert-danger">{errors.email}</div>
-                )}
-                {errors.password && (
-                  <div className="alert alert-danger">{errors.password}</div>
-                )}
 
                 <div className="d-grid">
                   <button className="btn btn-primary" type="submit">
@@ -193,8 +174,7 @@ const Login = () => {
               </form>
 
               <p className="text-center mt-3">
-                ¿No tienes cuenta?{" "}
-                <Link to="/create-account">Crear cuenta</Link>
+                ¿No tienes cuenta? <Link to="/create-account">Crear cuenta</Link>
               </p>
             </div>
           </div>
