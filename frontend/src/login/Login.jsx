@@ -1,8 +1,14 @@
 import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router";
 
+import Notifications, {
+  toastSuccess,
+  toastError,
+  toastInfo,
+} from "../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 import LoginImage from "/illustrations/login/login-illustration.webp";
 import {
@@ -26,15 +32,16 @@ const Login = () => {
   const handlePasswordChange = (e) =>
     setUserData({ ...userData, password: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validations = () => {
     let allErrors = {};
 
     if (isEmpty(userData.email)) {
+      toastError("El email es obligatorio.");
       allErrors.email = "El email es obligatorio.";
       emailRef.current.focus();
       emailRef.current.classList.add("is-invalid");
     } else if (!isValidEmail(userData.email)) {
+      toastError("El formato de email es inválido.");
       allErrors.email = "El formato de email es inválido.";
       emailRef.current.focus();
       emailRef.current.classList.add("is-invalid");
@@ -47,17 +54,33 @@ const Login = () => {
       allErrors.password = "Entrada inválida";
     } else if (!hasMinLength(userData.password, 6)) {
       allErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+      passwordRef.current.focus();
+      passwordRef.current.classList.add("is-invalid");
     }
 
     setErrors(allErrors);
 
-    if (Object.keys(allErrors).length === 0) {
-      console.log("Todo listo!", userData);
-    } else {
-      console.log("Algo pasó", allErrors);
+    if (Object.keys(allErrors).length !== 0) {
+      return false;
     }
 
-    /* try {
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const isValid = validations();
+
+    if(isValid)
+    {
+      emailRef.current.classList.remove("is-invalid");
+      passwordRef.current.classList.remove("is-invalid");
+
+      toastSuccess('Sesión iniciada correctamente.');
+      // CONECTAR
+      // HACER TOAST DE SUCESS
+      /* try {
       
       const data = await res.json();
 
@@ -76,10 +99,12 @@ const Login = () => {
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
     } */
+    }
   };
 
   return (
     <div className="container my-5">
+      <Notifications />
       <div className="row justify-content-center">
         <div className="col-md-5 d-flex justify-content-center align-items-center">
           <img
@@ -119,6 +144,17 @@ const Login = () => {
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label">
                     Contraseña
+                    <div className="tooltip-container ms-2">
+                      <span
+                        className="ms-2 text-primary d-none d-md-block"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        title="Debe tener al menos 6 caracteres"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <FontAwesomeIcon icon={faInfoCircle} />
+                      </span>
+                    </div>
                   </label>
                   <div className="input-group">
                     <span className="input-group-text">
