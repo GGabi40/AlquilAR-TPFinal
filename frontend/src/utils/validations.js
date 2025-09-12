@@ -20,8 +20,3 @@ export const hasScriptInjection = (value) => {
   const xssPattern = /<script.*?>.*?<\/script>|<.*?on\w+=.*?>/i;
   return xssPattern.test(value);
 };
-
-export const sanitizeInput = (value) => {
-  if (!value) return "";
-  return value.replace(/<.*?>/g, "").replace(/['";]/g, "");
-};
