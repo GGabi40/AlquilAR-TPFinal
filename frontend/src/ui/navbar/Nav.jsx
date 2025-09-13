@@ -5,6 +5,7 @@ import "../../customStyle.css";
 
 const Nav = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showButton, setShowButton] = useState(true);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const Nav = () => {
             <li className="nav-item">
               <Link
                 className="nav-link px-3 py-1 text-white"
-                to="/add-property/location" 
+                to="/add-property" // si está logueado: va a formulario
               >
                 Publicar
               </Link>

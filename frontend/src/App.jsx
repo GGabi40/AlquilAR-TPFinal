@@ -17,6 +17,7 @@ import TermsAndCondicions from "./pages/TermsAndCondicions.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import FAQ from "./pages/FAQ.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
+import PublishSteps from "./publish/PublishSteps.jsx";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
+          <Route path="/add-property" element={<PublishSteps />} />
+
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
