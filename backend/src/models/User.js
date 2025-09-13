@@ -24,7 +24,7 @@ export const User = sequelize.define('User', {
         allowNull: false
     },
     isActive: {
-        type: DataTypes.ENUM(true, false),
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
     },
