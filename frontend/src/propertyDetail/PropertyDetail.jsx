@@ -33,7 +33,7 @@ export default function PropertyDetail() {
                     <h2>{property.titulo}</h2>
                     <p className="text-muted">{property.direccion}</p>
                 </Col>
-                <Col className="text-end">
+                <Col className="text-end d-flex justify-content-end gap-2">
                     <Button variant="primary">Editar propiedad</Button>
                 </Col>
             </Row>

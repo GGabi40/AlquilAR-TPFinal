@@ -132,7 +132,7 @@ const PropertyImages = () => {
               <br />
 
               <div className='d-flex justify-content-center gap-3 mt-2'>
-                <button type="button" className='btn btn-secondary' onClick={() => navigate(-1)}>Anterior</button>
+                <button type="button" className='btn btn-secondary' onClick={() => navigate('/add-property/features')}>Anterior</button>
                 <button type="button" className='btn btn-primary' onClick={() => navigate('/property/preview')}>Vista Previa</button>
               </div>
             </div>

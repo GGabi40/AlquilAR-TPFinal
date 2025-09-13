@@ -9,9 +9,10 @@ import PropertyFeatures from "./propertyForm/PropertyFeatures";
 import PropertyImages from "./propertyForm/PropertyImages";
 import Register from "./register/Register";
 import OwnerDashboard from "./dashboards/ownerDashboard/OwnerDashboard.jsx";
-import PropertyDetail from "./PropertyDetail/PropertyDetail.jsx";
+import PropertyDetail from "./propertyDetail/PropertyDetail.jsx";
 import UserDashboard from "./dashboards/userDashboard/UserDashboard.jsx";
 import SuperadminDashboard from "./dashboards/superadminDashboard/SuperadminDashboard.jsx";
+import AboutUs from "./pages/AboutUs.jsx";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
+          <Route path="/about-us" element={<AboutUs />} />
 
           {/* Owner */}
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />
