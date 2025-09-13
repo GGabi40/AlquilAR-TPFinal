@@ -1,5 +1,12 @@
 export const isEmpty = (value) => !value || value.trim() === "";
 
+export const validateString = (str, minLength, maxLength) => {
+  if (minLength && str.length < minLength) return false;
+  else if (maxLength && str.length > maxLength) return false;
+
+  return true;
+};
+
 export const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
