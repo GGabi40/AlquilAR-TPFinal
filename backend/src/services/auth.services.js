@@ -98,6 +98,7 @@ export const loginUser = async (req,res) => {
 };
 
 
+// --- Validations ---
 const validateRegisterData = (reqData) => {
     const result = { error: false, message: '' };
 

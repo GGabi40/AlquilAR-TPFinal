@@ -15,8 +15,8 @@ router.get("/", verifyToken, roleMiddleware("superadmin"), getAllUsers);
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);
 
+router.post("/login", loginUser);
 router.post("/register", registerUser);
 
-router.post("/login", loginUser);
 
 export default router;
