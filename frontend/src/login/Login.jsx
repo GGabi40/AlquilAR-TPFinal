@@ -70,7 +70,8 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validations()) return;
+    const validation = validations();
+    if (!validation) return;
 
     try {
       const response = await axios.post(
