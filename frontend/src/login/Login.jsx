@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate, Link } from "react-router";
+import axios from "axios";
 
 import Notifications, {
   toastSuccess,
@@ -71,15 +72,33 @@ const Login = () => {
 
     if (!validations()) return;
 
-    toastSuccess("Sesión iniciada correctamente ✅");
-    console.log("Datos de login:", formData);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/login",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-    /* 
-    AXIOS
-    REDIRECCIÓN
-    JWT TOKEN
-    CREDENCIALES INVÁLIDAS
-    */
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+
+      toastSuccess("Sesión iniciada correctamente.");
+      console.log("Datos de login:", formData);
+      console.log("El servidor: ", response.data);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (error) {
+      console.error("Error al iniciar sesion: ", error.message);
+      toastError(
+        error.response?.data?.message ||
+          "Error al iniciar sesión. Intenta de nuevo."
+      );
+    }
   };
 
   return (
@@ -174,7 +193,8 @@ const Login = () => {
               </form>
 
               <p className="text-center mt-3">
-                ¿No tienes cuenta? <Link to="/create-account">Crear cuenta</Link>
+                ¿No tienes cuenta?{" "}
+                <Link to="/create-account">Crear cuenta</Link>
               </p>
             </div>
           </div>

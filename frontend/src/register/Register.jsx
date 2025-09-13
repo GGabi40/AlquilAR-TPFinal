@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import axios from 'axios';
 import { useNavigate, Link } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +16,7 @@ import {
   hasMinLength,
   hasSQLInjection,
   hasScriptInjection,
+  validateString,
 } from "../utils/validations";
 
 const Register = () => {
@@ -48,7 +50,8 @@ const Register = () => {
       nameRef.current.classList.remove("is-valid");
     } else if (
       hasSQLInjection(formData.name) ||
-      hasScriptInjection(formData.name)
+      hasScriptInjection(formData.name) ||
+      !validateString(formData.name, null, 25)
     ) {
       allErrors.name = "Entrada inválida en el nombre.";
       nameRef.current.classList.add("is-invalid");
@@ -64,7 +67,8 @@ const Register = () => {
       surnameRef.current.classList.remove("is-valid");
     } else if (
       hasSQLInjection(formData.surname) ||
-      hasScriptInjection(formData.surname)
+      hasScriptInjection(formData.surname) ||
+      !validateString(formData.surname, null, 80)
     ) {
       allErrors.surname = "Entrada inválida en los apellidos.";
       surnameRef.current.classList.add("is-invalid");
@@ -122,14 +126,27 @@ const Register = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validations()) return;
 
-    toastSuccess("Cuenta creada con éxito ✅");
-    console.log("Datos de registro:", formData);
+    try {
+      const response = await axios.post("http://localhost:3000/api/register", formData, {
+        headers: { "Content-Type": 'application/json' }
+      });
 
-    navigate("/login");
+      toastSuccess("Cuenta creada con éxito");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000)
+    } 
+    catch (error) {
+      console.error('Error al registrar ususario: ', error.message);
+      toastError('Error al crear la cuenta. Intenta de nuevo.');
+    }
+
+
   };
 
   return (
