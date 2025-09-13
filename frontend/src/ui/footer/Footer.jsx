@@ -57,16 +57,16 @@ const Footer = () => {
         <div className="col-md-4 mb-3">
           <ul className="list-unstyled footer-terms-conditions">
             <li>
-              <Link to="/">FAQ</Link>
+              <Link to="/faq">FAQ</Link>
             </li>
             <li>
-              <Link to="/">Términos y Condiciones</Link>
+              <Link to="/terms-condicions">Términos y Condiciones</Link>
             </li>
             <li>
-              <Link to="/">Políticas de Privacidad</Link>
+              <Link to="/privacy-policy">Políticas de Privacidad</Link>
             </li>
             <li>
-              <Link to="/">Contáctanos</Link>
+              <Link to="/contact-us">Contáctanos</Link>
             </li>
             <li>
               <Link to="/about-us">Sobre Nosotros</Link>

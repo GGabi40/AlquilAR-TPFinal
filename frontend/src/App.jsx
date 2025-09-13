@@ -13,6 +13,10 @@ import PropertyDetail from "./propertyDetail/PropertyDetail.jsx";
 import UserDashboard from "./dashboards/userDashboard/UserDashboard.jsx";
 import SuperadminDashboard from "./dashboards/superadminDashboard/SuperadminDashboard.jsx";
 import AboutUs from "./pages/AboutUs.jsx";
+import TermsAndCondicions from "./pages/TermsAndCondicions.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import FAQ from "./pages/FAQ.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
 
 function App() {
   return (
@@ -26,6 +30,11 @@ function App() {
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/terms-condicions" element={<TermsAndCondicions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+
 
           {/* Owner */}
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />
