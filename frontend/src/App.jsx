@@ -19,6 +19,8 @@ import FAQ from "./pages/FAQ.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PublishSteps from "./publish/PublishSteps.jsx";
 import PropertyCards from "./propertyCards/PropertyCards.jsx";
+import NotFound from "./error/NotFound.jsx";
+
 
 function App() {
   return (
@@ -39,6 +41,7 @@ function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/properties" element={<PropertyCards />} />
+          <Route path="*" element={<NotFound />} />
 
 
           {/* Owner */}
