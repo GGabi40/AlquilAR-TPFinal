@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Container, Card, Button, Row, Col, Form, Collapse } from 'react-bootstrap';
+import { Container, Card, Button, Row, Col, Form, Collapse, Dropdown } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { Link } from "react-router";
 
 const PropertyCards = () => {
     const [search, setSearch] = useState('');
@@ -13,7 +14,7 @@ const PropertyCards = () => {
     const [precioMax, setPrecioMax] = useState('');
     const [provincia, setProvincia] = useState('');
     const [localidad, setLocalidad] = useState('');
-    
+
     const properties = [
         { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200", localidad: "Rosario", provincia: "Santa Fe" },
         { id: 2, titulo: "Av. Siempre Viva 742", tipo: "Casa", direccion: "Buenos Aires, Argentina", precio: 450000, hab: 2, img: "https://via.placeholder.com/300x200", localidad: "Rio Cuarto", provincia: "Cordoba" },
@@ -52,65 +53,53 @@ const PropertyCards = () => {
                     <Button variant="success">
                         <FontAwesomeIcon icon={faSearch} className="me-2" />Buscar
                     </Button>
-                    <Button variant="outline-primary" className="ms-2" onClick={() => setShowFilters(!showFilters)}>
-                        <FontAwesomeIcon icon={faFilter} />Filtros
-                    </Button>
-                </Form>
-            </Container>
 
-            <Collapse in={showFilters}>
-                <div className="mb-3 border p-3 rounded">
-                    <Row className="g-2">
-                        <Col>
-                            <Form.Select value={tipo} onChange={e => setTipo(e.target.value)}>
-                                <option value="">Tipo</option>
-                                <option value="Casa">Casa</option>
-                                <option value="Departamento">Departamento</option>
-                                <option value="Loft">Loft</option>
-                            </Form.Select>
-                        </Col>
-                        <Col>
-                            <Form.Select value={habitaciones} onChange={e => setHabitaciones(e.target.value)}>
+                    <Dropdown className="ms-2">
+                        <Dropdown.Toggle variant="outline-primary">
+                            <FontAwesomeIcon icon={faFilter} /> Filtros
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className="p-3" style={{ minWidth: "250px" }}>
+                            <Form.Check
+                                type="checkbox"
+                                label="Departamentos"
+                                checked={tipo === "Departamento"}
+                                onChange={() => setTipo(tipo === "Departamento" ? "" : "Departamento")}
+                            />
+                            <Form.Check
+                                type="checkbox"
+                                label="Casas"
+                                checked={tipo === "Casa"}
+                                onChange={() => setTipo(tipo === "Casa" ? "" : "Casa")}
+                            />
+
+                            <Form.Select
+                                className="mt-2"
+                                value={habitaciones}
+                                onChange={e => setHabitaciones(e.target.value)}
+                            >
                                 <option value="">Habitaciones</option>
                                 {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
                             </Form.Select>
-                        </Col>
-                        <Col>
+
                             <Form.Control
+                                className="mt-2"
                                 type="number"
                                 placeholder="Precio min"
                                 value={precioMin}
                                 onChange={e => setPrecioMin(e.target.value)}
                             />
-                        </Col>
-                        <Col>
                             <Form.Control
+                                className="mt-2"
                                 type="number"
                                 placeholder="Precio max"
                                 value={precioMax}
                                 onChange={e => setPrecioMax(e.target.value)}
                             />
-                        </Col>
-                        <Col>
-                            <Form.Control
-                                type="text"
-                                placeholder="Provincia"
-                                value={provincia}
-                                onChange={e => setProvincia(e.target.value)}
-                            />
-                        </Col>
-                        <Col>
-                            <Form.Control
-                                type="text"
-                                placeholder="Localidad"
-                                value={localidad}
-                                onChange={e => setLocalidad(e.target.value)}
-                            />
-                        </Col>
-                    </Row>
-                </div>
-            </Collapse>
-
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Form>
+            </Container>
 
             <div className='d-flex flex-column align-items-center gap-3 w-100'>
                 {filteredProperties.map((p) => (
@@ -131,7 +120,10 @@ const PropertyCards = () => {
                                         <strong>Precio:</strong> ${p.precio} <br />
                                         <strong>Habitaciones:</strong> {p.hab}
                                     </Card.Text>
-                                    <Button variant="primary" href={`/property/${p.id}`}>+ Información</Button>
+
+                                    <Button as={Link} to={`/property/${p.id}`} variant="primary">
+                                        + Información
+                                    </Button>
                                 </Card.Body>
                             </Col>
                         </Row>

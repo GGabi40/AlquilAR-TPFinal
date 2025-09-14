@@ -20,6 +20,7 @@ import ContactUs from "./pages/ContactUs.jsx";
 import PublishSteps from "./publish/PublishSteps.jsx";
 import PropertyCards from "./propertyCards/PropertyCards.jsx";
 import NotFound from "./error/NotFound.jsx";
+import PropertyView from "./propertyView/PropertyView.jsx"
 
 
 function App() {
@@ -42,7 +43,7 @@ function App() {
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/properties" element={<PropertyCards />} />
           <Route path="*" element={<NotFound />} />
-
+          <Route path="/property/:id" element={<PropertyView />} />
 
           {/* Owner */}
           <Route path="/owner/dashboard" element={<OwnerDashboard />} />
