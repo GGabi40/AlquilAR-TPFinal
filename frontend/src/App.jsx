@@ -18,6 +18,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import FAQ from "./pages/FAQ.jsx";
 import ContactUs from "./pages/ContactUs.jsx";
 import PublishSteps from "./publish/PublishSteps.jsx";
+import PropertyCards from "./propertyCards/PropertyCards.jsx";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/properties" element={<PropertyCards />} />
 
 
           {/* Owner */}
