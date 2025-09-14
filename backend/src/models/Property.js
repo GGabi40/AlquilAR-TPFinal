@@ -3,29 +3,38 @@ import { sequelize } from "../config/db.js";
 import { User } from "./User.js";
 
 export const Property = sequelize.define("Property", {
-    ubicacion: {
-        type:DataTypes.STRING,
-        allowNull: false,
-    },
-    ambientes: {
+    idPropiedad: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        primaryKey: true,
+        autoIncrement: true,
     },
-    banos: {
-        type:DataTypes.INTEGER,
-        allowNull:false,
+    tipoPropiedad:{
+        type: DataTypes.ENUM('departamento', 'casa'),
+        defaultValue: 'departamento',
+        allowNull: false
     },
-    descripcion: {
-        type: DataTypes.TEXT,
-    },
-    alquiler: {
+    precioAlquiler: {
         type: DataTypes.FLOAT,
         allowNull:false,
     },
-    expensas: {
+    precioExpensas: {
         type:DataTypes.FLOAT,
         allowNull:true,
     },
+    estado: {
+        type: DataTypes.ENUM('disponible', 'no disponible', 'en revision'),
+        defaultValue: 'disponible',
+        allowNull: false
+    },
+    preferenciaAlquiler:{
+        type: DataTypes.ENUM('alquiler temporal', 'alquiler completo'),
+        defaultValue: 'alquiler completo',
+        allowNull: false
+    },
+    direccion: {
+        type:DataTypes.STRING,
+        allowNull: false,
+    }
 });
 
 User.hasMany(Property, { foreignKey: "ownerId" });
