@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Card, Button, Row, Col, Form, Collapse } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faFilter, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 const PropertyCards = () => {
     const [search, setSearch] = useState('');
@@ -13,14 +15,14 @@ const PropertyCards = () => {
     const [localidad, setLocalidad] = useState('');
     
     const properties = [
-        { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
-        { id: 2, titulo: "Av. Siempre Viva 742", tipo: "Casa", direccion: "Buenos Aires, Argentina", precio: 450000, hab: 2, img: "https://via.placeholder.com/300x200" },
-        { id: 3, titulo: "Casa con Patio", tipo: "Casa", direccion: "Calle Falsa 123, Córdoba", precio: 850000, hab: 4, img: "https://via.placeholder.com/300x200?text=Casa+con+Patio" },
-        { id: 4, titulo: "depto en el Centro", tipo: "Departamento", direccion: "Córdoba 456, Rosario", precio: 700000, hab: 1, img: "https://via.placeholder.com/300x200?text=Loft+Centro" },
-        { id: 5, titulo: "Casa con Piscina", tipo: "Casa", direccion: "Ruta 9, Santa Fe", precio: 1200000, hab: 5, img: "https://via.placeholder.com/300x200?text=Casa+Piscina" },
-        { id: 6, titulo: "Calle Falsa 123", direccion: "Rosario, Argentina", precio: 500000, tipo: "Departamento", hab: 4, img: "https://via.placeholder.com/300x200" }
+        { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200", localidad: "Rosario", provincia: "Santa Fe" },
+        { id: 2, titulo: "Av. Siempre Viva 742", tipo: "Casa", direccion: "Buenos Aires, Argentina", precio: 450000, hab: 2, img: "https://via.placeholder.com/300x200", localidad: "Rio Cuarto", provincia: "Cordoba" },
+        { id: 3, titulo: "Casa con Patio", tipo: "Casa", direccion: "Calle Falsa 123, Córdoba", precio: 850000, hab: 4, img: "https://via.placeholder.com/300x200?text=Casa+con+Patio", localidad: "CABA", provincia: "Buenos Aires" },
+        { id: 4, titulo: "depto en el Centro", tipo: "Departamento", direccion: "Córdoba 456, Rosario", precio: 700000, hab: 1, img: "https://via.placeholder.com/300x200?text=Loft+Centro", localidad: "La Plata", provincia: "Buenos Aires" },
+        { id: 5, titulo: "Casa con Piscina", tipo: "Casa", direccion: "Ruta 9, Santa Fe", precio: 1200000, hab: 5, img: "https://via.placeholder.com/300x200?text=Casa+Piscina", localidad: "Santa Fe", provincia: "Santa Fe" },
+        { id: 6, titulo: "Calle Falsa 123", direccion: "Rosario, Argentina", precio: 500000, tipo: "Departamento", hab: 4, img: "https://via.placeholder.com/300x200", localidad: "Bariloche", provincia: "Rio Negro" }
     ];
-    // ver lo de provincia y localidad porque el amigo me dio solo direccion no localidad y provincia por separado
+    // ver buscador, los filtros si andan bien 
 
     const filteredProperties = properties.filter(p => {
         return (
@@ -28,8 +30,8 @@ const PropertyCards = () => {
             (habitaciones === '' || p.hab === parseInt(habitaciones)) &&
             (precioMin === '' || p.precio >= parseInt(precioMin)) &&
             (precioMax === '' || p.precio <= parseInt(precioMax)) &&
-            (provincia === '' || p.direccion.toLowerCase().includes(provincia.toLowerCase())) &&
-            (localidad === '' || p.direccion.toLowerCase().includes(localidad.toLowerCase())) &&
+            (provincia === '' || p.provincia.toLowerCase().includes(provincia.toLowerCase())) &&
+            (localidad === '' || p.localidad.toLowerCase().includes(localidad.toLowerCase())) &&
             (search === '' || p.titulo.toLowerCase().includes(search.toLowerCase()))
         );
     });
@@ -47,9 +49,11 @@ const PropertyCards = () => {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
-                    <Button variant="success">Buscar</Button>
+                    <Button variant="success">
+                        <FontAwesomeIcon icon={faSearch} className="me-2" />Buscar
+                    </Button>
                     <Button variant="outline-primary" className="ms-2" onClick={() => setShowFilters(!showFilters)}>
-                        🔍 Filtros
+                        <FontAwesomeIcon icon={faFilter} />Filtros
                     </Button>
                 </Form>
             </Container>
