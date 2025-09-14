@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Container, Row, Col, Nav, Card, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
@@ -17,7 +19,9 @@ export default function Home() {
       <Container className="text-center my-5">
         <Form className="d-flex justify-content-center">
           <Form.Control type="text" placeholder="Buscador" className="w-50 me-2" />
-          <Button variant="success" onClick={() => navigate("/propiedades")}>Buscar</Button>
+          <Button variant="success" onClick={() => navigate("/propiedades")}>
+            <FontAwesomeIcon icon={faSearch} className="me-2" />Buscar
+          </Button>
         </Form>
       </Container>
 
