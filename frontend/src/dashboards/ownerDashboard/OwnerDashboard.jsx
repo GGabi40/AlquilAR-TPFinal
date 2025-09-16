@@ -57,7 +57,7 @@ export default function OwnerDashboard() {
                   <td>{p.ubicacion}</td>
                   <td>{p.ambientes}</td>
                   <td>{p.banos}</td>
-                  <td>${p.alquiler}</td>
+                  <td>{p.alquiler}</td>
                   <td>{p.disponible ? "Sí" : "No"}</td>
                   <td>
                     <Button size="sm" variant="info" className="me-2">
