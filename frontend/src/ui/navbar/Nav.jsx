@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate, useLocation, Link } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
 import "../../customStyle.css";
 
 const Nav = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showButton, setShowButton] = useState(true);
 
-
   useEffect(() => {
-    if (location.pathname !== "/login" && location.pathname !== "/create-account") {
-      setShowButton(false);
-    } else {
-      setShowButton(true);
-    }
+    setShowButton(!(location.pathname === "/login" || location.pathname === "/create-account"));
   }, [location.pathname]);
 
   return (
@@ -43,21 +38,21 @@ const Nav = () => {
         <div className="collapse navbar-collapse" id="navbarColor01">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <button
-                className="btn btn-light nav-link px-3 py-1"
-                onClick={() => navigate("/add-property/location")}
+              <Link
+                className="nav-link px-3 py-1 text-white"
+                to="/add-property" // si está logueado: va a formulario
               >
                 Publicar
-              </button>
+              </Link>
             </li>
             {showButton && (
               <li className="nav-item">
-                <button
+                <Link
+                  to="/login"
                   className="btn btn-outline-light ms-3 px-3 py-1"
-                  onClick={() => navigate("/login")}
                 >
                   Acceder
-                </button>
+                </Link>
               </li>
             )}
           </ul>
