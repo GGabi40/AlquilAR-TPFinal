@@ -1,16 +1,36 @@
-import { useState } from "react";
-import { Container, Row, Col, Nav, Card, Button, Form } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Container, Row, Col, Nav, Card, Button, Form, Carousel } from "react-bootstrap";
 import { useNavigate } from "react-router";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
+  const [featured, setFeatured] = useState([]);
+  const [recent, setRecent] = useState([]);
   const navigate = useNavigate();
 
-  const propiedades = [
-    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
-    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" },
-    { id: 1, titulo: "San Lorenzo 1222", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200" }
-  ];
+  const chunkArray = (arr, size) => {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
+    }
+    return chunks;
+  };
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/api/properties/featured").then(res => 
+      setFeatured(res.data)
+    );
+    axios.get("http://localhost:3000/api/properties/recent").then(res => 
+      setRecent(res.data)
+    );
+  }, []);
+
+  const featuredChunks = chunkArray(featured, 3);
+  const recentChunks = chunkArray(
+    recent.filter((p) => p.tipo === tipo),
+    3
+  );
 
   return (
     <Container>
@@ -31,34 +51,75 @@ export default function Home() {
       </Container>
 
       <Container className="my-5">
-        <h3 className="mb-3 fw-bold">Propiedades Más Visitadas</h3>
+        <h3 className="mb-3 fw-bold">Propiedades destacadas</h3>
+        <Carousel>
+          {featuredChunks.map((chunk, i) => (
+            <Carousel.Item key={i}>
+              <Row>
+                {chunk.map((p) => (
+                  <Col key={p.id} md={4}>
+                    <Card className="shadow-sm">
+                      <Card.Img variant="top" src={p.img} />
+                      <Card.Body>
+                        <Card.Title>{p.titulo}</Card.Title>
+                        <Card.Text className="text-success fw-bold">
+                          ${p.precio} - {p.hab} Hab.
+                        </Card.Text>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => navigate(`/propiedad/${p.id}`)}
+                        >
+                          Ver más
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </Container>
+
+      <Container className="my-5">
+        <h3 className="mb-3 fw-bold">Propiedades Recientes</h3>
         <Nav variant="tabs" defaultActiveKey="casas" onSelect={(k) => setTipo(k)}>
           <Nav.Item><Nav.Link eventKey="casas">Casas</Nav.Link></Nav.Item>
           <Nav.Item><Nav.Link eventKey="departamentos">Departamentos</Nav.Link></Nav.Item>
         </Nav>
 
-        <Row className="mt-4">
-          {propiedades.map((p) => (
-            <Col key={p.id} md={4}>
-              <Card className="shadow-sm">
-                <Card.Img variant="top" src={p.img} />
-                <Card.Body>
-                  <Card.Title>{p.titulo}</Card.Title>
-                  <Card.Text className="text-success fw-bold">
-                    ${p.precio} - {p.hab} Hab.
-                  </Card.Text>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => navigate(`/propiedad/${p.id}`)}
-                  >
-                    Ver más
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
+        <Carousel variant="dark">
+          {recentChunks.map((chunk, i) => (
+            <Carousel.Item key={i}>
+              <Row>
+                {chunk.map((p) => (
+                  <Col key={p.id} md={4}>
+                    <Card className="shadow-sm">
+                      <Card.Img
+                        variant="top"
+                        src={p.imgUrl}
+                      />
+                      <Card.Body>
+                        <Card.Title>{p.titulo}</Card.Title>
+                        <Card.Text className="text-success fw-bold">
+                          ${p.precio} - {p.hab} Hab.
+                        </Card.Text>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => navigate(`/propiedad/${p.id}`)}
+                        >
+                          Ver más
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </Carousel.Item>
           ))}
-        </Row>
+        </Carousel>
       </Container>
 
       <Container className="text-center my-5">

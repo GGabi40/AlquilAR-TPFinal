@@ -3,28 +3,38 @@ import { sequelize } from "../config/db";
 import { User } from "./User.js";
 
 export const Property = sequelize.define("Property", {
-    ubicacion: {
-        type:DataTypes.STRING,
-        allowNull: false,
-    },
-    ambientes: {
+    id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
     },
-    banos: {
-        type:DataTypes.INTEGER,
-        allowNull:false,
-    },
-    descripcion: {
+    description: {
         type: DataTypes.TEXT,
+        allowNull: true,
     },
-    alquiler: {
+    rent: {
         type: DataTypes.FLOAT,
         allowNull:false,
     },
-    expensas: {
+    location: {
+        type:DataTypes.STRING,
+        allowNull: false,
+    },
+    rooms: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    bathrooms: {
+        type:DataTypes.INTEGER,
+        allowNull:false,
+    },
+    expenses: {
         type:DataTypes.FLOAT,
         allowNull:true,
+    },
+    featured: {
+        type:DataTypes.BOOLEAN,
+        defaultValue: false,
     },
 });
 

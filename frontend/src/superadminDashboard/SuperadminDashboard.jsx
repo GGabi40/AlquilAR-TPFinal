@@ -4,42 +4,72 @@ import { Nav, Navbar, Container, Tab, Tabs, Table, Button } from "react-bootstra
 
 export default function SuperadminDashboard() {
     const [key, setKey] = useState("usuarios");
-    const [usuarios, serUsuarios] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
+    const [propiedades, setPropiedades] = useState([]);
+    const [pendientes, setPendientes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const propiedades = [
-        { id: 1, ubicacion: "San Martín 123", correo: "prop1@mail.com", disponible: "Sí", reportes: 2 },
-        { id: 2, ubicacion: "Belgrano 456", correo: "prop2@mail.com", disponible: "No", reportes: 0 },
-    ];
+    const toggleFeatured = async (id, currentValue) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`http://localhost:3000/api/properties/${id}/featured`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ featured: !currentValue }),
+            });
 
-    const pendientes = [
-        { id: 1, fecha: "01/09/2025", documento: "Contrato.pdf", propietario: "Pedro López" },
-        { id: 2, fecha: "05/09/2025", documento: "Escritura.pdf", propietario: "Ana Torres" },
-    ];
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.message);
+            }
+
+            const update = await res.json();
+
+            setPropiedades((prev) =>
+                prev.map((p) =>
+                    p.id === id ? { ...p, featured: update.property.featured } : p
+                )
+            );
+        } catch (error) {
+            console.error("Error al cambiar destacado:", error.message);
+        }
+    };
 
     useEffect(() => {
-        const fetchUsuarios = async () => {
+        const fetchData = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const res = await fetch("http://localhost:3000/api/users", {
-                    headers: {
-                        Autorization: `Bearer ${token}`,
-                    },
-                });
+              const token = localStorage.getItem("token");
 
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.message);
+              const resUsers = await fetch("http://localhost:3000/api/users", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const dataUsers = await resUsers.json();
+              if (!resUsers.ok) throw new Error(dataUsers.message);
+              setUsuarios(dataUsers);
 
-                setUsuarios(data);
+              const resProps = await fetch("http://localhost:3000/api/properties", {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              const dataProps = await resProps.json();
+              if(!resProps.ok) throw new Error(dataProps.message);
+              setPropiedades(dataProps);
+
+              setPendientes([
+                { id: 1, fecha: "01/09/2025", documento: "Contrato.pdf", propietario: "Pedro López" },
+                    { id: 2, fecha: "05/09/2025", documento: "Escritura.pdf", propietario: "Ana Torres" },
+                ]);
             } catch (err) {
                 setError(err.message);
-            }finally {
+            } finally {
                 setLoading(false);
             }
         };
 
-        fetchUsuarios();
+        fetchData();
     }, []);
 
     return (
@@ -64,31 +94,31 @@ export default function SuperadminDashboard() {
                         ) : error ? (
                             <p className="text-danger">{error}</p>
                         ) : (
-                        <Table striped bordered hover responsive>
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Apellido</th>
-                                    <th>Correo Electrónico</th>
-                                    <th>Rol</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {usuarios.map((u) => (
-                                    <tr key={u.id}>
-                                        <td>{u.nombre}</td>
-                                        <td>{u.apellido}</td>
-                                        <td>{u.correo}</td>
-                                        <td>{u.rol}</td>
-                                        <td>
-                                            <Button size="sm" variant="warning" className="me-2">Editar</Button>
-                                            <Button size="sm" variant="danger">Eliminar</Button>
-                                        </td>
+                            <Table striped bordered hover responsive>
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Correo Electrónico</th>
+                                        <th>Rol</th>
+                                        <th>Acciones</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                                </thead>
+                                <tbody>
+                                    {usuarios.map((u) => (
+                                        <tr key={u.id}>
+                                            <td>{u.nombre}</td>
+                                            <td>{u.apellido}</td>
+                                            <td>{u.correo}</td>
+                                            <td>{u.rol}</td>
+                                            <td>
+                                                <Button size="sm" variant="warning" className="me-2">Editar</Button>
+                                                <Button size="sm" variant="danger">Eliminar</Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
                         )}
                     </Tab>
 
@@ -100,16 +130,25 @@ export default function SuperadminDashboard() {
                                     <th>Correo de Propietario</th>
                                     <th>Disponible</th>
                                     <th>N° Reportes</th>
+                                    <th>Destacada</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {propiedades.map((p) => (
                                     <tr key={p.id}>
-                                        <td>{p.ubicacion}</td>
-                                        <td>{p.correo}</td>
-                                        <td>{p.disponible}</td>
-                                        <td>{p.reportes}</td>
+                                        <td>{p.location}</td>
+                                        <td>{p.owner?.correo || "N/A"}</td>
+                                        <td>{p.avaiable ? "Si" : "No"}</td>
+                                        <td>
+                                            <button
+                                                size="sm"
+                                                variant={p.featured ? "success" : "secondary"}
+                                                onClick={() => toggleFeatured(p.id, p.featured)}
+                                            >
+                                                {p.featured ? "Quitar" : "Destacar"}
+                                            </button>
+                                        </td>
                                         <td>
                                             <Button size="sm" variant="info" className="me-2">Ver</Button>
                                             <Button size="sm" variant="danger">Eliminar</Button>
