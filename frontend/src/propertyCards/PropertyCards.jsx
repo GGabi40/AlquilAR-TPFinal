@@ -6,7 +6,6 @@ import { Link } from "react-router";
 
 const PropertyCards = () => {
     const [search, setSearch] = useState('');
-    const [showFilters, setShowFilters] = useState(false);
 
     const [tipo, setTipo] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
@@ -89,6 +88,7 @@ const PropertyCards = () => {
                                 value={precioMin}
                                 onChange={e => setPrecioMin(e.target.value)}
                             />
+
                             <Form.Control
                                 className="mt-2"
                                 type="number"
@@ -96,6 +96,23 @@ const PropertyCards = () => {
                                 value={precioMax}
                                 onChange={e => setPrecioMax(e.target.value)}
                             />
+
+                            <Form.Control
+                                className="mt-2"
+                                type="text"
+                                placeholder="Localidad"
+                                value={localidad}
+                                onChange={e => setLocalidad(e.target.value)}
+                            />
+
+                            <Form.Control
+                                className="mt-2"
+                                type="text"
+                                placeholder="Provincia"
+                                value={provincia}
+                                onChange={e => setProvincia(e.target.value)}
+                            />
+
                         </Dropdown.Menu>
                     </Dropdown>
                 </Form>

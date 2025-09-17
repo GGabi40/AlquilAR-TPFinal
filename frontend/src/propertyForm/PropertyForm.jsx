@@ -4,31 +4,71 @@ import { useNavigate } from "react-router";
 import PropertyImage from "/illustrations/property-register/reg-prop-1.1.jpg";
 import PropertyTabs from './PropertyTabs';
 
-const PropertyForm = () => {
+import Notifications, {
+    toastSuccess,
+    toastError,
+} from "../ui/toaster/Notifications";
 
+import {
+    isEmpty,
+    validateString,
+} from "../utils/validations";
+
+const PropertyForm = () => {
     const navigate = useNavigate();
 
     const [provincia, setProvincia] = useState("");
     const [localidad, setLocalidad] = useState("");
     const [barrio, setBarrio] = useState("");
     const [direccion, setDireccion] = useState("");
+    const [errors, setErrors] = useState({});
 
-    const handleProvinciaChange = (e) => {
-        setProvincia(e.target.value);
-    }
+    //ver bien lo de las validaciones no andan 
 
-    const handleLocalidadChange = (e) => {
-        setLocalidad(e.target.value);
-    }
+    const validateForm = () => {
+        const newErrors = {};
 
-    const handleBarrioChange = (e) => {
-        setBarrio(e.target.value);
-    }
+        if (isEmpty(provincia)) {
+            newErrors.provincia = "La provincia es obligatoria";
+        } else if (!validateString(provincia, 3, 50)) {
+            newErrors.provincia = "La provincia debe tener entre 3 y 50 caracteres";
+        }
 
-    const handleDireccionChange = (e) => {
-        setDireccion(e.target.value);
-    }
+        if (isEmpty(localidad)) {
+            newErrors.localidad = "La localidad es obligatoria";
+        } else if (!validateString(localidad, 3, 50)) {
+            newErrors.localidad = "La localidad debe tener entre 3 y 50 caracteres";
+        }
 
+        if (isEmpty(barrio)) {
+            newErrors.barrio = "El barrio es obligatorio";
+        } else if (!validateString(barrio, 3, 50)) {
+            newErrors.barrio = "El barrio debe tener entre 3 y 50 caracteres";
+        }
+
+        if (isEmpty(direccion)) {
+            newErrors.direccion = "La dirección es obligatoria";
+        } else if (!validateString(direccion, 3, 50)) {
+            newErrors.direccion = "La dirección debe tener entre 3 y 50 caracteres";
+        } else {
+            const regex = /^[a-zA-ZÀ-ÿ\s]+[\s]+[0-9]+$/;
+            if (!regex.test(direccion.trim())) {
+                newErrors.direccion = "La dirección debe contener calle y número (ej: San Martín 1234)";
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = () => {
+        if (validateForm()) {
+            toastSuccess("Datos guardados correctamente 🚀");
+            navigate("/add-property/features");
+        } else {
+            toastError("Por favor, completa todos los campos");
+        }
+    };
 
     return (
         <div className="container my-5">
@@ -63,8 +103,9 @@ const PropertyForm = () => {
                                             className='form-control'
                                             placeholder='Ingrese su Provincia'
                                             value={provincia}
-                                            onChange={handleProvinciaChange}
+                                            onChange={(e) => setProvincia(e.target.value)}
                                         />
+                                        {errors.provincia && <div className="invalid-feedback">{errors.provincia}</div>}
                                     </div>
 
                                     <div className="mb-3">
@@ -74,8 +115,9 @@ const PropertyForm = () => {
                                             className='form-control'
                                             placeholder='Ingrese su Localidad/Ciudad'
                                             value={localidad}
-                                            onChange={handleLocalidadChange}
+                                            onChange={(e) => setLocalidad(e.target.value)}
                                         />
+                                        {errors.localidad && <div className="invalid-feedback">{errors.localidad}</div>}
                                     </div>
 
 
@@ -86,8 +128,9 @@ const PropertyForm = () => {
                                             className='form-control'
                                             placeholder='Ingrese el Barrio de la Propiedad'
                                             value={barrio}
-                                            onChange={handleBarrioChange}
+                                            onChange={(e) => setBarrio(e.target.value)}
                                         />
+                                        {errors.barrio && <div className="invalid-feedback">{errors.barrio}</div>}
                                     </div>
 
 
@@ -98,13 +141,14 @@ const PropertyForm = () => {
                                             className='form-control'
                                             placeholder='Dirección de la Propiedad'
                                             value={direccion}
-                                            onChange={handleDireccionChange}
+                                            onChange={(e) => setDireccion(e.target.value)}
                                         />
+                                        {errors.direccion && <div className="invalid-feedback">{errors.direccion}</div>}
                                     </div>
 
 
                                     <div className="d-flex justify-content-center">
-                                        <button type="button" className="btn btn-primary w-50" onClick={() => navigate("/add-property/features")}>
+                                        <button type="button" className="btn btn-primary w-50" onClick={handleSubmit}>
                                             Continuar
                                         </button>
                                     </div>
