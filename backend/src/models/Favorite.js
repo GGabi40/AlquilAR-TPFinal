@@ -1,18 +1,18 @@
-import { Datatypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 const Favorite = sequelize.define("Favorite", {
     id: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
     user_id: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     property_id: {
-        type: Datatypes.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
 }, {
