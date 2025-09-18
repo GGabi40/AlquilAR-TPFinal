@@ -1,13 +1,14 @@
 import express from "express";
 import { Property } from "../models/Property.js";
-import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
+import { verifyToken as authenticate, roleMiddleware as authorizeRoles } from "../middleware/authMiddleware.js";
+import { User } from "../models/User.js";
 
 const router = express.Router();
 
 router.get(
     "/owner/:id",
-    verifyToken,
-    roleMiddleware(["owner", "superadmin"]),
+    authenticate,
+    authorizeRoles(["owner", "superadmin"]),
     async (req, res) => {
         try {
             const { id } = req.params;

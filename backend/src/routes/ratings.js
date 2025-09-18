@@ -1,6 +1,6 @@
 import express from "express";
 import Rating from "../models/Rating.js";
-import { authenticate } from "../middleware/authMiddleware.js";
+import { verifyToken as authenticate } from "../middleware/authMiddleware.js";
 import { sequelize } from "../config/db.js";
 
 const router = express.Router();

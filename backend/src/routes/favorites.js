@@ -1,7 +1,7 @@
 import express from "express";
-import { Favorite } from "../models/Favorite.js";
+import Favorite from "../models/Favorite.js";
 import { Property } from "../models/Property.js";
-import { authenticate } from "../middleware/authMiddleware.js";
+import { verifyToken as authenticate } from "../middleware/authMiddleware.js";
 import { where } from "sequelize";
 
 const router = express.Router();
@@ -47,7 +47,7 @@ router.delete("/:propertyId", authenticate, async (req, res) => {
                 property_id: req.params.propertyId
             }
         });
-        res.json({ message: "Porpiedad eliminada de favoritos" });
+        res.json({ message: "Propiedad eliminada de favoritos" });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
