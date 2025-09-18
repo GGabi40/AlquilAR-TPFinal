@@ -162,3 +162,8 @@ ul.footer-terms-conditions > li > a:hover {
   flex-direction: column;
   align-items: center;
 }
+
+.required-star {
+  color: rgb(222, 45, 80);
+  display: inline;
+}
