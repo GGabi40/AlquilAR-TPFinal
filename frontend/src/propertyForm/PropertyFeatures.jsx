@@ -325,22 +325,56 @@ const PropertyFeatures = () => {
 
                                 <div>
                                     <label>Más Información:</label>
-                                    <textarea name="masinformacion" id="masinformacion" rows="8" cols="50" maxLength={300} placeholder='Ingrese los datos que crea importantes sobre el inmueble...' className='form-control' />
-                                </div> <br />
+                                    <textarea
+                                        name="masinformacion"
+                                        id="masinformacion"
+                                        rows="8"
+                                        cols="50"
+                                        maxLength={500}
+                                        placeholder='Ingrese los datos que crea importantes sobre el inmueble...'
+                                        className={`form-control ${masInformacion.length > 300 ? "is-invalid" : ""}`}
+                                        value={masInformacion}
+                                        onChange={(e) => setMasInformacion(e.target.value)}
+                                    />
+                                    <div
+                                        className='mt-1'
+                                        style={{
+                                            fontSize: "0.9rem",
+                                            fontWeight: "500",
+                                            textAlign: "right",
+                                            color:
+                                                masInformacion.length > 270
+                                                    ? "rgba(226, 63, 79, 1)"
+                                                    : masInformacion.length > 240
+                                                        ? "rgba(241, 107, 49, 0.953)"
+                                                        : masInformacion.length > 200
+                                                            ? "rgb(235, 202, 39)"
+                                                            : "rgb(121, 194, 121)",
+                                        }}
+                                    >
+                                        {masInformacion.length} /300
 
-                                <div className='d-flex justify-content-center gap-3 mt-2'>
-                                    <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property/location")}>
-                                        Volver
-                                    </button>
-                                    <button type="button" className="btn btn-primary w-25" onClick={handleSubmit}>
-                                        Continuar
-                                    </button>
+                                        {masInformacion.length > 300 && (
+                                            <div className="text-danger" style={{ fontSize: "0.85rem" }}>
+                                                Te pasaste del límite recomendado (300 caracteres).
+                                            </div>
+                                        )}
+                                    </div><br />
+
+                                    <div className='d-flex justify-content-center gap-3 mt-2'>
+                                        <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property/location")}>
+                                            Volver
+                                        </button>
+                                        <button type="button" className="btn btn-primary w-25" onClick={handleSubmit}>
+                                            Continuar
+                                        </button>
+                                    </div>
+
                                 </div>
-
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
