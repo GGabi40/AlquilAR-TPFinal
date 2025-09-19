@@ -12,6 +12,7 @@ const PropertyImages = () => {
   const [videoUrl, setVideoUrl] = useState("");
   const [images, setImages] = useState([]);
   const [document, setDocument] = useState(null);
+  const [errors, setErrors] = useState({});
 
   const handleVideoChange = (e) => {
     const url = e.target.value;
@@ -25,11 +26,33 @@ const PropertyImages = () => {
   const handleImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 10) {
-      alert("Solo podés subir hasta 10 imágenes");
+      setErrors(prev => ({ ...prev, images: "Solo podés subir hasta 10 imágenes" }));
       e.target.value = null;
       return;
     }
     setImages(files);
+    if (files.length > 0) {
+      setErrors(prev => {
+        const { images, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
+
+  const handleValidation = () => {
+    const newErrors = {};
+    if (images.length === 0) newErrors.images = "Debes subir al menos una imagen";
+    if (!document) newErrors.document = "Debes subir un documento de la propiedad";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handlePreview = () => {
+    if (handleValidation()) {
+      navigate('/property/preview');
+    } else {
+      alert("Por favor completa los campos obligatorios antes de continuar.");
+    }
   };
 
   const sliderSettings = {
@@ -67,11 +90,13 @@ const PropertyImages = () => {
                 type="file"
                 name="fotos"
                 id="fotos"
-                className="form-control"
+                className={`form-control ${errors.images ? "is-invalid" : ""}`}
                 accept="image/*"
                 multiple
                 onChange={handleImagesChange}
               />
+              {errors.images && <div className="text-danger">{errors.images}</div>}
+
               <div className="d-flex justify-content-center mt-3">
                 <div style={{ width: '80%', maxWidth: '300px' }}>
                   <Slider {...sliderSettings}>
@@ -123,9 +148,10 @@ const PropertyImages = () => {
                 type="file"
                 name='documentacion'
                 id="documentacion"
-                className='form-control'
+                className={`form-control ${errors.document ? "is-invalid" : ""}`}
                 onChange={(e) => setDocument(e.target.files[0])}
               />
+              {errors.document && <div className="text-danger">{errors.document}</div>}
               {document && (
                 <p className="mt-2">Archivo seleccionado: {document.name}</p>
               )}
@@ -133,7 +159,7 @@ const PropertyImages = () => {
 
               <div className='d-flex justify-content-center gap-3 mt-2'>
                 <button type="button" className='btn btn-secondary' onClick={() => navigate('/add-property/features')}>Anterior</button>
-                <button type="button" className='btn btn-primary' onClick={() => navigate('/property/preview')}>Vista Previa</button>
+                <button type="button" className='btn btn-primary' onClick={handlePreview}>Vista Previa</button>
               </div>
             </div>
           </div>
