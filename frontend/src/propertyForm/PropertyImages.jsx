@@ -85,7 +85,7 @@ const PropertyImages = () => {
             <div className='card-body d-flex flex-column justify-content-center text-dark'>
               <h2 className='card-title text-center mb-4'>Registro de tu Propiedad</h2>
               <PropertyTabs />
-              <label className='form-label d-block'>Subí las mejores fotos de tu propiedad <br />(Hasta 10)</label>
+              <label className='form-label d-block'>Subí las mejores fotos de tu propiedad<span className="required-star"> *</span> <br />(Hasta 10)</label>
               <input
                 type="file"
                 name="fotos"
@@ -143,7 +143,7 @@ const PropertyImages = () => {
               )}
 
               <br />
-              <label className='form-label d-block'>Documentación/Escritura de la propiedad</label>
+              <label className='form-label d-block'>Documentación/Escritura de la propiedad<span className="required-star"> *</span></label>
               <input
                 type="file"
                 name='documentacion'
