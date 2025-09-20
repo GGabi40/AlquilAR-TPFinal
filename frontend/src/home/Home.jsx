@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Row, Col, Nav, Card, Button, Form, Carousel } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Nav,
+  Card,
+  Button,
+  Form,
+  Carousel,
+} from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSearch,
+  faUsers,
+  faHome,
+  faHandshake,
+  faRoute,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
@@ -20,12 +35,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:3000/api/properties/featured").then(res => 
-      setFeatured(res.data)
-    );
-    axios.get("http://localhost:3000/api/properties/recent").then(res => 
-      setRecent(res.data)
-    );
+    axios
+      .get("http://localhost:3000/api/properties/featured")
+      .then((res) => setFeatured(res.data));
+    axios
+      .get("http://localhost:3000/api/properties/recent")
+      .then((res) => setRecent(res.data));
   }, []);
 
   const featuredChunks = chunkArray(featured, 3);
@@ -35,22 +50,95 @@ export default function Home() {
   );
 
   return (
-    <Container>
-      <Container className="text-center my-5">
-        <Form className="d-flex justify-content-center">
-          <Form.Control type="text" placeholder="Buscador" className="w-50 me-2" />
-          <Button variant="success" onClick={() => navigate("/propiedades")}>
-            <FontAwesomeIcon icon={faSearch} className="me-2" />Buscar
-          </Button>
-        </Form>
-      </Container>
+    <>
+      <div
+        className="text-center p-5 my-3 img-width-100"
+        style={{
+          backgroundImage: "url('/photos/living-HomePage.png')",
+        }}
+      >
+        <div
+          className="bg-white bg-opacity-25 rounded-3 p-3 p-md-4 p-lg-5"
+          style={{ width: "70%" }}
+        >
+          <h4 className="text-start text-white mb-3 fw-bold text-shadow fs-6">
+            Encontrá tu próximo hogar
+          </h4>
+          <Form className="d-flex flex-column flex-md-row justify-content-center gap-2">
+            <Form.Control
+              type="text"
+              placeholder="Ej: 2 ambientes en Buenos Aires"
+              className="w-100 me-2 rounded-pill shadow-sm search-input"
+              style={{ padding: "0.75rem 1.5rem" }}
+            />
+            <Button
+              variant="success"
+              className="d-flex align-items-center rounded-pill px-4"
+              onClick={() => navigate("/propiedades")}
+            >
+              <FontAwesomeIcon icon={faSearch} className="me-2" />
+              Buscar
+            </Button>
+          </Form>
+        </div>
+      </div>
 
       <Container className="my-5">
         <Row className="g-4">
-          <Col md={3}><Card body className="shadow-sm">Conectate con dueños de todo el país sin vueltas</Card></Col>
-          <Col md={3}><Card body className="shadow-sm">Encontrá tu próximo hogar de forma simple y directa</Card></Col>
-          <Col md={3}><Card body className="shadow-sm">De persona a persona, como debe ser</Card></Col>
-          <Col md={3}><Card body className="shadow-sm">Simplificamos el camino hacia tu nuevo hogar</Card></Col>
+          <Col md={3}>
+            <Card body className="shadow-sm text-center login-form">
+              <Card.Title>
+                <FontAwesomeIcon
+                  icon={faUsers}
+                  size="2x"
+                  className="mb-3 text-primary"
+                />
+              </Card.Title>
+              <Card.Text>
+                Conectate con dueños de todo el país sin vueltas
+              </Card.Text>
+            </Card>
+          </Col>
+          <Col md={3}>
+            <Card body className="shadow-sm text-center login-form">
+              <Card.Title>
+                <FontAwesomeIcon
+                  icon={faHome}
+                  size="2x"
+                  className="mb-3 text-success"
+                />
+              </Card.Title>
+              <Card.Text>
+                Encontrá tu hogar de forma simple y directa
+              </Card.Text>
+            </Card>
+          </Col>
+          <Col md={3}>
+            <Card body className="shadow-sm text-center login-form">
+              <Card.Title>
+                <FontAwesomeIcon
+                  icon={faHandshake}
+                  size="2x"
+                  className="mb-3 text-info"
+                />
+              </Card.Title>
+              <Card.Text>De persona a persona, como debe ser</Card.Text>
+            </Card>
+          </Col>
+          <Col md={3}>
+            <Card body className="shadow-sm text-center login-form">
+              <Card.Title>
+                <FontAwesomeIcon
+                  icon={faRoute}
+                  size="2x"
+                  className="mb-3 text-warning"
+                />
+              </Card.Title>
+              <Card.Text>
+                Simplificamos el camino hacia tu nuevo hogar
+              </Card.Text>
+            </Card>
+          </Col>
         </Row>
       </Container>
 
@@ -88,9 +176,17 @@ export default function Home() {
 
       <Container className="my-5">
         <h3 className="mb-3 fw-bold">Propiedades Recientes</h3>
-        <Nav variant="tabs" defaultActiveKey="casas" onSelect={(k) => setTipo(k)}>
-          <Nav.Item><Nav.Link eventKey="casas">Casas</Nav.Link></Nav.Item>
-          <Nav.Item><Nav.Link eventKey="departamentos">Departamentos</Nav.Link></Nav.Item>
+        <Nav
+          variant="tabs"
+          defaultActiveKey="casas"
+          onSelect={(k) => setTipo(k)}
+        >
+          <Nav.Item>
+            <Nav.Link eventKey="casas">Casas</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="departamentos">Departamentos</Nav.Link>
+          </Nav.Item>
         </Nav>
 
         <Carousel variant="dark">
@@ -100,10 +196,7 @@ export default function Home() {
                 {chunk.map((p) => (
                   <Col key={p.id} md={4}>
                     <Card className="shadow-sm">
-                      <Card.Img
-                        variant="top"
-                        src={p.imgUrl}
-                      />
+                      <Card.Img variant="top" src={p.imgUrl} />
                       <Card.Body>
                         <Card.Title>{p.titulo}</Card.Title>
                         <Card.Text className="text-success fw-bold">
@@ -126,12 +219,26 @@ export default function Home() {
         </Carousel>
       </Container>
 
-      <Container className="text-center my-5">
-        <p className="lead">Donde los dueños encuentran inquilinos, y los inquilinos encuentran hogar.</p>
-        <Button variant="success" size="lg" onClick={() => navigate("/create-account")}>
-          Sumate a AlquiAR
+      <div
+        className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
+        style={{
+          backgroundImage: "url('/illustrations/bg-protruding-squares-2.svg')",
+          backgroundSize: "auto"
+        }}
+      >
+        <p className="lead fw-bold text-white fs-2 w-50 text-shadow">
+          Donde los dueños encuentran inquilinos, y los inquilinos encuentran
+          hogar
+        </p>
+        <Button
+          variant="light"
+          size="lg"
+          className="fw-bold text-dark px-4 py-2 rounded-pill shadow-lg"
+          onClick={() => navigate("/create-account")}
+        >
+          Sumate a AlquilAR
         </Button>
-      </Container>
-    </Container>
+      </div>
+    </>
   );
 }
