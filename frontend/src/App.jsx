@@ -1,26 +1,26 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
-import Login from "./login/Login";
-import MainLayout from "./ui/MainLayout";
-import Home from "./home/Home.jsx";
-import PropertyForm from "./propertyForm/PropertyForm";
-import PropertyFeatures from "./propertyForm/PropertyFeatures";
-import PropertyImages from "./propertyForm/PropertyImages";
-import Register from "./register/Register";
-import OwnerDashboard from "./dashboards/ownerDashboard/OwnerDashboard.jsx";
-import PropertyDetail from "./propertyDetail/PropertyDetail.jsx";
-import UserDashboard from "./dashboards/userDashboard/UserDashboard.jsx";
-import SuperadminDashboard from "./dashboards/superadminDashboard/SuperadminDashboard.jsx";
-import AboutUs from "./pages/AboutUs.jsx";
-import TermsAndCondicions from "./pages/TermsAndCondicions.jsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
-import FAQ from "./pages/FAQ.jsx";
-import ContactUs from "./pages/ContactUs.jsx";
-import PublishSteps from "./publish/PublishSteps.jsx";
-import PropertyCards from "./propertyCards/PropertyCards.jsx";
-import NotFound from "./error/NotFound.jsx";
-import PropertyView from "./propertyView/PropertyView.jsx"
+import Login from "./components/login/Login";
+import MainLayout from "./components/ui/MainLayout";
+import Home from "./components/home/Home";
+import PropertyForm from "./components/propertyForm/PropertyForm";
+import PropertyFeatures from "./components/propertyForm/PropertyFeatures";
+import PropertyImages from "./components/propertyForm/PropertyImages";
+import Register from "./components/register/Register";
+import OwnerDashboard from "./components/dashboards/ownerDashboard/OwnerDashboard";
+import PropertyDetail from "./components/propertyDetail/PropertyDetail";
+import UserDashboard from "./components/dashboards/userDashboard/UserDashboard";
+import SuperadminDashboard from "./components/dashboards/superadminDashboard/SuperadminDashboard";
+import AboutUs from "./components/pages/AboutUs";
+import TermsAndCondicions from "./components/pages/TermsAndCondicions";
+import PrivacyPolicy from "./components/pages/PrivacyPolicy";
+import FAQ from "./components/pages/FAQ";
+import ContactUs from "./components/pages/ContactUs";
+import PublishSteps from "./components/publish/PublishSteps";
+import PropertyCards from "./components/propertyCards/PropertyCards";
+import NotFound from "./components/error/NotFound";
+import PropertyView from "./components/propertyView/PropertyView"
 
 
 function App() {

@@ -5,7 +5,7 @@ import PropertyTabs from './PropertyTabs';
 
 import { toastSuccess, toastError } from "../ui/toaster/Notifications";
 
-import { isEmpty, validateString } from "../utils/validations";
+import { isEmpty, validateString } from "../../utils/validations";
 
 const PropertyForm = () => {
     const navigate = useNavigate();

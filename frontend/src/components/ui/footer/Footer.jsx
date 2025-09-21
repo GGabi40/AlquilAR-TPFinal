@@ -1,6 +1,6 @@
 import React from "react";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
-import "../../customStyle.css";
+import "../../../customStyle.css";
 
 import { Link } from "react-router";
 
