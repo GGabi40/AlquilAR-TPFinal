@@ -1,15 +1,52 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useLocation, Link } from "react-router";
+
 import LOGO from "/logo/techo-amarillo-blanco.webp";
 import "../../../customStyle.css";
 
+import { AuthenticationContext } from "../../../services/auth.context";
+import { getUserById } from "../../../services/userService.js";
+
 const Nav = () => {
+  const initialName = localStorage.getItem("userName");
+  const { userId, token, handleUserLogout } = useContext(AuthenticationContext);
+  const [user, setUser] = useState(initialName ? { name: initialName } : {});
   const location = useLocation();
   const navigate = useNavigate();
   const [showButton, setShowButton] = useState(true);
+  
+
 
   useEffect(() => {
-    setShowButton(!(location.pathname === "/login" || location.pathname === "/create-account"));
+    const fetchUser = async () => {
+      if (userId && token) {
+        try {
+          const userData = await getUserById(userId, token);
+          setUser(userData);
+        } catch (error) {
+          handleUserLogout();
+          navigate("/login");
+        }
+      } else {
+        setUser({});
+      }
+    };
+    fetchUser();
+  }, [userId, token]);
+
+  const logout = () => {
+    handleUserLogout();
+    setUser({});
+    navigate("/");
+  };
+
+  useEffect(() => {
+    setShowButton(
+      !(
+        location.pathname === "/login" ||
+        location.pathname === "/create-account"
+      )
+    );
   }, [location.pathname]);
 
   return (
