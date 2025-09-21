@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
-import "../../customStyle.css";
+import "../../../customStyle.css";
 
 const Nav = () => {
   const location = useLocation();

@@ -22,7 +22,7 @@ import {
   hasSQLInjection,
   hasScriptInjection,
   validateString,
-} from "../utils/validations";
+} from "../../utils/validations";
 
 import TermsAndConditions from "../pages/TermsAndCondicions";
 import { Button, Modal } from "react-bootstrap";

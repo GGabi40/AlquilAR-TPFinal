@@ -16,7 +16,7 @@ import {
   hasSQLInjection,
   hasScriptInjection,
   hasMinLength,
-} from "../utils/validations";
+} from "../../utils/validations";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -26,8 +26,14 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    emailRef.current.classList.remove("is-invalid");
+    emailRef.current.classList.remove("is-valid");
+    passwordRef.current.classList.remove("is-invalid");
+    passwordRef.current.classList.remove("is-valid");
+    setErrors({ email: "", password: "" });
+  }
 
   const validations = () => {
     let allErrors = {};
@@ -45,7 +51,11 @@ const Login = () => {
       emailRef.current.classList.add("is-valid");
     }
 
-    if (
+    if (isEmpty(formData.password)) {
+      allErrors.password = "La contraseña es obligatoria.";
+      passwordRef.current.classList.add("is-invalid");
+      passwordRef.current.classList.remove("is-valid");
+    } else if (
       hasSQLInjection(formData.password) ||
       hasScriptInjection(formData.password)
     ) {
@@ -99,6 +109,8 @@ const Login = () => {
         error.response?.data?.message ||
           "Error al iniciar sesión. Intenta de nuevo."
       );
+      emailRef.current.classList.add("is-invalid");
+      passwordRef.current.classList.add("is-invalid");
     }
   };
 
