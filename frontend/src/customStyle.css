@@ -57,27 +57,27 @@ img.logo-alquilAR {
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
 }
 
+.avatar-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #212529;
+  background-color: #ffc107;
+  line-height: 30px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
 @media (min-width: 1000px) {
   .navbar .nav-link {
     position: relative;
     text-decoration: none;
     transition: color 0.2s ease;
-  }
-
-  .navbar .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    border-radius: 100%;
-    background-color: #fff;
-    transition: width 0.2s ease;
-  }
-
-  .navbar .nav-link:hover::after {
-    width: 10%;
   }
 
   .navbar .btn-outline-light:hover {

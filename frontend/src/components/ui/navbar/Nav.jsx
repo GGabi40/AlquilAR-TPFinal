@@ -14,8 +14,6 @@ const Nav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [showButton, setShowButton] = useState(true);
-  
-
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,7 +48,10 @@ const Nav = () => {
   }, [location.pathname]);
 
   return (
-    <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <nav
+      className="navbar navbar-expand-lg bg-primary px-5"
+      data-bs-theme="dark"
+    >
       <div className="container-fluid">
         <img
           src={LOGO}
@@ -73,16 +74,17 @@ const Nav = () => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarColor01">
-          <ul className="navbar-nav ms-auto">
+          <ul className="navbar-nav ms-auto d-flex align-items-center">
             <li className="nav-item">
               <Link
                 className="nav-link px-3 py-1 text-white"
-                to="/add-property" // si está logueado: va a formulario
+                to="/add-property"
               >
                 Publicar
               </Link>
             </li>
-            {showButton && (
+            {/* Logout */}
+            {!user.name && showButton && (
               <li className="nav-item">
                 <Link
                   to="/login"
@@ -90,6 +92,64 @@ const Nav = () => {
                 >
                   Acceder
                 </Link>
+              </li>
+            )}
+            {/* Logged */}
+            {user.name && (
+              <li className="nav-item dropdown ms-3">
+                <a
+                  className="nav-link dropdown-toggle d-flex align-items-center text-white"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <div className="avatar-circle me-2">
+                    {user.name.charAt(0).toUpperCase()}
+                    {user.surname.charAt(0).toUpperCase()}
+                  </div>
+                  {user.name} {user.surname}
+                </a>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <Link className="dropdown-item" to="/">
+                      Mi perfil
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/">
+                      Favoritos
+                    </Link>
+                  </li>
+                  <li>
+                    <li>
+                      {user.role === "owner" && (
+                        <Link className="dropdown-item" to="/my-properties">
+                          Mis propiedades
+                        </Link>
+                      )}
+
+                      {user.role === "superadmin" && (
+                        <Link className="dropdown-item" to="/admin">
+                          Panel de Control
+                        </Link>
+                      )}
+                    </li>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/faq">
+                      FAQ
+                    </Link>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <button className="dropdown-item" onClick={logout}>
+                      Cerrar sesión
+                    </button>
+                  </li>
+                </ul>
               </li>
             )}
           </ul>
