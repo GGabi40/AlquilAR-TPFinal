@@ -37,7 +37,7 @@ function App() {
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
           <Route path="/about-us" element={<AboutUs />} />
-          <Route path="/terms-condicions" element={<TermsAndCondicions />} />
+          <Route path="/terms-conditions" element={<TermsAndCondicions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />

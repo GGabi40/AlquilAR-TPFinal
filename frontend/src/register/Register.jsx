@@ -1,8 +1,13 @@
 import React, { useState, useRef } from "react";
-import axios from 'axios';
+import axios from "axios";
 import { useNavigate, Link } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faEnvelope,
+  faLock,
+  faL,
+} from "@fortawesome/free-solid-svg-icons";
 import RegisterImage from "/illustrations/register/register-illustration.webp";
 
 import Notifications, {
@@ -19,13 +24,19 @@ import {
   validateString,
 } from "../utils/validations";
 
+import TermsAndConditions from "../pages/TermsAndCondicions";
+import { Button, Modal } from "react-bootstrap";
+
 const Register = () => {
+  const [showTerms, setShowTerms] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
     email: "",
     password: "",
     confirmPassword: "",
+    termsAndConditions: false,
   });
   const [errors, setErrors] = useState({});
 
@@ -34,11 +45,13 @@ const Register = () => {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const confirmPasswordRef = useRef(null);
+  const termsAndConditionsRef = useRef(null);
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
   const validations = () => {
@@ -51,7 +64,8 @@ const Register = () => {
     } else if (
       hasSQLInjection(formData.name) ||
       hasScriptInjection(formData.name) ||
-      !validateString(formData.name, null, 25)
+      !validateString(formData.name, null, 25) ||
+      !/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.name)
     ) {
       allErrors.name = "Entrada inválida en el nombre.";
       nameRef.current.classList.add("is-invalid");
@@ -68,7 +82,8 @@ const Register = () => {
     } else if (
       hasSQLInjection(formData.surname) ||
       hasScriptInjection(formData.surname) ||
-      !validateString(formData.surname, null, 80)
+      !validateString(formData.surname, null, 80) ||
+      !/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.surname)
     ) {
       allErrors.surname = "Entrada inválida en los apellidos.";
       surnameRef.current.classList.add("is-invalid");
@@ -116,6 +131,15 @@ const Register = () => {
       confirmPasswordRef.current.classList.add("is-valid");
     }
 
+    if (!formData["termsAndConditions"]) {
+      allErrors.termsChecked = "Debes aceptar los Términos y Condiciones.";
+      termsAndConditionsRef.current?.classList.add("is-invalid");
+    } else {
+      termsAndConditionsRef.current?.classList.remove("is-invalid");
+      termsAndConditionsRef.current?.classList.add("is-valid");
+      delete allErrors.termsChecked;
+    }
+
     setErrors(allErrors);
 
     if (Object.keys(allErrors).length !== 0) {
@@ -133,22 +157,26 @@ const Register = () => {
     if (!validation) return;
 
     try {
-      const response = await axios.post("http://localhost:3000/api/register", formData, {
-        headers: { "Content-Type": 'application/json' }
-      });
+      const response = await axios.post(
+        "http://localhost:3000/api/register",
+        formData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       toastSuccess("Cuenta creada con éxito");
 
       setTimeout(() => {
         navigate("/login");
-      }, 1000)
-    } 
-    catch (error) {
-      console.error('Error al registrar ususario: ', error.message);
-      toastError('Error al crear la cuenta. Intenta de nuevo.');
+      }, 1000);
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        toastError(error.response.data.message);
+      } else {
+        toastError("Error al crear la cuenta. Intenta de nuevo.");
+      }
     }
-
-
   };
 
   return (
@@ -274,6 +302,60 @@ const Register = () => {
                     )}
                   </div>
                 </div>
+                <div className="row mb-3">
+                  <div
+                    className="input-group d-flex flex-row gap-2"
+                    style={{ fontSize: "12px" }}
+                  >
+                    <input
+                      type="checkbox"
+                      name="termsAndConditions"
+                      id="termsAndConditions"
+                      ref={termsAndConditionsRef}
+                      onChange={handleChange}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="termsAndConditions"
+                    >
+                      {" "}
+                      Leí y estoy de acuerdo con los
+                    </label>
+                    <Button
+                      variant="link"
+                      className="p-0 text-dark border-bottom"
+                      style={{ fontSize: "12px" }}
+                      onClick={() => setShowTerms(true)}
+                    >
+                      Términos y Condiciones
+                    </Button>
+                    <div className="invalid-feedback d-block">
+                      {errors.termsChecked}
+                    </div>
+                  </div>
+                </div>
+
+                <Modal
+                  show={showTerms}
+                  onHide={() => setShowTerms(false)}
+                  size="lg"
+                  centered
+                >
+                  <Modal.Header closeButton>
+                    <Modal.Title>Términos y Condiciones</Modal.Title>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <TermsAndConditions />
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setShowTerms(false)}
+                    >
+                      Cerrar
+                    </Button>
+                  </Modal.Footer>
+                </Modal>
 
                 <div className="d-grid">
                   <button className="btn btn-primary" type="submit">
