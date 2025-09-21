@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { useNavigate, Link } from "react-router";
 import axios from "axios";
 
@@ -18,7 +18,11 @@ import {
   hasMinLength,
 } from "../../utils/validations";
 
+import { AuthenticationContext } from "../../services/auth.context";
+
 const Login = () => {
+  const { handleUserLogin } = useContext(AuthenticationContext);
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const emailRef = useRef(null);
@@ -85,7 +89,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/login",
+        "http://localhost:3000/api/users/login",
         formData,
         {
           headers: { "Content-Type": "application/json" },
@@ -93,12 +97,10 @@ const Login = () => {
       );
 
       if (response.data.token) {
-        localStorage.setItem("token", response.data.token);
+        handleUserLogin(response.data.token);
       }
 
       toastSuccess("Sesión iniciada correctamente.");
-      console.log("Datos de login:", formData);
-      console.log("El servidor: ", response.data);
 
       setTimeout(() => {
         navigate("/");
