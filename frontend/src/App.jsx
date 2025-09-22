@@ -21,6 +21,7 @@ import PublishSteps from "./components/publish/PublishSteps";
 import PropertyCards from "./components/propertyCards/PropertyCards";
 import NotFound from "./components/error/NotFound";
 import PropertyView from "./components/propertyView/PropertyView"
+import ForgotPassword from "./components/forgotPassword/ForgotPassword";
 
 
 function App() {
@@ -31,8 +32,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
-          <Route path="/forgot-password" element={<Register />} />
-          <Route path="/reset-password" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* ajustar elemento */}
+          <Route path="/reset-password" element={<Register />} /> {/* ajustar elemento */}
 
           <Route path="/add-property" element={<PublishSteps />} />
 
