@@ -31,6 +31,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
+          <Route path="/forgot-password" element={<Register />} />
+          <Route path="/reset-password" element={<Register />} />
+
           <Route path="/add-property" element={<PublishSteps />} />
 
           <Route path="/add-property/location" element={<PropertyForm />} />
@@ -42,7 +45,6 @@ function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
           <Route path="/properties" element={<PropertyCards />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="/property/:id" element={<PropertyView />} />
 
           {/* Owner */}
@@ -54,6 +56,8 @@ function App() {
           {/* User */}
           <Route path="/user/dashboard" element={<UserDashboard />} />
           {/* Agg path para /property/:id -> inquilino ingresa a detalles */}
+
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
