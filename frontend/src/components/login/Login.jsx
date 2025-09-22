@@ -194,7 +194,7 @@ const Login = () => {
                     </div>
                   )}
                   <small className="d-block mt-1">
-                    <Link to="/password-recovery">
+                    <Link to="/forgot-password">
                       ¿Olvidaste tu contraseña?
                     </Link>
                   </small>
