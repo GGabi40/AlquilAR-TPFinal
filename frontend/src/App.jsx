@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 
-import Login from "./components/login/Login";
+import Login from "./components/auth/login/Login";
 import MainLayout from "./components/ui/MainLayout";
 import Home from "./components/home/Home";
 import PropertyForm from "./components/propertyForm/PropertyForm";
 import PropertyFeatures from "./components/propertyForm/PropertyFeatures";
 import PropertyImages from "./components/propertyForm/PropertyImages";
-import Register from "./components/register/Register";
+import Register from "./components/auth/register/Register";
 import OwnerDashboard from "./components/dashboards/ownerDashboard/OwnerDashboard";
 import PropertyDetail from "./components/propertyDetail/PropertyDetail";
 import UserDashboard from "./components/dashboards/userDashboard/UserDashboard";
@@ -21,7 +21,7 @@ import PublishSteps from "./components/publish/PublishSteps";
 import PropertyCards from "./components/propertyCards/PropertyCards";
 import NotFound from "./components/error/NotFound";
 import PropertyView from "./components/propertyView/PropertyView"
-import ForgotPassword from "./components/forgotPassword/ForgotPassword";
+import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 
 
 function App() {
