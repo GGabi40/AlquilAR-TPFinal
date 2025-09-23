@@ -119,7 +119,27 @@ export const loginUser = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  // - perfil de usuario
+  try {
+    const { token, newPassword } = req.body;
+
+    const user = await User.findOne({ where: { resetToken: token } });
+
+    if (!user || user.resetTokenExpiry < Date.now()) {
+      return res.status(400).json({ message: "Token inválido o expirado." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    res.json({ message: "Se restableció la contraseña con éxito." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al resetear contraseña." });
+  }
 };
 
 export const forgotPassword = async (req, res) => {

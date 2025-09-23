@@ -22,6 +22,7 @@ import PropertyCards from "./components/propertyCards/PropertyCards";
 import NotFound from "./components/error/NotFound";
 import PropertyView from "./components/propertyView/PropertyView"
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
+import ResetPassword from "./components/auth/resetPassword/ResetPassword";
 
 
 function App() {
@@ -32,8 +33,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* ajustar elemento */}
-          <Route path="/reset-password" element={<Register />} /> {/* ajustar elemento */}
+          <Route path="/forgot-password" element={<ForgotPassword />} /> 
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route path="/add-property" element={<PublishSteps />} />
 
