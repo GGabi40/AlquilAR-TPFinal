@@ -13,7 +13,7 @@ import RegisterImage from "/illustrations/register/register-illustration.webp";
 import Notifications, {
   toastSuccess,
   toastError,
-} from "../ui/toaster/Notifications";
+} from "../../ui/toaster/Notifications";
 
 import {
   isEmpty,
@@ -22,9 +22,9 @@ import {
   hasSQLInjection,
   hasScriptInjection,
   validateString,
-} from "../../utils/validations";
+} from "../../../utils/validations";
 
-import TermsAndConditions from "../pages/TermsAndCondicions";
+import TermsAndConditions from "../../pages/TermsAndCondicions";
 import { Button, Modal } from "react-bootstrap";
 
 const Register = () => {

@@ -5,7 +5,7 @@ import axios from "axios";
 import Notifications, {
   toastSuccess,
   toastError,
-} from "../ui/toaster/Notifications";
+} from "../../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,9 +16,9 @@ import {
   hasSQLInjection,
   hasScriptInjection,
   hasMinLength,
-} from "../../utils/validations";
+} from "../../../utils/validations";
 
-import { AuthenticationContext } from "../../services/auth.context";
+import { AuthenticationContext } from "../../../services/auth.context";
 
 const Login = () => {
   const { handleUserLogin } = useContext(AuthenticationContext);

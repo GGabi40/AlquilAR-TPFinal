@@ -5,7 +5,7 @@ import axios from "axios";
 import Notifications, {
   toastError,
   toastInfo,
-} from "../ui/toaster/Notifications";
+} from "../../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
@@ -16,7 +16,7 @@ import {
   isValidEmail,
   hasSQLInjection,
   hasScriptInjection,
-} from "../../utils/validations";
+} from "../../../utils/validations";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({ email: "" });
