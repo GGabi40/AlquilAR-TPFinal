@@ -26,6 +26,7 @@ import {
 
 import TermsAndConditions from "../../pages/TermsAndCondicions";
 import { Button, Modal } from "react-bootstrap";
+import AuthLayout from "../AuthLayout";
 
 const Register = () => {
   const [showTerms, setShowTerms] = useState(false);
@@ -180,198 +181,162 @@ const Register = () => {
   };
 
   return (
-    <div className="container my-5">
+    <AuthLayout image={RegisterImage} title="AlquilAR tu hogar">
       <Notifications />
-      <div className="row justify-content-center">
-        <div className="col-md-5 d-flex justify-content-center align-items-center">
-          <img
-            src={RegisterImage}
-            alt="Ilustración de registro de usuario en AlquilAR"
-            className="illustration-login img-fluid d-none d-md-block"
-          />
-
-          <h2 className="d-block d-md-none text-center fw-bold mt-3">
-            AlquilAR tu hogar
-          </h2>
+      <h4 className="card-title text-center mb-4">Crear cuenta</h4>
+      <form onSubmit={handleSubmit}>
+        <div className="row mb-3">
+          <div className="col">
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faUser} />
+              </span>
+              <input
+                type="text"
+                name="name"
+                className="form-control"
+                placeholder="Nombre"
+                value={formData.name}
+                onChange={handleChange}
+                ref={nameRef}
+              />
+            </div>
+            {errors.name && (
+              <div className="invalid-feedback d-block">{errors.name}</div>
+            )}
+          </div>
+          <div className="col">
+            <input
+              type="text"
+              name="surname"
+              className="form-control"
+              placeholder="Apellidos"
+              value={formData.surname}
+              onChange={handleChange}
+              ref={surnameRef}
+            />
+            {errors.surname && (
+              <div className="invalid-feedback d-block">{errors.surname}</div>
+            )}
+          </div>
         </div>
 
-        <div className="col-md-5 register-form">
-          <div className="card shadow h-100">
-            <div className="card-body d-flex flex-column justify-content-center text-dark">
-              <h4 className="card-title text-center mb-4">Crear cuenta</h4>
+        <div className="mb-3">
+          <div className="input-group">
+            <span className="input-group-text">
+              <FontAwesomeIcon icon={faEnvelope} />
+            </span>
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              placeholder="Correo electrónico"
+              value={formData.email}
+              onChange={handleChange}
+              ref={emailRef}
+            />
+          </div>
+          {errors.email && (
+            <div className="invalid-feedback d-block">{errors.email}</div>
+          )}
+        </div>
 
-              <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
-                  <div className="col">
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <FontAwesomeIcon icon={faUser} />
-                      </span>
-                      <input
-                        type="text"
-                        name="name"
-                        className="form-control"
-                        placeholder="Nombre"
-                        value={formData.name}
-                        onChange={handleChange}
-                        ref={nameRef}
-                      />
-                    </div>
-                    {errors.name && (
-                      <div className="invalid-feedback d-block">
-                        {errors.name}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col">
-                    <input
-                      type="text"
-                      name="surname"
-                      className="form-control"
-                      placeholder="Apellidos"
-                      value={formData.surname}
-                      onChange={handleChange}
-                      ref={surnameRef}
-                    />
-                    {errors.surname && (
-                      <div className="invalid-feedback d-block">
-                        {errors.surname}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <div className="input-group">
-                    <span className="input-group-text">
-                      <FontAwesomeIcon icon={faEnvelope} />
-                    </span>
-                    <input
-                      type="email"
-                      name="email"
-                      className="form-control"
-                      placeholder="Correo electrónico"
-                      value={formData.email}
-                      onChange={handleChange}
-                      ref={emailRef}
-                    />
-                  </div>
-                  {errors.email && (
-                    <div className="invalid-feedback d-block">
-                      {errors.email}
-                    </div>
-                  )}
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col">
-                    <div className="input-group">
-                      <span className="input-group-text">
-                        <FontAwesomeIcon icon={faLock} />
-                      </span>
-                      <input
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        placeholder="Contraseña"
-                        value={formData.password}
-                        onChange={handleChange}
-                        ref={passwordRef}
-                      />
-                    </div>
-                    {errors.password && (
-                      <div className="invalid-feedback d-block">
-                        {errors.password}
-                      </div>
-                    )}
-                  </div>
-                  <div className="col">
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      className="form-control"
-                      placeholder="Confirmar contraseña"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      ref={confirmPasswordRef}
-                    />
-                    {errors.confirmPassword && (
-                      <div className="invalid-feedback d-block">
-                        {errors.confirmPassword}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div
-                    className="input-group d-flex flex-row gap-2"
-                    style={{ fontSize: "12px" }}
-                  >
-                    <input
-                      type="checkbox"
-                      name="termsAndConditions"
-                      id="termsAndConditions"
-                      ref={termsAndConditionsRef}
-                      onChange={handleChange}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="termsAndConditions"
-                    >
-                      {" "}
-                      Leí y estoy de acuerdo con los
-                    </label>
-                    <Button
-                      variant="link"
-                      className="p-0 text-dark border-bottom"
-                      style={{ fontSize: "12px" }}
-                      onClick={() => setShowTerms(true)}
-                    >
-                      Términos y Condiciones
-                    </Button>
-                    <div className="invalid-feedback d-block">
-                      {errors.termsChecked}
-                    </div>
-                  </div>
-                </div>
-
-                <Modal
-                  show={showTerms}
-                  onHide={() => setShowTerms(false)}
-                  size="lg"
-                  centered
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title>Términos y Condiciones</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <TermsAndConditions />
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setShowTerms(false)}
-                    >
-                      Cerrar
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-
-                <div className="d-grid">
-                  <button className="btn btn-primary" type="submit">
-                    Crear Cuenta
-                  </button>
-                </div>
-              </form>
-
-              <p className="text-center mt-3">
-                ¿Ya tienes cuenta? <Link to="/login">Iniciar Sesión</Link>
-              </p>
+        <div className="row mb-3">
+          <div className="col">
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faLock} />
+              </span>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="Contraseña"
+                value={formData.password}
+                onChange={handleChange}
+                ref={passwordRef}
+              />
+            </div>
+            {errors.password && (
+              <div className="invalid-feedback d-block">{errors.password}</div>
+            )}
+          </div>
+          <div className="col">
+            <input
+              type="password"
+              name="confirmPassword"
+              className="form-control"
+              placeholder="Confirmar contraseña"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              ref={confirmPasswordRef}
+            />
+            {errors.confirmPassword && (
+              <div className="invalid-feedback d-block">
+                {errors.confirmPassword}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="row mb-3">
+          <div
+            className="input-group d-flex flex-row gap-2"
+            style={{ fontSize: "12px" }}
+          >
+            <input
+              type="checkbox"
+              name="termsAndConditions"
+              id="termsAndConditions"
+              ref={termsAndConditionsRef}
+              onChange={handleChange}
+            />
+            <label className="form-check-label" htmlFor="termsAndConditions">
+              {" "}
+              Leí y estoy de acuerdo con los
+            </label>
+            <Button
+              variant="link"
+              className="p-0 text-dark border-bottom"
+              style={{ fontSize: "12px" }}
+              onClick={() => setShowTerms(true)}
+            >
+              Términos y Condiciones
+            </Button>
+            <div className="invalid-feedback d-block">
+              {errors.termsChecked}
             </div>
           </div>
         </div>
-      </div>
-    </div>
+
+        <Modal
+          show={showTerms}
+          onHide={() => setShowTerms(false)}
+          size="lg"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Términos y Condiciones</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <TermsAndConditions />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowTerms(false)}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <div className="d-grid">
+          <button className="btn btn-primary" type="submit">
+            Crear Cuenta
+          </button>
+        </div>
+      </form>
+      <p className="text-center mt-3">
+        ¿Ya tienes cuenta? <Link to="/login">Iniciar Sesión</Link>
+      </p>
+    </AuthLayout>
   );
 };
 

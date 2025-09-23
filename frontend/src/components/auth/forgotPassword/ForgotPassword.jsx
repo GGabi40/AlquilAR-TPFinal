@@ -9,7 +9,7 @@ import Notifications, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-import ForgotPasswordImage from "/illustrations/forgot-pass/forgot-password.webp"; 
+import ForgotPasswordImage from "/illustrations/forgot-pass/forgot-password.webp";
 
 import {
   isEmpty,
@@ -17,6 +17,7 @@ import {
   hasSQLInjection,
   hasScriptInjection,
 } from "../../../utils/validations";
+import AuthLayout from "../AuthLayout";
 
 const ForgotPassword = () => {
   const [formData, setFormData] = useState({ email: "" });
@@ -104,84 +105,57 @@ const ForgotPassword = () => {
   }, [cooldown]);
 
   return (
-    <div className="container my-5">
+    <AuthLayout image={ForgotPasswordImage} title="Recupera tu acceso">
       <Notifications />
-      <div className="row justify-content-center">
-        <div className="col-md-5 d-flex justify-content-center align-items-center">
-          <img
-            src={ForgotPasswordImage}
-            alt="Ilustración de recuperación de contraseña."
-            className="illustration-login img-fluid d-none d-md-block"
-          />
-          <h2 className="d-block d-md-none text-center fw-bold mt-3">
-            Recupera tu acceso
-          </h2>
+      <h4 className="card-title text-center mb-4">Recuperar contraseña</h4>
+      {isSent && (
+        <div className="alert alert-info text-center" role="alert">
+          Si el correo ingresado está registrado, recibirás un enlace de
+          recuperación.
+          <br />
+          <strong>Revisa tu bandeja de entrada o correo no deseado.</strong>
         </div>
-
-        <div className="col-md-5 login-form">
-          <div className="card shadow h-100">
-            <div className="card-body d-flex flex-column justify-content-center text-dark">
-              <h4 className="card-title text-center mb-4">
-                Recuperar contraseña
-              </h4>
-              {isSent && (
-                <div className="alert alert-info text-center" role="alert">
-                  Si el correo ingresado está registrado, recibirás un enlace de
-                  recuperación.
-                  <br />
-                  <strong>
-                    Revisa tu bandeja de entrada o correo no deseado.
-                  </strong>
-                </div>
-              )}
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    Correo electrónico
-                  </label>
-                  <div className="input-group">
-                    <span className="input-group-text">
-                      <FontAwesomeIcon icon={faEnvelope} />
-                    </span>
-                    <input
-                      type="email"
-                      name="email"
-                      className="form-control"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      ref={emailRef}
-                      placeholder="ejemplo@mail.com"
-                    />
-                  </div>
-                  {errors.email && (
-                    <div className="invalid-feedback d-block">
-                      {errors.email}
-                    </div>
-                  )}
-                </div>
-
-                <div className="d-grid">
-                  <button
-                    className="btn btn-primary"
-                    type="submit"
-                    disabled={cooldown > 0}
-                  >
-                    {cooldown > 0
-                      ? `Reintentar en ${cooldown}s`
-                      : "Enviar enlace"}
-                  </button>
-                </div>
-              </form>
-
-              <p className="text-center mt-3">
-                <Link to="/login">Volver al inicio de sesión</Link>
-              </p>
-            </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
+            Correo electrónico
+          </label>
+          <div className="input-group">
+            <span className="input-group-text">
+              <FontAwesomeIcon icon={faEnvelope} />
+            </span>
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              ref={emailRef}
+              placeholder="ejemplo@mail.com"
+            />
           </div>
+          {errors.email && (
+            <div className="invalid-feedback d-block">{errors.email}</div>
+          )}
         </div>
-      </div>
-    </div>
+
+        <div className="d-grid">
+          <button
+            className="btn btn-primary"
+            type="submit"
+            disabled={cooldown > 0}
+          >
+            {cooldown > 0 ? `Reintentar en ${cooldown}s` : "Enviar enlace"}
+          </button>
+        </div>
+      </form>
+
+      <p className="text-center mt-3">
+        <Link to="/login">Volver al inicio de sesión</Link>
+      </p>
+    </AuthLayout>
   );
 };
 
