@@ -1,6 +1,6 @@
 import React from "react";
 import LOGO from "/logo/techo-amarillo-blanco.webp";
-import "../../customStyle.css";
+import "../../../customStyle.css";
 
 import { Link } from "react-router";
 
@@ -13,7 +13,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="mt-5 pt-4 border-top bg-primary">
+    <footer className="pt-4 border-top bg-primary">
       <div className="row text-center">
         <div className="col-md-4 mb-3">
           <img

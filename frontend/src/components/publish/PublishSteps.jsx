@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
-import '../customStyle.css';
+import '../../customStyle.css';
 
 // Usamos Bootstrap Icons (asegurate de tener el link en index.html)
 const steps = [
