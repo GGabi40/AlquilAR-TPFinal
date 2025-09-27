@@ -2,6 +2,7 @@ import express from "express";
 import { Property } from "../models/Property.js";
 import { verifyToken as authenticate, roleMiddleware as authorizeRoles } from "../middleware/authMiddleware.js";
 import { User } from "../models/User.js";
+import * as propertyService from "../services/properties.services.js";
 
 const router = express.Router();
 
@@ -25,7 +26,7 @@ router.get(
     }
 );
 
-router.get("/", authenticate, authorizeRoles("superadmin", async (req, res) => {
+router.get("/", authenticate, authorizeRoles(["superadmin"]), async (req, res) => {
     try {
         const properties = await Property.findAll({
             include: [{ model: User, attributes: ["id", "correo"] }],
@@ -37,7 +38,7 @@ router.get("/", authenticate, authorizeRoles("superadmin", async (req, res) => {
         console.error("Error al obtener todas las propiedades:", error);
         res.status(500).json({ message: "Error al obtener propiedades" });
     }
-}));
+});
 
 router.get("/featured", async (req, res) => {
     try {
@@ -68,29 +69,35 @@ router.get("/recent", async (req, res) => {
     }
 });
 
-router.patch("/:id/featured", authenticate, authorizeRoles("owner", "superadmin"),
-    async (req, res) => {
-        try {
-            const { id } = req.params;
-            const { featured } = req.body;
+router.patch("/:id/featured", authenticate, authorizeRoles(["owner", "superadmin"]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { featured } = req.body;
 
-            const property = await Property.findByPk(id);
+        const property = await Property.findByPk(id);
 
-            if (!property) {
-                return res.status(404).json({ message: "Propiedad no encontrada" });
-            }
-
-            property.featured = featured;
-            await property.save();
-
-            res.json({
-                message: `Propiedad ${featured ? "marcada" : "desmarcada"} como destacada`,
-                property,
-            });
-        } catch (error) {
-            console.error("Error al actualizar propiedad destacada:", error);
-            res.status(500).json({ message: "Error al actualizar propiedad destacada" });
+        if (!property) {
+            return res.status(404).json({ message: "Propiedad no encontrada" });
         }
-    });
+
+        property.featured = featured;
+        await property.save();
+
+        res.json({
+            message: `Propiedad ${featured ? "marcada" : "desmarcada"} como destacada`,
+            property,
+        });
+    } catch (error) {
+        console.error("Error al actualizar propiedad destacada:", error);
+        res.status(500).json({ message: "Error al actualizar propiedad destacada" });
+    }
+});
+
+
+router.post("/", authenticate, authorizeRoles(["owner", "superadmin"]), createProperty);
+
+router.put("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), updateProperty);
+
+router.delete("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), deleteProperty);
 
 export default router;

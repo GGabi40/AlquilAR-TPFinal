@@ -3,12 +3,12 @@ import { sequelize } from "../config/db.js";
 import { Property } from "./Property.js";
 
 export const PropertyDocuments = sequelize.define("PropertyDocuments", {
-    idDocumento: {
+    idDocument: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    URLDocumento: {
+    URLDocument: {
         type: DataTypes.STRING,
         allowNull: false
     }

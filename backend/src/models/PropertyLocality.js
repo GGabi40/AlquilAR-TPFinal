@@ -3,12 +3,12 @@ import { sequelize } from "../config/db.js";
 import { Property } from "./Property.js";
 
 export const PropertyLocality = sequelize.define("PropertyLocality", {
-    idLocalidad: {
+    idLocality: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    nombre: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     }
