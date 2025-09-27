@@ -137,7 +137,7 @@ ul.footer-terms-conditions > li {
 }
 
 ul.footer-terms-conditions > li > a {
-  color: #244c42;
+  color: white;
   text-decoration: none;
 }
 
@@ -146,7 +146,7 @@ ul.footer-terms-conditions > li > a:hover {
 }
 
 .social-links a {
-  color: #244c42;
+  color: white;
   transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
 }
 

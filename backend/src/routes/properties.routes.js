@@ -94,10 +94,10 @@ router.patch("/:id/featured", authenticate, authorizeRoles(["owner", "superadmin
 });
 
 
-router.post("/", authenticate, authorizeRoles(["owner", "superadmin"]), createProperty);
+// router.post("/", authenticate, authorizeRoles(["owner", "superadmin"]), createProperty);
 
-router.put("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), updateProperty);
+// router.put("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), updateProperty);
 
-router.delete("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), deleteProperty);
+// router.delete("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), deleteProperty);
 
 export default router;

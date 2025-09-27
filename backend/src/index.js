@@ -3,9 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import userRoutes from './routes/auth.routes.js';
-import propertyRoutes from './routes/properties.js';
-import favoritesRoutes from './routes/favorites.js';
-import ratingsRoutes from './routes/ratings.js';
+import propertyRoutes from './routes/properties.routes.js';
+import favoritesRoutes from './routes/favorites.routes.js';
+import ratingsRoutes from './routes/ratings.routes.js';
 import { port, sequelize } from './config/db.js';
 
 dotenv.config();

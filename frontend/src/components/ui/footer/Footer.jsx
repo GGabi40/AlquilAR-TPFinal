@@ -25,13 +25,13 @@ const Footer = () => {
         </div>
 
         <div className="col-md-4 mb-3">
-          <p className="fw-bold">Redes Sociales</p>
+          <p className="fw-bold text-white">Redes Sociales</p>
           <div className="d-flex justify-content-center gap-4 social-links">
             <Link
               to="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-dark fs-3"
+              className="text-white fs-3"
             >
               <FontAwesomeIcon icon={faFacebook} />
             </Link>
@@ -39,7 +39,7 @@ const Footer = () => {
               to="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-dark fs-3"
+              className="text-white fs-3"
             >
               <FontAwesomeIcon icon={faTwitter} />
             </Link>
@@ -47,7 +47,7 @@ const Footer = () => {
               to="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-dark fs-3"
+              className="text-white fs-3"
             >
               <FontAwesomeIcon icon={faInstagram} />
             </Link>
@@ -60,7 +60,7 @@ const Footer = () => {
               <Link to="/faq">FAQ</Link>
             </li>
             <li>
-              <Link to="/terms-condicions">Términos y Condiciones</Link>
+              <Link to="/terms-conditions">Términos y Condiciones</Link>
             </li>
             <li>
               <Link to="/privacy-policy">Políticas de Privacidad</Link>
