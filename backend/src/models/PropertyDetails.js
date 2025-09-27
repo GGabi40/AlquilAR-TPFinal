@@ -3,28 +3,28 @@ import { sequelize } from "../config/db.js";
 import { Property } from "./Property.js";
 
 export const PropertyDetails = sequelize.define('PropertyDetails', {
-    idPropiedadDetalle: {
+    idPropertyDetails: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    numAmbientes: {
+    numRooms: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    numHabitaciones: {
+    numBedrooms: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    numBanios: {
+    numBathrooms: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    antiguedad: {
+    propertyAge: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    metrosTotales:{
+    totalArea:{
         type: DataTypes.FLOAT,
         allowNull: false
     }

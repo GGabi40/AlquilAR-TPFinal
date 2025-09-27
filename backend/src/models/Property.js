@@ -3,35 +3,35 @@ import { sequelize } from "../config/db.js";
 import { User } from "./User.js";
 
 export const Property = sequelize.define("Property", {
-    idPropiedad: {
+    idProperty: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    tipoPropiedad:{
+    propertyType:{
         type: DataTypes.ENUM('departamento', 'casa'),
         defaultValue: 'departamento',
         allowNull: false
     },
-    precioAlquiler: {
+    rentPrice: {
         type: DataTypes.FLOAT,
         allowNull:false,
     },
-    precioExpensas: {
+    expensesPrice: {
         type:DataTypes.FLOAT,
         allowNull:true,
     },
-    estado: {
+    status: {
         type: DataTypes.ENUM('disponible', 'no disponible', 'en revision'),
         defaultValue: 'disponible',
         allowNull: false
     },
-    preferenciaAlquiler:{
+    rentPreference:{
         type: DataTypes.ENUM('alquiler temporal', 'alquiler completo'),
         defaultValue: 'alquiler completo',
         allowNull: false
     },
-    direccion: {
+    address: {
         type:DataTypes.STRING,
         allowNull: false,
     }
