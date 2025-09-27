@@ -72,8 +72,7 @@ export default function Home() {
               style={{ padding: "0.75rem 1.5rem" }}
             />
             <Button
-              variant="success"
-              className="d-flex align-items-center rounded-pill px-4"
+              className="d-flex align-items-center rounded-pill px-4 btn-primary"
               onClick={() => navigate("/propiedades")}
             >
               <FontAwesomeIcon icon={faSearch} className="me-2" />

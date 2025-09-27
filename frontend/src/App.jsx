@@ -46,18 +46,20 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/properties" element={<PropertyCards />} />
+          <Route path="/properties" element={<PropertyCards />} /> {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
 
           {/* Owner */}
-          <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+          <Route path="/owner/dashboard" element={<OwnerDashboard />} /> {/* Falta id de usuario */}
           <Route path="/owner/property/:id" element={<PropertyDetail />} />
 
           <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
 
           {/* User */}
-          <Route path="/user/dashboard" element={<UserDashboard />} />
-          {/* Agg path para /property/:id -> inquilino ingresa a detalles */}
+          <Route path="/user/dashboard" element={<UserDashboard />} /> {/* Falta id de usuario */}
+          {/* Agg "mi perfil" */}
+
+          {/* Agg proteccion de rutas */}
 
           <Route path="*" element={<NotFound />} />
         </Route>

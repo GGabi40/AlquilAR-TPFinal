@@ -15,9 +15,9 @@ const PropertyCards = () => {
     const [localidad, setLocalidad] = useState('');
 
     const properties = [
-        { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://via.placeholder.com/300x200", localidad: "Rosario", provincia: "Santa Fe" },
-        { id: 2, titulo: "Av. Siempre Viva 742", tipo: "Casa", direccion: "Buenos Aires, Argentina", precio: 450000, hab: 2, img: "https://via.placeholder.com/300x200", localidad: "Rio Cuarto", provincia: "Cordoba" },
-        { id: 3, titulo: "Casa con Patio", tipo: "Casa", direccion: "Calle Falsa 123, Córdoba", precio: 850000, hab: 4, img: "https://via.placeholder.com/300x200?text=Casa+con+Patio", localidad: "CABA", provincia: "Buenos Aires" },
+        { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D", localidad: "Rosario", provincia: "Santa Fe" },
+        { id: 2, titulo: "Av. Siempre Viva 742", tipo: "Casa", direccion: "Buenos Aires, Argentina", precio: 450000, hab: 2, img: "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D", localidad: "Rio Cuarto", provincia: "Cordoba" },
+        { id: 3, titulo: "Casa con Patio", tipo: "Casa", direccion: "Calle Falsa 123, Córdoba", precio: 850000, hab: 4, img: "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D", localidad: "CABA", provincia: "Buenos Aires" },
         { id: 4, titulo: "depto en el Centro", tipo: "Departamento", direccion: "Córdoba 456, Rosario", precio: 700000, hab: 1, img: "https://via.placeholder.com/300x200?text=Loft+Centro", localidad: "La Plata", provincia: "Buenos Aires" },
         { id: 5, titulo: "Casa con Piscina", tipo: "Casa", direccion: "Ruta 9, Santa Fe", precio: 1200000, hab: 5, img: "https://via.placeholder.com/300x200?text=Casa+Piscina", localidad: "Santa Fe", provincia: "Santa Fe" },
         { id: 6, titulo: "Calle Falsa 123", direccion: "Rosario, Argentina", precio: 500000, tipo: "Departamento", hab: 4, img: "https://via.placeholder.com/300x200", localidad: "Bariloche", provincia: "Rio Negro" }
