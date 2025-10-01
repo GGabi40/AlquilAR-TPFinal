@@ -23,6 +23,7 @@ import NotFound from "./components/error/NotFound";
 import PropertyView from "./components/propertyView/PropertyView"
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 import ResetPassword from "./components/auth/resetPassword/ResetPassword";
+import Profile from "./components/profile/Profile";
 
 
 function App() {
@@ -57,7 +58,7 @@ function App() {
 
           {/* User */}
           <Route path="/user/dashboard" element={<UserDashboard />} /> {/* Falta id de usuario */}
-          {/* Agg "mi perfil" */}
+          <Route path="/user/profile" element={<Profile />} />
 
           {/* Agg proteccion de rutas */}
 

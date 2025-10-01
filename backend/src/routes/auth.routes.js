@@ -16,6 +16,7 @@ router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers)
 
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);
+// router.delete("/:id", verifyToken, getUserById);
 
 router.post("/reset-password", resetPassword);
 router.post("/forgot-password", forgotPassword);

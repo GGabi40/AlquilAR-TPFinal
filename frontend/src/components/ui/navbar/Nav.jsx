@@ -104,7 +104,7 @@ const Nav = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <div className="avatar-circle me-2">
+                  <div className="avatar-circle me-2" style={{ backgroundColor: user?.avatarColor}}>
                     {user.name.charAt(0).toUpperCase()}
                     {user.surname.charAt(0).toUpperCase()}
                   </div>
@@ -112,7 +112,7 @@ const Nav = () => {
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end">
                   <li>
-                    <Link className="dropdown-item" to="/">
+                    <Link className="dropdown-item" to="user/profile">
                       Mi perfil
                     </Link>
                   </li>

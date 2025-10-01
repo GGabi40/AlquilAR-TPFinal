@@ -33,6 +33,10 @@ export const User = sequelize.define("User", {
     defaultValue: "user",
     allowNull: false,
   },
+  avatarColor: {
+    type: DataTypes.STRING,
+    defaultValue: "#ffc107"
+  },
   resetToken: {
     type: DataTypes.STRING,
     allowNull: true,
