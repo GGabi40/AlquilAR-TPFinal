@@ -54,7 +54,7 @@ export const registerUser = async (req, res) => {
 
   if (result.error) return res.status(400).json({ message: result.message });
 
-  const { name, surname, email, password, isActive, role } = req.body;
+  const { name, surname, email, password, isActive, avatarColor, role } = req.body;
 
   try {
     const existingEmail = await User.findOne({ where: { email } });
@@ -72,6 +72,7 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       isActive,
+      avatarColor: avatarColor || "#ffc107",
       role: role || "user",
     });
 
@@ -193,6 +194,7 @@ export const forgotPassword = async (req, res) => {
     res.status(500).json({ message: "Error en el proceso de recuperación" });
   }
 };
+
 
 // --- Validations ---
 const validateRegisterData = (reqData) => {
