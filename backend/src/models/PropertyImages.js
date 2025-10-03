@@ -3,12 +3,12 @@ import { sequelize } from "../config/db.js";
 import { PropertyDetails } from "./PropertyDetails.js";
 
 export const PropertyImages = sequelize.define("PropertyImages", {
-    idFotoPropiedad: {
+    idPropertyImages: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    URLFoto: {
+    URLImages: {
         type: DataTypes.STRING,
         allowNull: false
     },

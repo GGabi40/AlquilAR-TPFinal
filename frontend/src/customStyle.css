@@ -5,10 +5,49 @@
 }
 
 body {
+  margin: 0;
+  padding: 0 !important;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+/* Div with 100% Width */
+.img-width-100 {
+  background-position: center;
+  background-size: cover;
+  width: 100vw;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .img-width-100 {
+    height: 30vh;
+  }
+
+  .img-width-100.for-mobile {
+    height: auto;
+    padding: 20px;
+  }
+}
+
+.text-shadow {
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.search-input {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
 /* NAV BAR */
@@ -18,34 +57,34 @@ img.logo-alquilAR {
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.619));
 }
 
+.avatar-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #212529;
+  background-color: #ffc107;
+  line-height: 30px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
 @media (min-width: 1000px) {
   .navbar .nav-link {
     position: relative;
     text-decoration: none;
     transition: color 0.2s ease;
   }
-  
-  .navbar .nav-link::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    border-radius: 100%;
-    background-color: #fff;
-    transition: width 0.2s ease;
-  }
-  
-  .navbar .nav-link:hover::after {
-    width: 10%;
-  }
-  
+
   .navbar .btn-outline-light:hover {
     background-color: #fff;
     color: #ff9800;
     transition: all 0.3s ease;
-  } 
+  }
 }
 
 /* Illustrations */
@@ -78,7 +117,6 @@ img.logo-alquilAR {
   color: #636b74 !important;
 }
 
-
 /* ToolTip */
 label.form-label {
   position: relative;
@@ -86,7 +124,6 @@ label.form-label {
   flex-direction: row;
   justify-content: space-between;
 }
-
 
 /* Footer */
 
@@ -100,7 +137,7 @@ ul.footer-terms-conditions > li {
 }
 
 ul.footer-terms-conditions > li > a {
-  color: #244c42;
+  color: white;
   text-decoration: none;
 }
 
@@ -109,7 +146,7 @@ ul.footer-terms-conditions > li > a:hover {
 }
 
 .social-links a {
-  color: #244c42;
+  color: white;
   transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
 }
 
@@ -125,13 +162,13 @@ ul.footer-terms-conditions > li > a:hover {
 }
 
 .btn-link:hover {
-  text-decoration: underline !important; 
+  text-decoration: underline !important;
 }
 
 .active-tab {
-  text-decoration: underline !important; 
+  text-decoration: underline !important;
   font-weight: bold;
-  color: #2eb7c1; 
+  color: #2eb7c1;
 }
 
 .preview-images {
@@ -161,4 +198,9 @@ ul.footer-terms-conditions > li > a:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.required-star {
+  color: rgb(222, 45, 80);
+  display: inline;
 }
