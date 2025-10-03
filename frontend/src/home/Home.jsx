@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Container, Row, Col, Nav, Card, Button, Form, Carousel } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import useProperties from "../hooks/useProperties.jsx"
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
-  const [featured, setFeatured] = useState([]);
-  const [recent, setRecent] = useState([]);
   const navigate = useNavigate();
+
+  const { data: featured, loading: loadingFeatured } = useProperties("/properties/featured");
+  const { data: recent, loading: loadingRecent } = useProperties("/properties/recent");
 
   const chunkArray = (arr, size) => {
     const chunks = [];
@@ -18,15 +19,6 @@ export default function Home() {
     }
     return chunks;
   };
-
-  useEffect(() => {
-    axios.get("http://localhost:3000/api/properties/featured").then(res => 
-      setFeatured(res.data)
-    );
-    axios.get("http://localhost:3000/api/properties/recent").then(res => 
-      setRecent(res.data)
-    );
-  }, []);
 
   const featuredChunks = chunkArray(featured, 3);
   const recentChunks = chunkArray(
@@ -56,34 +48,38 @@ export default function Home() {
 
       <Container className="my-5">
         <h3 className="mb-3 fw-bold">Propiedades destacadas</h3>
-        <Carousel>
-          {featuredChunks.map((chunk, i) => (
-            <Carousel.Item key={i}>
-              <Row>
-                {chunk.map((p) => (
-                  <Col key={p.id} md={4}>
-                    <Card className="shadow-sm">
-                      <Card.Img variant="top" src={p.img} />
-                      <Card.Body>
-                        <Card.Title>{p.titulo}</Card.Title>
-                        <Card.Text className="text-success fw-bold">
-                          ${p.precio} - {p.hab} Hab.
-                        </Card.Text>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)}
-                        >
-                          Ver más
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-        </Carousel>
+        {loadingFeatured ? (
+          <p>Cargando destacadas...</p>
+        ) : (
+          <Carousel>
+            {featuredChunks.map((chunk, i) => (
+              <Carousel.Item key={i}>
+                <Row>
+                  {chunk.map((p) => (
+                    <Col key={p.id} md={4}>
+                      <Card className="shadow-sm">
+                        <Card.Img variant="top" src={p.img} />
+                        <Card.Body>
+                          <Card.Title>{p.titulo}</Card.Title>
+                          <Card.Text className="text-success fw-bold">
+                            ${p.precio} - {p.hab} Hab.
+                          </Card.Text>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => navigate(`/propiedad/${p.id}`)}
+                          >
+                            Ver más
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        )}
       </Container>
 
       <Container className="my-5">
@@ -93,37 +89,41 @@ export default function Home() {
           <Nav.Item><Nav.Link eventKey="departamentos">Departamentos</Nav.Link></Nav.Item>
         </Nav>
 
-        <Carousel variant="dark">
-          {recentChunks.map((chunk, i) => (
-            <Carousel.Item key={i}>
-              <Row>
-                {chunk.map((p) => (
-                  <Col key={p.id} md={4}>
-                    <Card className="shadow-sm">
-                      <Card.Img
-                        variant="top"
-                        src={p.imgUrl}
-                      />
-                      <Card.Body>
-                        <Card.Title>{p.titulo}</Card.Title>
-                        <Card.Text className="text-success fw-bold">
-                          ${p.precio} - {p.hab} Hab.
-                        </Card.Text>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)}
-                        >
-                          Ver más
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-        </Carousel>
+        {loadingRecent ? (
+          <p>Cargando recientes...</p>
+        ) : (
+          <Carousel variant="dark">
+            {recentChunks.map((chunk, i) => (
+              <Carousel.Item key={i}>
+                <Row>
+                  {chunk.map((p) => (
+                    <Col key={p.id} md={4}>
+                      <Card className="shadow-sm">
+                        <Card.Img
+                          variant="top"
+                          src={p.imgUrl}
+                        />
+                        <Card.Body>
+                          <Card.Title>{p.titulo}</Card.Title>
+                          <Card.Text className="text-success fw-bold">
+                            ${p.precio} - {p.hab} Hab.
+                          </Card.Text>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => navigate(`/propiedad/${p.id}`)}
+                          >
+                            Ver más
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        )}
       </Container>
 
       <Container className="text-center my-5">

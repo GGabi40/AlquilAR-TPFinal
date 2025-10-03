@@ -1,43 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { Navbar, Container, Table, Button } from "react-bootstrap";
-import { data } from "react-router";
+import React from "react";
+import { Navbar, Container, Table, Button, Spinner } from "react-bootstrap";
+import { useNavigate } from "react-router";
+import usePagination from "../../hooks/usePagination";
 
 export default function OwnerDashboard() {
-  const [propiedades, setPropiedades] = useState([]);
-
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(`http://localhost:3000/api/properties/owner/${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => setPropiedades(data));
-  }, [user, token]);
+  const { data: propiedades, loading, loadMore, hasMore } = usePagination(`/properties/owner/${user.id}`);
 
   return (
     <div>
-      {/* Barra superior */}
       <Navbar bg="primary" variant="dark" expand="lg" className="px-3">
         <Container fluid>
           <Navbar.Brand>AlquilAR</Navbar.Brand>
           <div className="d-flex align-items-center text-white">
             <span className="me-2">{user?.name} ({user?.role})</span>
-            <div
-              className="rounded-circle bg-light"
-              style={{ width: "30px", height: "30px" }}
-            ></div>
+            <div className="rounded-circle bg-light" style={{ width: "30px", height: "30px" }}></div>
           </div>
         </Container>
       </Navbar>
 
-      {/* Contenido */}
       <Container className="mt-4">
         <h3>Bienvenido/a {user?.name},</h3>
         <p className="text-muted">Estas son tus propiedades publicadas:</p>
 
-        {propiedades.length === 0 ? (
+        {loading && propiedades.length === 0 ? (
+          <p>Cargando propiedades...</p>
+        ) : propiedades.length === 0 ? (
           <p>No tienes propiedades registradas todavía.</p>
         ) : (
           <Table striped bordered hover responsive>
@@ -60,12 +50,8 @@ export default function OwnerDashboard() {
                   <td>{p.alquiler}</td>
                   <td>{p.disponible ? "Sí" : "No"}</td>
                   <td>
-                    <Button size="sm" variant="info" className="me-2">
-                      Editar
-                    </Button>
-                    <Button size="sm" variant="danger">
-                      Eliminar
-                    </Button>
+                    <Button size="sm" variant="info" className="me-2">Editar</Button>
+                    <Button size="sm" variant="danger">Eliminar</Button>
                   </td>
                 </tr>
               ))}
@@ -73,8 +59,18 @@ export default function OwnerDashboard() {
           </Table>
         )}
 
+        {hasMore && (
+          <div className="text-center my-3">
+            <Button variant="secondary" onClick={loadMore} disabled={loading}>
+              {loading ? <><Spinner animation="border" size="sm" className="me-2" />Cargando...</> : "Cargar más"}
+            </Button>
+          </div>
+        )}
+
         <div className="mt-3">
-          <Button variant="primary">+ Agregar nueva propiedad</Button>
+          <Button variant="primary" onClick={() => navigate("/propiedad/create")}>
+            + Agregar nueva propiedad
+          </Button>
         </div>
       </Container>
     </div>
