@@ -3,7 +3,7 @@ import { Container, Row, Col, Nav, Card, Button, Form, Carousel } from "react-bo
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import useProperties from "../hooks/useProperties.jsx"
+import useProperties from "../../../hooks/useProperties.jsx"
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");

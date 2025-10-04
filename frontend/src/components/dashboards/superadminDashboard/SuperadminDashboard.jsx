@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Container, Tabs, Tab, Table, Button, Spinner } from "react-bootstrap";
-import usePagination from "../../hooks/usePagination";
+import usePagination from "../../../hooks/usePagination";
 
 export default function SuperadminDashboard() {
   const [key, setKey] = useState("usuarios");
