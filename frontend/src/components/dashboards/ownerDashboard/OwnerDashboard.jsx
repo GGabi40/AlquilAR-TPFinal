@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar, Container, Table, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import usePagination from "../../hooks/usePagination";
+import usePagination from "../../../hooks/usePagination.jsx";
 
 export default function OwnerDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));

@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 
 import userRoutes from './routes/auth.routes.js';
-import propertyRoutes from './routes/properties.routes.js';
+import propertiesRoutes from './routes/properties.routes.js';
 import favoritesRoutes from './routes/favorites.routes.js';
 import ratingsRoutes from './routes/ratings.routes.js';
 import { port, sequelize } from './config/db.js';
@@ -19,7 +19,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/api/users', userRoutes);
-app.use("/api/properties", propertyRoutes);
+app.use("/api/properties", propertiesRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
 
