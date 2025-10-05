@@ -8,7 +8,6 @@ import {
   registerUser,
   resetPassword,
   updateUser,
-  deactivateUser,
   deleteUser
 } from "../services/auth.services.js";
 
