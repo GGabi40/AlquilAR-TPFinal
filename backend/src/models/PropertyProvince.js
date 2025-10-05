@@ -8,7 +8,7 @@ export const PropertyProvince = sequelize.define("PropertyProvince", {
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
+    nameP: {
         type: DataTypes.STRING,
         allowNull: false
     }
