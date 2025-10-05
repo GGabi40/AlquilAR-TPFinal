@@ -1,14 +1,24 @@
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 export const isTokenValid = (token) => {
-    if(!token) return false;
+  if (!token) return false;
 
-    try {
-        const decodedToken = jwtDecode(token);
-        const currentTime = Date.now() / 1000;
-        return currentTime < decodedToken.exp;
-    } catch (error) {
-        console.error('Error decodificando token: ', error);
-        return false;
-    }
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+    return currentTime < decodedToken.exp;
+  } catch (error) {
+    console.error("Error decodificando token: ", error);
+    return false;
+  }
+};
+
+export const getUserRole = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+    return decoded.role || null;
+  } catch (error) {
+    console.error("Error obteniendo rol:", error);
+    return null;
+  }
 };

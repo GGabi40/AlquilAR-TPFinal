@@ -1,16 +1,25 @@
-import { Navigate } from "react-router";
+import React, { useContext } from "react";
+import { Outlet, Navigate } from "react-router";
+import { isTokenValid, getUserRole } from "./services/auth/tokenValidation";
+import { AuthenticationContext } from "./services/auth.context";
 
-export default function ProtectedRoute({ children, role }) {
-    const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
+export default function Protected({ allowedRoles }) {
+    const { token } = useContext(AuthenticationContext);
 
-    if(!token || user) {
-        return <Navigate to="/login" />;
+    if(!token) {
+        return <Navigate to="/login" replace />;
     }
 
-    if(role && user.role !== role) {
-        return <Navigate to="/" />;
+    if(!isTokenValid(token)) {
+        return <Navigate to="/login" replace />;
+    } 
+
+    const userRole = getUserRole(token);
+    const rolesArray = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+
+    if(rolesArray.length > 0 && !rolesArray.includes(userRole)) {
+        return <Navigate to="/unauthorized" replace />
     }
 
-    return children;
+    return <Outlet />;
 }

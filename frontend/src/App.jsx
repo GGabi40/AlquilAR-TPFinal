@@ -24,6 +24,7 @@ import PropertyView from "./components/propertyView/PropertyView"
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 import ResetPassword from "./components/auth/resetPassword/ResetPassword";
 import Profile from "./components/profile/Profile";
+import Protected from "./ProtectedRoute";
 
 
 function App() {
@@ -51,18 +52,26 @@ function App() {
           <Route path="/property/:id" element={<PropertyView />} />
 
           {/* Owner */}
-          <Route path="/owner/dashboard" element={<OwnerDashboard />} /> {/* Falta id de usuario */}
-          <Route path="/owner/property/:id" element={<PropertyDetail />} />
+          <Route element={<Protected allowedRoles={['owner']} />}>
+            <Route path="/owner/dashboard" element={<OwnerDashboard />} /> {/* Falta id de usuario */}
+            <Route path="/owner/property/:id" element={<PropertyDetail />} />
+          </Route>
 
-          <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
+          <Route element={<Protected allowedRoles={['superadmin']} />}>
+            <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
+          </Route>
 
           {/* User */}
-          <Route path="/user/dashboard" element={<UserDashboard />} /> {/* Falta id de usuario */}
-          <Route path="/user/profile" element={<Profile />} />
+          <Route element={<Protected allowedRoles={['user']} />}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+          </Route>
 
-          {/* Agg proteccion de rutas */}
+          <Route element={<Protected allowedRoles={['user', 'owner', 'superadmin']} />}>
+            <Route path="/user/profile" element={<Profile />} />
+          </Route>
 
           <Route path="*" element={<NotFound />} />
+          <Route path="/unauthorized" element={<NotFound />} /> {/* Crear */}
         </Route>
       </Routes>
     </BrowserRouter>
