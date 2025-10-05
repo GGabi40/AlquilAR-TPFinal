@@ -85,7 +85,7 @@ export const registerUser = async (req, res) => {
 
   if (result.error) return res.status(400).json({ message: result.message });
 
-  const { name, surname, email, password, isActive, avatarColor, role } = req.body;
+  const { name, surname, email, password, isBlocked, avatarColor, role } = req.body;
 
   try {
     const existingEmail = await User.findOne({ where: { email } });
@@ -102,7 +102,7 @@ export const registerUser = async (req, res) => {
       surname,
       email,
       password: hashedPassword,
-      isActive,
+      isBlocked,
       avatarColor: avatarColor || "#ffc107",
       role: role || "user",
     });
@@ -131,10 +131,9 @@ export const loginUser = async (req, res) => {
         .json({ message: "Este email no esta registrado." });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res
-        .status(401)
-        .json({ message: "Email o contraseña incorrectos." });
+    if (!isMatch) return res.status(401).json({ message: "Email o contraseña incorrectos." });
+
+    if (user.isBlocked) return res.status(403).json({ message: "Tu cuenta fue bloqueada. Contactá con soporte." });
 
     // create token
     const token = jwt.sign(
@@ -227,22 +226,22 @@ export const forgotPassword = async (req, res) => {
 };
 
 
-export const deactivateUser = async (req, res) => {
+/* export const unBlockUser = async (req, res) => {
   try {
     const { id } = req.params;
 
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
 
-    user.isActive = false;
+    user.isBlocked = false;
     await user.save();
 
-    res.json({ message: "Cuenta desactivada correctamente." });
+    res.json({ message: "Cuenta bloqueada correctamente." });
   } catch (error) {
     console.error("Error al desactivar usuario:", error);
     res.status(500).json({ message: "Error del servidor." });
   }
-};
+}; */
 
 export const deleteUser = async (req, res) => {
   try {

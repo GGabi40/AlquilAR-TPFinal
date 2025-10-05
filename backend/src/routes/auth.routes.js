@@ -16,11 +16,11 @@ const router = Router();
 
 // SuperAdmin Routes
 router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers);
+// router.patch('/:id/deactivate', verifyToken, roleMiddleware("superadmin"), deactivateUser);
 
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);
 router.put("/:id", verifyToken, updateUser);
-router.patch('/:id/deactivate', verifyToken, deactivateUser);
 router.delete("/:id/delete", verifyToken, deleteUser);
 
 router.post("/reset-password", resetPassword);
