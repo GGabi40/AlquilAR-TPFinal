@@ -3,7 +3,7 @@ import { Container, Card, Button, Row, Col, Form, Collapse, Dropdown } from 'rea
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilter, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { Link } from "react-router";
-import usePagination from '../../hooks/usePagination';
+//import usePagination from '../../hooks/usePagination'; ver como usarlo aca cuando haya propiedades
 
 const PropertyCards = () => {
     const [search, setSearch] = useState('');
