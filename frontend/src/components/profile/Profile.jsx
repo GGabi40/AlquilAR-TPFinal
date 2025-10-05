@@ -6,7 +6,6 @@ import {
   faEnvelope,
   faPalette,
   faTrash,
-  faUserSlash,
   faFloppyDisk
 } from "@fortawesome/free-solid-svg-icons";
 import { Container, Card } from "react-bootstrap";
