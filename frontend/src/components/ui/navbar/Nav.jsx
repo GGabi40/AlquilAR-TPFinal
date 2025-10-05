@@ -6,6 +6,7 @@ import "../../../customStyle.css";
 
 import { AuthenticationContext } from "../../../services/auth.context";
 import { getById } from "../../../services/userService.js";
+import { getTextColor } from "../../../utils/textColors.js";
 
 const Nav = () => {
   const initialName = localStorage.getItem("userName");
@@ -19,7 +20,7 @@ const Nav = () => {
     const fetchUser = async () => {
       if (userId && token) {
         try {
-          const userData = await getById(userId, 'users', token);
+          const userData = await getById(userId, "users", token);
           setUser(userData);
         } catch (error) {
           handleUserLogout();
@@ -30,7 +31,7 @@ const Nav = () => {
       }
     };
     fetchUser();
-  }, [userId, token]);
+  }, [userId, token, location.pathname]);
 
   const logout = () => {
     handleUserLogout();
@@ -104,7 +105,14 @@ const Nav = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <div className="avatar-circle me-2" style={{ backgroundColor: user?.avatarColor}}>
+                  <div
+                    className="avatar-circle me-2"
+                    style={{
+                      backgroundColor: user?.avatarColor,
+                      border: "0.2px solid black",
+                      color: getTextColor(user?.avatarColor || "#ffc107"),
+                    }}
+                  >
                     {user.name.charAt(0).toUpperCase()}
                     {user.surname.charAt(0).toUpperCase()}
                   </div>

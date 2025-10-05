@@ -8,13 +8,15 @@ import {
   faTrash,
   faUserSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { Button, Container, Card } from "react-bootstrap";
+import { Container, Card } from "react-bootstrap";
 
 import ConfirmModal from "../ui/modal/ConfirmModal.jsx";
+
 import Notifications, {
   toastSuccess,
   toastError,
 } from "../ui/toaster/Notifications";
+
 import {
   isEmpty,
   isValidEmail,
@@ -25,7 +27,7 @@ import {
 
 import { getTextColor } from "../../utils/textColors.js";
 import { AuthenticationContext } from "../../services/auth.context";
-import { getById } from "../../services/userService";
+import { getById, update, deactivate, del } from "../../services/userService";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -34,7 +36,6 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     name: "",
     surname: "",
-    email: "",
     avatarColor: "#ffc107",
   });
   const [showDelete, setShowDelete] = useState(false);
@@ -42,7 +43,6 @@ const Profile = () => {
   const [errors, setErrors] = useState({});
   const nameRef = useRef(null);
   const surnameRef = useRef(null);
-  const emailRef = useRef(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -82,16 +82,6 @@ const Profile = () => {
       surnameRef.current.classList.remove("is-invalid");
     }
 
-    if (isEmpty(formData.email)) {
-      allErrors.email = "El email es obligatorio.";
-      emailRef.current.classList.add("is-invalid");
-    } else if (!isValidEmail(formData.email)) {
-      allErrors.email = "El formato de email es inválido.";
-      emailRef.current.classList.add("is-invalid");
-    } else {
-      emailRef.current.classList.remove("is-invalid");
-    }
-
     setErrors(allErrors);
     if (Object.keys(allErrors).length !== 0) {
       toastError("Revisa los errores del formulario.");
@@ -101,20 +91,18 @@ const Profile = () => {
     return true;
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     try {
-      /* await axios.put(`http://localhost:3000/api/users/${userId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      }); */
-
+      await update(userId, "users", formData, token);
       toastSuccess("Perfil actualizado correctamente ✅");
+      setTimeout(() => {
+        navigate("/");
+      }, 500);
     } catch (error) {
       toastError("Error al actualizar el perfil ❌");
       console.error(error);
@@ -219,12 +207,20 @@ const Profile = () => {
               <input
                 type="email"
                 name="email"
+                readOnly
+                disabled
                 className="form-control"
                 placeholder="Correo electrónico"
                 value={formData.email}
-                onChange={handleChange}
-                ref={emailRef}
               />
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => navigate("/change-email")}
+                variant='info'
+              >
+                Cambiar
+              </button>
             </div>
             {errors.email && (
               <div className="invalid-feedback d-block">{errors.email}</div>
@@ -312,7 +308,6 @@ const Profile = () => {
         cancelText="Cancelar"
         variant="warning"
       />
-
     </Container>
   );
 };
