@@ -111,7 +111,7 @@ const Profile = () => {
 
   const handleDeactivate = async () => {
     try {
-      await deactivateUser(userId, token);
+      await deactivate(userId, token);
       toastSuccess("Cuenta desactivada correctamente.");
       logout();
       navigate("/login");
@@ -123,8 +123,8 @@ const Profile = () => {
 
   const handleDelete = async () => {
     try {
-      // await deleteUser(userId, token);
-      toastSuccess("Cuenta eliminada 🗑️");
+      await del(userId, 'users', token);
+      toastSuccess("Cuenta eliminada");
       logout();
       navigate("/login");
     } catch (error) {
@@ -151,6 +151,7 @@ const Profile = () => {
               style={{
                 backgroundColor: formData.avatarColor || "#ffc107",
                 color: getTextColor(formData.avatarColor || "#ffc107"),
+                border: '0.25px solid black',
                 width: "90px",
                 height: "90px",
                 fontSize: "2rem",
