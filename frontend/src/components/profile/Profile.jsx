@@ -125,8 +125,10 @@ const Profile = () => {
     try {
       await del(userId, 'users', token);
       toastSuccess("Cuenta eliminada");
-      logout();
-      navigate("/login");
+      
+      setTimeout(() => {
+        navigate("/login");
+      }, 800);
     } catch (error) {
       console.error("Error al eliminar cuenta:", error);
       alert("No se pudo eliminar la cuenta ❌");

@@ -55,7 +55,7 @@ export const deactivate = async (id, token) => {
 
 export const del = async (id, endpoint = "users", token) => {
   try {
-    const reponse = await axios.delete(`${API_URL}/api/${endpoint}/${id}`, {
+    const response = await axios.delete(`${API_URL}/api/${endpoint}/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

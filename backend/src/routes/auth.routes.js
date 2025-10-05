@@ -8,7 +8,8 @@ import {
   registerUser,
   resetPassword,
   updateUser,
-  deactivateUser
+  deactivateUser,
+  deleteUser
 } from "../services/auth.services.js";
 
 const router = Router();
@@ -20,7 +21,7 @@ router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers)
 router.get("/:id", verifyToken, getUserById);
 router.put("/:id", verifyToken, updateUser);
 router.patch('/:id/deactivate', verifyToken, deactivateUser);
-// router.delete("/:id", verifyToken, getUserById);
+router.delete("/:id/delete", verifyToken, deleteUser);
 
 router.post("/reset-password", resetPassword);
 router.post("/forgot-password", forgotPassword);
