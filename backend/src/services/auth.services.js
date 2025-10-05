@@ -49,6 +49,10 @@ export const getUserById = async (req, res) => {
   }
 };
 
+export const updateUser = async (req,res) => {
+  // PUT
+};
+
 export const registerUser = async (req, res) => {
   const result = validateRegisterData(req.body);
 
@@ -192,6 +196,24 @@ export const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el proceso de recuperación" });
+  }
+};
+
+
+export const deactivateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+
+    user.isActive = false;
+    await user.save();
+
+    res.json({ message: "Cuenta desactivada correctamente." });
+  } catch (error) {
+    console.error("Error al desactivar usuario:", error);
+    res.status(500).json({ message: "Error del servidor." });
   }
 };
 

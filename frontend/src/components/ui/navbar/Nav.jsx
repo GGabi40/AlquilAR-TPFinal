@@ -5,7 +5,7 @@ import LOGO from "/logo/techo-amarillo-blanco.webp";
 import "../../../customStyle.css";
 
 import { AuthenticationContext } from "../../../services/auth.context";
-import { getUserById } from "../../../services/userService.js";
+import { getById } from "../../../services/userService.js";
 
 const Nav = () => {
   const initialName = localStorage.getItem("userName");
@@ -19,7 +19,7 @@ const Nav = () => {
     const fetchUser = async () => {
       if (userId && token) {
         try {
-          const userData = await getUserById(userId, token);
+          const userData = await getById(userId, 'users', token);
           setUser(userData);
         } catch (error) {
           handleUserLogout();

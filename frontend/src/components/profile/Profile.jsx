@@ -1,16 +1,55 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
+  faEnvelope,
+  faPalette,
+  faTrash,
+  faUserSlash,
+} from "@fortawesome/free-solid-svg-icons";
+import { Button, Container, Card } from "react-bootstrap";
+
+import ConfirmModal from "../ui/modal/ConfirmModal.jsx";
+import Notifications, {
+  toastSuccess,
+  toastError,
+} from "../ui/toaster/Notifications";
+import {
+  isEmpty,
+  isValidEmail,
+  hasSQLInjection,
+  hasScriptInjection,
+  validateString,
+} from "../../utils/validations.js";
+
+import { getTextColor } from "../../utils/textColors.js";
 import { AuthenticationContext } from "../../services/auth.context";
-import { getUserById } from "../../services/userService";
+import { getById } from "../../services/userService";
 
 const Profile = () => {
-  const { userId, token } = useContext(AuthenticationContext);
+  const navigate = useNavigate();
+  const { userId, token, logout } = useContext(AuthenticationContext);
   const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    avatarColor: "#ffc107",
+  });
+  const [showDelete, setShowDelete] = useState(false);
+  const [showDeactivate, setShowDeactivate] = useState(false);
+  const [errors, setErrors] = useState({});
+  const nameRef = useRef(null);
+  const surnameRef = useRef(null);
+  const emailRef = useRef(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await getUserById(userId, token);
+        const res = await getById(userId, "users", token);
         setUser(res);
+        setFormData(res);
       } catch (error) {
         console.error("Error al cargar usuario: ", error);
       }
@@ -18,61 +57,263 @@ const Profile = () => {
     fetchUser();
   }, [userId, token]);
 
+  const validateForm = () => {
+    let allErrors = {};
 
-  const handleEdit = () => {
-    // Agg modal -> editar usuario
-    console.log('En proceso...');
-  }
+    if (isEmpty(formData.name)) {
+      allErrors.name = "El nombre es obligatorio.";
+      nameRef.current.classList.add("is-invalid");
+    } else if (
+      hasSQLInjection(formData.name) ||
+      hasScriptInjection(formData.name) ||
+      !validateString(formData.name, null, 25) ||
+      !/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.name)
+    ) {
+      allErrors.name = "Entrada inválida en el nombre.";
+      nameRef.current.classList.add("is-invalid");
+    } else {
+      nameRef.current.classList.remove("is-invalid");
+    }
 
-  const handleDelete = () => {
-    // Agg: Modal -> confirmar o no.
-    // borrado lógico
-    console.log('No hay acciones por ahora.');
-  }
+    if (isEmpty(formData.surname)) {
+      allErrors.surname = "Los apellidos son obligatorios.";
+      surnameRef.current.classList.add("is-invalid");
+    } else {
+      surnameRef.current.classList.remove("is-invalid");
+    }
+
+    if (isEmpty(formData.email)) {
+      allErrors.email = "El email es obligatorio.";
+      emailRef.current.classList.add("is-invalid");
+    } else if (!isValidEmail(formData.email)) {
+      allErrors.email = "El formato de email es inválido.";
+      emailRef.current.classList.add("is-invalid");
+    } else {
+      emailRef.current.classList.remove("is-invalid");
+    }
+
+    setErrors(allErrors);
+    if (Object.keys(allErrors).length !== 0) {
+      toastError("Revisa los errores del formulario.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    try {
+      /* await axios.put(`http://localhost:3000/api/users/${userId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      }); */
+
+      toastSuccess("Perfil actualizado correctamente ✅");
+    } catch (error) {
+      toastError("Error al actualizar el perfil ❌");
+      console.error(error);
+    }
+  };
+
+  const handleDeactivate = async () => {
+    try {
+      await deactivateUser(userId, token);
+      toastSuccess("Cuenta desactivada correctamente.");
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al desactivar cuenta:", error);
+      toastError("No se pudo desactivar la cuenta.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      // await deleteUser(userId, token);
+      toastSuccess("Cuenta eliminada 🗑️");
+      logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al eliminar cuenta:", error);
+      alert("No se pudo eliminar la cuenta ❌");
+    }
+  };
+
+  if (!user) return <p className="text-center mt-5">Cargando perfil...</p>;
 
   return (
-    <div className="container my-5">
-      <div
-        className="card shadow-lg border-0 rounded-4 p-4 mx-auto"
-        style={{ maxWidth: "500px" }}
+    <Container className="my-5 d-flex justify-content-center">
+      <Card
+        className="shadow-lg border-0 rounded-4 p-4 w-100"
+        style={{ maxWidth: "600px" }}
       >
-        <div className="d-flex flex-column align-items-center text-center">
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center"
-            style={{
-              backgroundColor: user?.avatarColor,
-              width: "90px",
-              height: "90px",
-              fontSize: "2rem",
-              fontWeight: "bold",
-            }}
-          >
-            {user?.name.charAt(0).toUpperCase()}
-            {user?.surname.charAt(0).toUpperCase()}
+        <Notifications />
+        <h4 className="card-title text-center mb-4">Editar perfil</h4>
+
+        <form onSubmit={handleUpdate}>
+          <div className="d-flex flex-column align-items-center mb-4">
+            <div
+              className="rounded-circle d-flex align-items-center justify-content-center"
+              style={{
+                backgroundColor: formData.avatarColor || "#ffc107",
+                color: getTextColor(formData.avatarColor || "#ffc107"),
+                width: "90px",
+                height: "90px",
+                fontSize: "2rem",
+                fontWeight: "bold",
+              }}
+            >
+              {formData.name?.charAt(0).toUpperCase()}
+              {formData.surname?.charAt(0).toUpperCase()}
+            </div>
           </div>
 
-          <h3 className="mt-3 mb-1">
-            {user?.name} {user?.surname}
-          </h3>
-          <span className="badge bg-secondary mb-3">
-            {user?.role === "owner"
-              ? "Propietario"
-              : user?.role === "user"
-              ? "Inquilino"
-              : "Superadmin"}
-          </span>
+          <div className="row mb-3">
+            <div className="col-md-6 mb-3 mb-md-0">
+              <div className="input-group">
+                <span className="input-group-text">
+                  <FontAwesomeIcon icon={faUser} />
+                </span>
+                <input
+                  type="text"
+                  name="name"
+                  className="form-control"
+                  placeholder="Nombre"
+                  value={formData.name}
+                  onChange={handleChange}
+                  ref={nameRef}
+                />
+              </div>
+              {errors.name && (
+                <div className="invalid-feedback d-block">{errors.name}</div>
+              )}
+            </div>
 
-          <p className="text-muted">{user?.email}</p>
+            <div className="col-md-6">
+              <input
+                type="text"
+                name="surname"
+                className="form-control"
+                placeholder="Apellidos"
+                value={formData.surname}
+                onChange={handleChange}
+                ref={surnameRef}
+              />
+              {errors.surname && (
+                <div className="invalid-feedback d-block">{errors.surname}</div>
+              )}
+            </div>
+          </div>
 
-          <button className="btn btn-outline-primary mt-3 px-4" onClick={handleEdit}>
-            Editar perfil
-          </button>
-          <button variant="danger" className="btn btn-danger mt-3 px-4" onClick={handleDelete}>
-            Eliminar cuenta
-          </button>
-        </div>
-      </div>
-    </div>
+          <div className="mb-3">
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faEnvelope} />
+              </span>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                placeholder="Correo electrónico"
+                value={formData.email}
+                onChange={handleChange}
+                ref={emailRef}
+              />
+            </div>
+            {errors.email && (
+              <div className="invalid-feedback d-block">{errors.email}</div>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label fw-semibold d-block mb-2">
+              <FontAwesomeIcon icon={faPalette} className="me-2 text-warning" />
+              Color del avatar
+            </label>
+
+            {/* Input color */}
+            <div
+              className="d-flex align-items-center justify-content-between p-3 rounded-3 shadow-sm"
+              style={{
+                backgroundColor: "#f8f9fa",
+                border: "1px solid #e0e0e0",
+              }}
+            >
+              <input
+                type="color"
+                name="avatarColor"
+                value={formData.avatarColor || "#007bff"}
+                onChange={handleChange}
+                title="Elegí un color"
+                className="form-control form-control-color border-0"
+                style={{
+                  cursor: "pointer",
+                  width: "70px",
+                  height: "40px",
+                  background: "transparent",
+                }}
+              />
+
+              <small className="text-muted ms-2">
+                Tocá para elegir un color
+              </small>
+            </div>
+          </div>
+
+          <div className="d-grid gap-3">
+            <button className="btn btn-primary" type="submit">
+              Guardar cambios
+            </button>
+            <button
+              type="button"
+              className="btn btn-warning text-dark"
+              onClick={() => setShowDeactivate(true)}
+            >
+              <FontAwesomeIcon icon={faUserSlash} className="me-2" />
+              Desactivar cuenta
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={() => setShowDelete(true)}
+            >
+              <FontAwesomeIcon icon={faTrash} className="me-2" />
+              Eliminar cuenta
+            </button>
+          </div>
+        </form>
+      </Card>
+
+      {/* MODAL */}
+      <ConfirmModal
+        show={showDelete}
+        title="Confirmar eliminación"
+        message="⚠️ Esta acción eliminará permanentemente tu cuenta. ¿Deseas continuar?"
+        onConfirm={handleDelete}
+        onClose={() => setShowDelete(false)}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
+
+      <ConfirmModal
+        show={showDeactivate}
+        title="Desactivar cuenta"
+        message="Tu cuenta quedará inactiva. Podrás reactivarla iniciando sesión nuevamente."
+        onConfirm={handleDeactivate}
+        onClose={() => setShowDeactivate(false)}
+        confirmText="Desactivar"
+        cancelText="Cancelar"
+        variant="warning"
+      />
+
+    </Container>
   );
 };
 
