@@ -23,10 +23,10 @@ export const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  isActive: {
+  isBlocked: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   },
   role: {
     type: DataTypes.ENUM("superadmin", "owner", "user"),

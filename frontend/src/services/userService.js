@@ -35,7 +35,20 @@ export const update = async (id, endpoint = "users", userData, token) => {
   }
 };
 
-export const deactivate = async (id, token) => {
+export const del = async (id, endpoint = "users", token) => {
+  try {
+    const response = await axios.delete(`${API_URL}/api/${endpoint}/${id}/delete`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar logicamente el usuario: ", error);
+    throw error;
+  }
+};
+
+/* export const deactivate = async (id, token) => {
   try {
     const res = await axios.patch(
       `${API_URL}/api/users/${id}/deactivate`,
@@ -51,17 +64,4 @@ export const deactivate = async (id, token) => {
     console.error("Error al desactivar usuario: ", error);
     throw error;
   }
-};
-
-export const del = async (id, endpoint = "users", token) => {
-  try {
-    const response = await axios.delete(`${API_URL}/api/${endpoint}/${id}/delete`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Error al eliminar logicamente el usuario: ", error);
-    throw error;
-  }
-};
+}; */

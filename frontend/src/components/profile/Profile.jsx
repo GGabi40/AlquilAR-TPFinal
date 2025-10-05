@@ -7,6 +7,7 @@ import {
   faPalette,
   faTrash,
   faUserSlash,
+  faFloppyDisk
 } from "@fortawesome/free-solid-svg-icons";
 import { Container, Card } from "react-bootstrap";
 
@@ -109,23 +110,11 @@ const Profile = () => {
     }
   };
 
-  const handleDeactivate = async () => {
-    try {
-      await deactivate(userId, token);
-      toastSuccess("Cuenta desactivada correctamente.");
-      logout();
-      navigate("/login");
-    } catch (error) {
-      console.error("Error al desactivar cuenta:", error);
-      toastError("No se pudo desactivar la cuenta.");
-    }
-  };
-
   const handleDelete = async () => {
     try {
       await del(userId, 'users', token);
       toastSuccess("Cuenta eliminada");
-      
+
       setTimeout(() => {
         navigate("/login");
       }, 800);
@@ -267,15 +256,8 @@ const Profile = () => {
 
           <div className="d-grid gap-3">
             <button className="btn btn-primary" type="submit">
+              <FontAwesomeIcon icon={faFloppyDisk} className="me-2" />
               Guardar cambios
-            </button>
-            <button
-              type="button"
-              className="btn btn-warning text-dark"
-              onClick={() => setShowDeactivate(true)}
-            >
-              <FontAwesomeIcon icon={faUserSlash} className="me-2" />
-              Desactivar cuenta
             </button>
             <button
               type="button"
@@ -299,17 +281,6 @@ const Profile = () => {
         confirmText="Eliminar"
         cancelText="Cancelar"
         variant="danger"
-      />
-
-      <ConfirmModal
-        show={showDeactivate}
-        title="Desactivar cuenta"
-        message="Tu cuenta quedará inactiva. Podrás reactivarla iniciando sesión nuevamente."
-        onConfirm={handleDeactivate}
-        onClose={() => setShowDeactivate(false)}
-        confirmText="Desactivar"
-        cancelText="Cancelar"
-        variant="warning"
       />
     </Container>
   );
