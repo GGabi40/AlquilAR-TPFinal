@@ -9,10 +9,14 @@ const PropertyCards = () => {
 
     const [tipo, setTipo] = useState('');
     const [habitaciones, setHabitaciones] = useState('');
+    const [ambientes, setAmbientes] = useState('');
     const [precioMin, setPrecioMin] = useState('');
     const [precioMax, setPrecioMax] = useState('');
     const [provincia, setProvincia] = useState('');
     const [localidad, setLocalidad] = useState('');
+
+    const [filteredProperties, setFilteredProperties] = useState([]);
+
 
     const properties = [
         { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D", localidad: "Rosario", provincia: "Santa Fe" },
@@ -24,18 +28,21 @@ const PropertyCards = () => {
     ];
     // ver buscador, los filtros si andan bien 
 
-    const filteredProperties = properties.filter(p => {
-        return (
-            (tipo === '' || p.tipo === tipo) &&
-            (habitaciones === '' || p.hab === parseInt(habitaciones)) &&
-            (precioMin === '' || p.precio >= parseInt(precioMin)) &&
-            (precioMax === '' || p.precio <= parseInt(precioMax)) &&
-            (provincia === '' || p.provincia.toLowerCase().includes(provincia.toLowerCase())) &&
-            (localidad === '' || p.localidad.toLowerCase().includes(localidad.toLowerCase())) &&
-            (search === '' || p.titulo.toLowerCase().includes(search.toLowerCase()))
-        );
-    });
-
+    const handleApplyFilters  = () => {
+        const results = properties.filter(p => {
+            return (
+                (tipo === '' || p.tipo === tipo) &&
+                (habitaciones === '' || p.hab === parseInt(habitaciones)) &&
+                (ambientes === '' || p.hab === parseInt(ambientes)) &&
+                (precioMin === '' || p.precio >= parseInt(precioMin)) &&
+                (precioMax === '' || p.precio <= parseInt(precioMax)) &&
+                (provincia === '' || p.provincia.toLowerCase().includes(provincia.toLowerCase())) &&
+                (localidad === '' || p.localidad.toLowerCase().includes(localidad.toLowerCase())) &&
+                (search === '' || p.titulo.toLowerCase().includes(search.toLowerCase()))
+            );
+        });
+        setFilteredProperties(results);
+    }
 
 
     return (
@@ -81,6 +88,15 @@ const PropertyCards = () => {
                                 {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
                             </Form.Select>
 
+                            <Form.Select
+                                className="mt-2"
+                                value={ambientes}
+                                onChange={e => setAmbientes(e.target.value)}
+                            >
+                                <option value="">Ambientes</option>
+                                {[1, 2, 3, 4, 5].map(n => <option key={n} value={n}>{n}</option>)}
+                            </Form.Select>
+
                             <Form.Control
                                 className="mt-2"
                                 type="number"
@@ -113,13 +129,17 @@ const PropertyCards = () => {
                                 onChange={e => setProvincia(e.target.value)}
                             />
 
+                            <Button variant="success" className="mt-3 w-100" onClick={handleApplyFilters}>
+                                <FontAwesomeIcon icon={faFilter} className="me-2" />Aplicar Filtros
+                            </Button>
+
                         </Dropdown.Menu>
                     </Dropdown>
                 </Form>
             </Container>
 
             <div className='d-flex flex-column align-items-center gap-3 w-100'>
-                {filteredProperties.map((p) => (
+                {(filteredProperties.length > 0 ? filteredProperties : properties).map((p) => (
                     <Card className="shadow-sm login-form" style={{ maxWidth: '500px', minWidth: '500px' }} key={p.id}>
                         <Row className="g-0" style={{ minHeight: '150px' }}>
                             <Col md={4} className='p-0'>
