@@ -28,7 +28,7 @@ import {
 
 import { getTextColor } from "../../utils/textColors.js";
 import { AuthenticationContext } from "../../services/auth.context";
-import { getById, update, deactivate, del } from "../../services/userService";
+import { getById, update, del } from "../../services/userService";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -40,7 +40,6 @@ const Profile = () => {
     avatarColor: "#ffc107",
   });
   const [showDelete, setShowDelete] = useState(false);
-  const [showDeactivate, setShowDeactivate] = useState(false);
   const [errors, setErrors] = useState({});
   const nameRef = useRef(null);
   const surnameRef = useRef(null);
