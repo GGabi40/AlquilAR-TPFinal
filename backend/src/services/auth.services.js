@@ -49,6 +49,37 @@ export const getUserById = async (req, res) => {
   }
 };
 
+export const updateUser = async (req,res) => {
+  const { id } = req.params;
+  
+  try {
+    const { name, surname, avatarColor } = req.body;
+
+    const user = await User.findByPk(id);
+
+    if(!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+
+    if (req.body.email && req.body.email !== user.email) {
+      return res.status(400).json({
+        message:
+          "El correo electrónico no puede modificarse desde el perfil.",
+      });
+    }
+
+    user.name = name ?? user.name;
+    user.surname = surname ?? user.surname;
+    user.avatarColor = avatarColor ?? user.avatarColor;
+
+    await user.save();
+
+    res.status(200).json({ message: 'Perfil actualizado correctamente.' });
+  } catch (error) {
+    console.error("Error al actualizar usuario: ", error);
+    res.status(500).json({ message: "Error al actualizar usuario." });
+  }
+
+};
+
 export const registerUser = async (req, res) => {
   const result = validateRegisterData(req.body);
 
@@ -192,6 +223,40 @@ export const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error en el proceso de recuperación" });
+  }
+};
+
+
+export const deactivateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+
+    user.isActive = false;
+    await user.save();
+
+    res.json({ message: "Cuenta desactivada correctamente." });
+  } catch (error) {
+    console.error("Error al desactivar usuario:", error);
+    res.status(500).json({ message: "Error del servidor." });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+
+    await user.destroy();
+
+    res.json({ message: 'Cuenta eliminada correctamente.' });
+  } catch (error) {
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).json({ message: "Error del servidor." });
   }
 };
 
