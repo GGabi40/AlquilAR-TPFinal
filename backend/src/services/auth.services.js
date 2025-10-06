@@ -225,24 +225,6 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-
-/* export const unBlockUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const user = await User.findByPk(id);
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
-
-    user.isBlocked = false;
-    await user.save();
-
-    res.json({ message: "Cuenta bloqueada correctamente." });
-  } catch (error) {
-    console.error("Error al desactivar usuario:", error);
-    res.status(500).json({ message: "Error del servidor." });
-  }
-}; */
-
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;

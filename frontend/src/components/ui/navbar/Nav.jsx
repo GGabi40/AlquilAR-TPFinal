@@ -5,7 +5,7 @@ import LOGO from "/logo/techo-amarillo-blanco.webp";
 import "../../../customStyle.css";
 
 import { AuthenticationContext } from "../../../services/auth.context";
-import { getById } from "../../../services/userService.js";
+import { getUserById } from "../../../services/userService.js";
 import { getTextColor } from "../../../utils/textColors.js";
 
 const Nav = () => {
@@ -20,7 +20,7 @@ const Nav = () => {
     const fetchUser = async () => {
       if (userId && token) {
         try {
-          const userData = await getById(userId, "users", token);
+          const userData = await getUserById(userId, "users", token);
           setUser(userData);
         } catch (error) {
           handleUserLogout();
@@ -138,7 +138,7 @@ const Nav = () => {
                       )}
 
                       {user.role === "superadmin" && (
-                        <Link className="dropdown-item" to="/admin">
+                        <Link className="dropdown-item" to="/admin/dashboard">
                           Panel de Control
                         </Link>
                       )}
