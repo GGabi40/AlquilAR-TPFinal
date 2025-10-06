@@ -19,7 +19,6 @@ import Notifications, {
 
 import {
   isEmpty,
-  isValidEmail,
   hasSQLInjection,
   hasScriptInjection,
   validateString,
@@ -27,7 +26,7 @@ import {
 
 import { getTextColor } from "../../utils/textColors.js";
 import { AuthenticationContext } from "../../services/auth.context";
-import { getById, update, del } from "../../services/userService";
+import { updateUser, delUser } from "../../services/userService";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -46,7 +45,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await getById(userId, "users", token);
+        const res = await (userId, "users", token);
         setUser(res);
         setFormData(res);
       } catch (error) {
@@ -97,7 +96,7 @@ const Profile = () => {
     if (!validateForm()) return;
 
     try {
-      await update(userId, "users", formData, token);
+      await updateUser(userId, "users", formData, token);
       toastSuccess("Perfil actualizado correctamente ✅");
       setTimeout(() => {
         navigate("/");
@@ -110,7 +109,7 @@ const Profile = () => {
 
   const handleDelete = async () => {
     try {
-      await del(userId, 'users', token);
+      await delUser(userId, 'users', token);
       toastSuccess("Cuenta eliminada");
 
       setTimeout(() => {

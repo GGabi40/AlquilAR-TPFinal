@@ -45,11 +45,11 @@ const ConfirmModal = ({
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>
-          {cancelText}
-        </Button>
         <Button variant={variant} onClick={onConfirm}>
           {confirmText}
+        </Button>
+        <Button variant="secondary" onClick={onClose}>
+          {cancelText}
         </Button>
       </Modal.Footer>
     </Modal>

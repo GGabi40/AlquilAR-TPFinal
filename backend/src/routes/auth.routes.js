@@ -8,14 +8,16 @@ import {
   registerUser,
   resetPassword,
   updateUser,
-  deleteUser
+  deleteUser,
 } from "../services/auth.services.js";
+
+import { blockUser } from "../services/superadmin.services.js";
 
 const router = Router();
 
 // SuperAdmin Routes
 router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers);
-// router.patch('/:id/deactivate', verifyToken, roleMiddleware("superadmin"), deactivateUser);
+router.patch("/:id/block", verifyToken, roleMiddleware("superadmin"), blockUser);
 
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);
@@ -26,6 +28,5 @@ router.post("/reset-password", resetPassword);
 router.post("/forgot-password", forgotPassword);
 router.post("/login", loginUser);
 router.post("/register", registerUser);
-
 
 export default router;
