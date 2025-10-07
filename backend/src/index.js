@@ -30,7 +30,7 @@ app.use("/api/posts", postsRoutes);
 app.use("/api/rentals", rentalsRoutes);
 
 try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     app.listen(port, () => {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });
