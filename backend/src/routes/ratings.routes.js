@@ -1,5 +1,5 @@
 import express from "express";
-import Rating from "../models/Rating.js";
+import { Rating } from "../models/Rating.js";
 import { verifyToken as authenticate } from "../middleware/authMiddleware.js";
 import { sequelize } from "../config/db.js";
 

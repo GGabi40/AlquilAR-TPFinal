@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import './models/associations.js';
+
 import userRoutes from './routes/auth.routes.js';
 import propertiesRoutes from './routes/properties.routes.js';
 import favoritesRoutes from './routes/favorites.routes.js';
@@ -24,7 +26,7 @@ app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
 
 try {
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     app.listen(port, () => {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });

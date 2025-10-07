@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-const Favorite = sequelize.define("Favorite", {
+export const Favorite = sequelize.define("Favorite", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -19,5 +19,3 @@ const Favorite = sequelize.define("Favorite", {
     tableName: "favorites",
     timestamps: false,
 });
-
-export default Favorite;

@@ -1,5 +1,5 @@
 import express from "express";
-import Favorite from "../models/Favorite.js";
+import { Favorite } from "../models/Favorite.js";
 import { Property } from "../models/Property.js";
 import { verifyToken as authenticate } from "../middleware/authMiddleware.js";
 

@@ -7,6 +7,7 @@ import { PropertyLocality } from "./PropertyLocality.js";
 import { PropertyProvince } from "./PropertyProvince.js";
 import { PropertyVideos } from "./PropertyVideos.js";
 import { Rating } from "./Rating.js";
+import { Favorite } from "./Favorite.js";
 import { Rental } from "./Rental.js";
 import { User } from "./User.js";
 
