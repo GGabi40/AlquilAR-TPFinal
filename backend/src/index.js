@@ -2,10 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
+import './models/associations.js';
+
 import userRoutes from './routes/auth.routes.js';
 import propertiesRoutes from './routes/properties.routes.js';
 import favoritesRoutes from './routes/favorites.routes.js';
 import ratingsRoutes from './routes/ratings.routes.js';
+import postsRoutes from './routes/posts.routes.js';
 import { port, sequelize } from './config/db.js';
 
 dotenv.config();
@@ -22,6 +25,7 @@ app.use('/api/users', userRoutes);
 app.use("/api/properties", propertiesRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
+app.use("/api/posts", postsRoutes);
 
 try {
     await sequelize.sync();

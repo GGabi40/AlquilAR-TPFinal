@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { Property } from "./Property.js";
 
 export const PropertyLocality = sequelize.define("PropertyLocality", {
     idLocality: {
@@ -13,6 +12,3 @@ export const PropertyLocality = sequelize.define("PropertyLocality", {
         allowNull: false
     }
 });
-
-PropertyLocality.belongsTo(Property, { foreignKey: "idPropiedad" });
-Property.hasOne(PropertyLocality, { foreignKey: "idPropiedad" });

@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { PropertyDetails } from "./PropertyDetails.js";
 
 export const PropertyImages = sequelize.define("PropertyImages", {
     idPropertyImages: {
@@ -17,6 +16,3 @@ export const PropertyImages = sequelize.define("PropertyImages", {
         allowNull: false
     }
 });
-
-PropertyDetails.hasMany(PropertyImages, { foreignKey: "idPropiedadDetalle"});
-PropertyImages.belongsTo(PropertyDetails, { foreignKey: "idPropiedadDetalle"});

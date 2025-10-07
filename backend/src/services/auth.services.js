@@ -232,7 +232,7 @@ export const deleteUser = async (req, res) => {
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
 
-    await user.destroy();
+    await user.destroy({ where: { id } });
 
     res.json({ message: 'Cuenta eliminada correctamente.' });
   } catch (error) {
