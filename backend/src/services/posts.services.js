@@ -1,7 +1,6 @@
 import { Post } from "../models/Post.js";
 import { Property } from "../models/Property.js";
 import { User } from "../models/User.js";
-import { Rental } from "../models/Rental.js";
 
 export const getAllPosts = async (req, res) => {
   try {
