@@ -9,6 +9,7 @@ import propertiesRoutes from './routes/properties.routes.js';
 import favoritesRoutes from './routes/favorites.routes.js';
 import ratingsRoutes from './routes/ratings.routes.js';
 import postsRoutes from './routes/posts.routes.js';
+import rentalsRoutes from './routes/rental.routes.js';
 import { port, sequelize } from './config/db.js';
 
 dotenv.config();
@@ -26,9 +27,10 @@ app.use("/api/properties", propertiesRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
 app.use("/api/posts", postsRoutes);
+app.use("/api/rentals", rentalsRoutes);
 
 try {
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     app.listen(port, () => {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });

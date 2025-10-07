@@ -18,3 +18,5 @@ export const Rental = sequelize.define("Rental", {
         defaultValue: "pending"
     }
 });
+
+// TODO: Agg opción de subida de contrato de alquiler
