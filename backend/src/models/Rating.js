@@ -7,11 +7,11 @@ const Rating = sequelize.define("Rating", {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    property_id: {
+    propertyId: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },

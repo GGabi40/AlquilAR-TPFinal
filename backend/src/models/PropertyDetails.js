@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { Property } from "./Property.js";
 
 export const PropertyDetails = sequelize.define('PropertyDetails', {
     idPropertyDetails: {
@@ -29,7 +28,3 @@ export const PropertyDetails = sequelize.define('PropertyDetails', {
         allowNull: false
     }
 });
-
-//ver si esta bien hecha 
-Property.hasOne(PropertyDetails, { foreignKey: "idPropiedad"});
-PropertyDetails.belongsTo(Property, { foreignKey: "idPropiedad"});

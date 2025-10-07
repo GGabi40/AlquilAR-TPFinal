@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { PropertyDetails } from "./PropertyDetails.js";
 
 export const PropertyVideos = sequelize.define("PropertyVideos", {
     idPropertyVideo: {
@@ -17,6 +16,3 @@ export const PropertyVideos = sequelize.define("PropertyVideos", {
         allowNull: true
     }
 });
-
-PropertyDetails.hasMany(PropertyVideos, { foreignKey: "idPropiedadDetalle" });
-PropertyVideos.belongsTo(PropertyDetails, { foreignKey: "idPropiedadDetalle" });

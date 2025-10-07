@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { Property } from "./Property.js";
 
 export const PropertyDocuments = sequelize.define("PropertyDocuments", {
     idDocument: {
@@ -13,6 +12,3 @@ export const PropertyDocuments = sequelize.define("PropertyDocuments", {
         allowNull: false
     }
 });
-
-PropertyDocuments.belongsTo(Property, { foreignKey: "idPropiedad"});
-Property.hasMany(PropertyDocuments, { foreignKey: "idPropiedad"});
