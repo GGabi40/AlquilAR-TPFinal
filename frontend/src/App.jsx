@@ -20,26 +20,26 @@ import ContactUs from "./components/pages/ContactUs";
 import PublishSteps from "./components/publish/PublishSteps";
 import PropertyCards from "./components/propertyCards/PropertyCards";
 import NotFound from "./components/error/NotFound";
-import PropertyView from "./components/propertyView/PropertyView"
+import PropertyView from "./components/propertyView/PropertyView";
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 import ResetPassword from "./components/auth/resetPassword/ResetPassword";
 import Profile from "./components/profile/Profile";
 import Protected from "./ProtectedRoute";
 
+import { ScrollToTop } from "./hooks/useScrollToTop.js";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} /> 
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
           <Route path="/add-property" element={<PublishSteps />} />
-
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />
@@ -48,28 +48,29 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
-          <Route path="/properties" element={<PropertyCards />} /> {/* Ruta de search */}
+          <Route path="/properties" element={<PropertyCards />} />{" "}
+          {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
-
           {/* Owner */}
-          <Route element={<Protected allowedRoles={['owner']} />}>
-            <Route path="/owner/dashboard" element={<OwnerDashboard />} /> {/* Falta id de usuario */}
+          <Route element={<Protected allowedRoles={["owner"]} />}>
+            <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
+            {/* Falta id de usuario */}
             <Route path="/owner/property/:id" element={<PropertyDetail />} />
           </Route>
-
-          <Route element={<Protected allowedRoles={['superadmin']} />}>
+          <Route element={<Protected allowedRoles={["superadmin"]} />}>
             <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
           </Route>
-
           {/* User */}
-          <Route element={<Protected allowedRoles={['user']} />}>
+          <Route element={<Protected allowedRoles={["user"]} />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
           </Route>
-
-          <Route element={<Protected allowedRoles={['user', 'owner', 'superadmin']} />}>
+          <Route
+            element={
+              <Protected allowedRoles={["user", "owner", "superadmin"]} />
+            }
+          >
             <Route path="/user/profile" element={<Profile />} />
           </Route>
-
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<NotFound />} /> {/* Crear */}
         </Route>

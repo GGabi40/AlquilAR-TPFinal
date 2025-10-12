@@ -9,6 +9,7 @@ import {
   Button,
   Form,
   Carousel,
+  NavItem,
 } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -49,6 +50,11 @@ export default function Home() {
     3
   );
 
+  const handleClick= (route) => {
+    navigate(`${route}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
       <div
@@ -73,7 +79,7 @@ export default function Home() {
             />
             <Button
               className="d-flex align-items-center rounded-pill px-4 btn-primary"
-              onClick={() => navigate("/propiedades")}
+              onClick={() => handleClick('properties')}
             >
               <FontAwesomeIcon icon={faSearch} className="me-2" />
               Buscar
@@ -107,9 +113,7 @@ export default function Home() {
                   className="mb-3 text-success"
                 />
               </Card.Title>
-              <Card.Text>
-                Encontrá tu hogar de forma simple y directa
-              </Card.Text>
+              <Card.Text>Encontrá tu hogar de forma simple y directa</Card.Text>
             </Card>
           </Col>
           <Col md={3}>
@@ -159,7 +163,7 @@ export default function Home() {
                         <Button
                           variant="primary"
                           size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)}
+                          onClick={() => navigate(`/propiedad/${p.id}`)} /* cambiar ruta */
                         >
                           Ver más
                         </Button>
@@ -222,7 +226,7 @@ export default function Home() {
         className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
         style={{
           backgroundImage: "url('/illustrations/bg-protruding-squares-2.svg')",
-          backgroundSize: "auto"
+          backgroundSize: "auto",
         }}
       >
         <p className="lead fw-bold text-white fs-2 w-50 text-shadow">
@@ -233,7 +237,7 @@ export default function Home() {
           variant="light"
           size="lg"
           className="fw-bold text-dark px-4 py-2 rounded-pill shadow-lg"
-          onClick={() => navigate("/create-account")}
+          onClick={() => handleClick('create-account')}
         >
           Sumate a AlquilAR
         </Button>
