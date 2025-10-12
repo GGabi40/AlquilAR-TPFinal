@@ -26,7 +26,7 @@ import {
 
 import { getTextColor } from "../../utils/textColors.js";
 import { AuthenticationContext } from "../../services/auth.context";
-import { updateUser, delUser } from "../../services/userService";
+import { updateUser, delUser, getUserById } from "../../services/userService";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await (userId, "users", token);
+        const res = await getUserById(userId, "users", token);
         setUser(res);
         setFormData(res);
       } catch (error) {
