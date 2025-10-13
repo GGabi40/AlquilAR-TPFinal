@@ -77,6 +77,18 @@ export default function SuperadminDashboard() {
     }
   };
 
+  const handleDeleteUser = async (userId) => {
+    try {
+      await delUser(userId, token);
+      toastSuccess("Cuenta eliminada");
+
+      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
+    } catch (error) {
+      toastError("Algo pasó...");
+      throw error;
+    }
+  }
+
   /* PROPERTY */
   const toggleFeatured = async (id, currentValue) => {
     try {
@@ -177,6 +189,10 @@ export default function SuperadminDashboard() {
                         size="sm"
                         variant="danger"
                         title="Eliminar usuario"
+                        onClick={() => {
+                          setSelectedUser(u);
+                          setShowDelete(true);
+                        }}
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
@@ -295,6 +311,20 @@ export default function SuperadminDashboard() {
         confirmText={selectedUser.isBlocked ? "Desbloquear" : "Bloquear"}
         cancelText="Cancelar"
         variant={selectedUser.isBlocked ? "success" : "danger"}
+      />
+
+      <ConfirmModal
+        show={showDelete}
+        title="Confirmar eliminación de cuenta"
+        message={`⚠️ Esta acción eliminará la cuenta del usuario del usuario ${selectedUser.name} ${selectedUser.surname}. ¿Deseas continuar?`}
+        onConfirm={() => {
+          handleDeleteUser(selectedUser.id);
+          setShowDelete(false);
+        }}
+        onClose={() => setShowDelete(false)}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </Container>
   );

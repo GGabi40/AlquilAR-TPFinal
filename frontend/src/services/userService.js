@@ -50,9 +50,9 @@ export const updateUser = async (id, endpoint = "users", userData, token) => {
   }
 };
 
-export const delUser = async (id, endpoint = "users", token) => {
+export const delUser = async (id, token) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/${endpoint}/${id}/delete`, {
+    const response = await axios.delete(`${API_URL}/api/users/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

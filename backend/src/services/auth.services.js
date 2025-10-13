@@ -232,7 +232,7 @@ export const deleteUser = async (req, res) => {
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
     
-    const isOwner = id === user.id;
+    const isOwner = parseInt(id) === user.id;
     const isSuperadmin = req.user.role === 'superadmin';
 
     if(!isOwner && !isSuperadmin)
