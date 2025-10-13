@@ -228,9 +228,17 @@ export const forgotPassword = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
+    
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+    
+    const isOwner = id === user.id;
+    const isSuperadmin = req.user.role === 'superadmin';
+
+    if(!isOwner && !isSuperadmin)
+    {
+      return res.status(403).json({ message: 'No tenés autorización para eliminar este usuario.' });
+    }
 
     await user.destroy({ where: { id } });
 
