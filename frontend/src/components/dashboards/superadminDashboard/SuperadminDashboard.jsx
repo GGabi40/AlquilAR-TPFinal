@@ -15,7 +15,7 @@ import { blockUser, delUser, getAllUsers } from "../../../services/userService";
 import { AuthenticationContext } from "../../../services/auth.context";
 
 export default function SuperadminDashboard() {
-  const { token } = useContext(AuthenticationContext);
+  const { token, userId } = useContext(AuthenticationContext);
   const [showBlock, setShowBlock] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
   const [showDelete, setShowDelete] = useState(false);
@@ -169,6 +169,7 @@ export default function SuperadminDashboard() {
                         variant="info"
                         className="me-2"
                         title="Editar Usuario"
+                        disabled={userId === u.id}
                       >
                         <FontAwesomeIcon icon={faPencil} className="me-2" />
                         Editar
@@ -177,6 +178,7 @@ export default function SuperadminDashboard() {
                         size="sm"
                         className="btn btn-primary me-2"
                         title={u.isBlocked ? "Desbloquear" : "Bloquear"}
+                        disabled={userId === u.id}
                         onClick={() => {
                           setSelectedUser(u);
                           setShowBlock(true);
@@ -189,6 +191,7 @@ export default function SuperadminDashboard() {
                         size="sm"
                         variant="danger"
                         title="Eliminar usuario"
+                        disabled={userId === u.id}
                         onClick={() => {
                           setSelectedUser(u);
                           setShowDelete(true);

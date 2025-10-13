@@ -240,6 +240,12 @@ export const deleteUser = async (req, res) => {
       return res.status(403).json({ message: 'No tenés autorización para eliminar este usuario.' });
     }
 
+    if (isSuperadmin && isOwner) {
+      return res.status(403).json({
+        message: "No podés eliminar tu propia cuenta de superadministrador.",
+      });
+    }
+
     await user.destroy({ where: { id } });
 
     res.json({ message: 'Cuenta eliminada correctamente.' });

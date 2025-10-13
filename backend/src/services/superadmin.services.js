@@ -7,6 +7,11 @@ export const blockUser = async (req, res) => {
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
 
+    const isSuperadmin = req.user.role === 'superadmin';
+
+    if(isSuperadmin)
+      return res.status(403).json({ message: "No podés bloquear tu propia cuenta de superadministrador." });
+
     user.isBlocked = !user.isBlocked;
     await user.save();
 
