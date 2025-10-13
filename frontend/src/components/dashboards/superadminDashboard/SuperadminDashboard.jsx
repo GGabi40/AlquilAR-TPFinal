@@ -11,7 +11,12 @@ import Notifications, {
 } from "../../ui/toaster/Notifications.jsx";
 
 import usePagination from "../../../hooks/usePagination";
-import { blockUser, delUser, getAllUsers } from "../../../services/userService";
+import {
+  blockUser,
+  delUser,
+  getAllUsers,
+  updateRole,
+} from "../../../services/userService";
 import { AuthenticationContext } from "../../../services/auth.context";
 
 export default function SuperadminDashboard() {
@@ -38,6 +43,8 @@ export default function SuperadminDashboard() {
   ]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [errorUsers, setErrorUsers] = useState(null);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editedRole, setEditedRole] = useState(null);
 
   const {
     data: propiedades,
@@ -87,7 +94,31 @@ export default function SuperadminDashboard() {
       toastError("Algo pasó...");
       throw error;
     }
-  }
+  };
+
+  const handleEditRole = (userId, userRole) => {
+    setEditingUserId(userId);
+    setEditedRole(userRole);
+  };
+
+  const handleSaveRole = async (userId) => {
+    try {
+      await updateRole(userId, token, { role: editedRole });
+
+      const updatedUsers = users.map((u) =>
+        u.id === userId ? { ...u, role: editedRole } : u
+      );
+      setUsers(updatedUsers);
+
+      setEditingUserId(null);
+      setEditedRole(null);
+
+      toastSuccess("Rol actualizado correctamente.");
+    } catch (error) {
+      toastError("Algo pasó...");
+      throw error;
+    }
+  };
 
   /* PROPERTY */
   const toggleFeatured = async (id, currentValue) => {
@@ -159,21 +190,48 @@ export default function SuperadminDashboard() {
                       ></span>
                     </td>
                     <td>
-                      {u.role === "owner" && "Propietario"}
-                      {u.role === "superadmin" && "SuperAdmin"}
-                      {u.role === "user" && "Inquilino"}
+                      {editingUserId === u.id ? (
+                        <select
+                          value={editedRole}
+                          onChange={(e) => setEditedRole(e.target.value)}
+                          className="form-select"
+                        >
+                          <option value="superadmin">Superadmin</option>
+                          <option value="owner">Propietario</option>
+                          <option value="user">Inquilino</option>
+                        </select>
+                      ) : u.role === "owner" ? (
+                        "Propietario"
+                      ) : u.role === "superadmin" ? (
+                        "SuperAdmin"
+                      ) : (
+                        "Inquilino"
+                      )}
                     </td>
                     <td>
-                      <Button
-                        size="sm"
-                        variant="info"
-                        className="me-2"
-                        title="Editar Usuario"
-                        disabled={userId === u.id}
-                      >
-                        <FontAwesomeIcon icon={faPencil} className="me-2" />
-                        Editar
-                      </Button>
+                      {editingUserId === u.id ? (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          className="me-2"
+                          title="Guardar"
+                          onClick={() => handleSaveRole(u.id)}
+                        >
+                          Guardar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="info"
+                          className="me-2"
+                          title="Editar Usuario"
+                          disabled={userId === u.id}
+                          onClick={() => handleEditRole(u.id, u.role)}
+                        >
+                          <FontAwesomeIcon icon={faPencil} className="me-2" />
+                          Editar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         className="btn btn-primary me-2"

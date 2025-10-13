@@ -77,7 +77,6 @@ export const updateUser = async (req,res) => {
     console.error("Error al actualizar usuario: ", error);
     res.status(500).json({ message: "Error al actualizar usuario." });
   }
-
 };
 
 export const registerUser = async (req, res) => {

@@ -11,13 +11,14 @@ import {
   deleteUser,
 } from "../services/auth.services.js";
 
-import { blockUser } from "../services/superadmin.services.js";
+import { blockUser, updateUserRole } from "../services/superadmin.services.js";
 
 const router = Router();
 
 // SuperAdmin Routes
 router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers);
 router.patch("/:id/block", verifyToken, roleMiddleware("superadmin"), blockUser);
+router.patch("/:id/updateRole", verifyToken, roleMiddleware("superadmin"), updateUserRole);
 
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);

@@ -80,3 +80,21 @@ export const blockUser = async (id, token) => {
     throw error;
   }
 };
+
+export const updateRole = async (id, token, data) => {
+  try {
+    const res = await axios.patch(
+      `${API_URL}/api/users/${id}/updateRole`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error al actualizar rol: ", error);
+    throw error;
+  }
+};
