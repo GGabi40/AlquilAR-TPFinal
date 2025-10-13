@@ -19,7 +19,7 @@ import FAQ from "./components/pages/FAQ";
 import ContactUs from "./components/pages/ContactUs";
 import PublishSteps from "./components/publish/PublishSteps";
 import PropertyCards from "./components/propertyCards/PropertyCards";
-import NotFound from "./components/error/NotFound";
+import NotFound from "./components/error/notFound/NotFound.jsx";
 import PropertyView from "./components/propertyView/PropertyView";
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 import ResetPassword from "./components/auth/resetPassword/ResetPassword";
@@ -27,6 +27,7 @@ import Profile from "./components/profile/Profile";
 import Protected from "./ProtectedRoute";
 
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
+import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
 
 function App() {
   return (
@@ -72,7 +73,7 @@ function App() {
             <Route path="/user/profile" element={<Profile />} />
           </Route>
           <Route path="*" element={<NotFound />} />
-          <Route path="/unauthorized" element={<NotFound />} /> {/* Crear */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
         </Route>
       </Routes>
     </BrowserRouter>
