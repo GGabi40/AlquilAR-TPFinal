@@ -77,7 +77,6 @@ export const updateUser = async (req,res) => {
     console.error("Error al actualizar usuario: ", error);
     res.status(500).json({ message: "Error al actualizar usuario." });
   }
-
 };
 
 export const registerUser = async (req, res) => {
@@ -228,9 +227,23 @@ export const forgotPassword = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
+    
     const user = await User.findByPk(id);
     if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
+    
+    const isOwner = parseInt(id) === user.id;
+    const isSuperadmin = req.user.role === 'superadmin';
+
+    if(!isOwner && !isSuperadmin)
+    {
+      return res.status(403).json({ message: 'No tenés autorización para eliminar este usuario.' });
+    }
+
+    if (isSuperadmin && isOwner) {
+      return res.status(403).json({
+        message: "No podés eliminar tu propia cuenta de superadministrador.",
+      });
+    }
 
     await user.destroy({ where: { id } });
 

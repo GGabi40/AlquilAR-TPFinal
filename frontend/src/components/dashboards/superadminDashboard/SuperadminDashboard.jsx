@@ -11,11 +11,16 @@ import Notifications, {
 } from "../../ui/toaster/Notifications.jsx";
 
 import usePagination from "../../../hooks/usePagination";
-import { blockUser, delUser, getAllUsers } from "../../../services/userService";
+import {
+  blockUser,
+  delUser,
+  getAllUsers,
+  updateRole,
+} from "../../../services/userService";
 import { AuthenticationContext } from "../../../services/auth.context";
 
 export default function SuperadminDashboard() {
-  const { token } = useContext(AuthenticationContext);
+  const { token, userId } = useContext(AuthenticationContext);
   const [showBlock, setShowBlock] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
   const [showDelete, setShowDelete] = useState(false);
@@ -38,6 +43,8 @@ export default function SuperadminDashboard() {
   ]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [errorUsers, setErrorUsers] = useState(null);
+  const [editingUserId, setEditingUserId] = useState(null);
+  const [editedRole, setEditedRole] = useState(null);
 
   const {
     data: propiedades,
@@ -71,6 +78,42 @@ export default function SuperadminDashboard() {
       );
 
       toastSuccess("Cuenta bloqueada");
+    } catch (error) {
+      toastError("Algo pasó...");
+      throw error;
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await delUser(userId, token);
+      toastSuccess("Cuenta eliminada");
+
+      setUsers((prevUsers) => prevUsers.filter((u) => u.id !== userId));
+    } catch (error) {
+      toastError("Algo pasó...");
+      throw error;
+    }
+  };
+
+  const handleEditRole = (userId, userRole) => {
+    setEditingUserId(userId);
+    setEditedRole(userRole);
+  };
+
+  const handleSaveRole = async (userId) => {
+    try {
+      await updateRole(userId, token, { role: editedRole });
+
+      const updatedUsers = users.map((u) =>
+        u.id === userId ? { ...u, role: editedRole } : u
+      );
+      setUsers(updatedUsers);
+
+      setEditingUserId(null);
+      setEditedRole(null);
+
+      toastSuccess("Rol actualizado correctamente.");
     } catch (error) {
       toastError("Algo pasó...");
       throw error;
@@ -147,24 +190,53 @@ export default function SuperadminDashboard() {
                       ></span>
                     </td>
                     <td>
-                      {u.role === "owner" && "Propietario"}
-                      {u.role === "superadmin" && "SuperAdmin"}
-                      {u.role === "user" && "Inquilino"}
+                      {editingUserId === u.id ? (
+                        <select
+                          value={editedRole}
+                          onChange={(e) => setEditedRole(e.target.value)}
+                          className="form-select"
+                        >
+                          <option value="superadmin">Superadmin</option>
+                          <option value="owner">Propietario</option>
+                          <option value="user">Inquilino</option>
+                        </select>
+                      ) : u.role === "owner" ? (
+                        "Propietario"
+                      ) : u.role === "superadmin" ? (
+                        "SuperAdmin"
+                      ) : (
+                        "Inquilino"
+                      )}
                     </td>
                     <td>
-                      <Button
-                        size="sm"
-                        variant="info"
-                        className="me-2"
-                        title="Editar Usuario"
-                      >
-                        <FontAwesomeIcon icon={faPencil} className="me-2" />
-                        Editar
-                      </Button>
+                      {editingUserId === u.id ? (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          className="me-2"
+                          title="Guardar"
+                          onClick={() => handleSaveRole(u.id)}
+                        >
+                          Guardar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="info"
+                          className="me-2"
+                          title="Editar Usuario"
+                          disabled={userId === u.id}
+                          onClick={() => handleEditRole(u.id, u.role)}
+                        >
+                          <FontAwesomeIcon icon={faPencil} className="me-2" />
+                          Editar
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         className="btn btn-primary me-2"
                         title={u.isBlocked ? "Desbloquear" : "Bloquear"}
+                        disabled={userId === u.id}
                         onClick={() => {
                           setSelectedUser(u);
                           setShowBlock(true);
@@ -177,6 +249,11 @@ export default function SuperadminDashboard() {
                         size="sm"
                         variant="danger"
                         title="Eliminar usuario"
+                        disabled={userId === u.id}
+                        onClick={() => {
+                          setSelectedUser(u);
+                          setShowDelete(true);
+                        }}
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
@@ -295,6 +372,20 @@ export default function SuperadminDashboard() {
         confirmText={selectedUser.isBlocked ? "Desbloquear" : "Bloquear"}
         cancelText="Cancelar"
         variant={selectedUser.isBlocked ? "success" : "danger"}
+      />
+
+      <ConfirmModal
+        show={showDelete}
+        title="Confirmar eliminación de cuenta"
+        message={`⚠️ Esta acción eliminará la cuenta del usuario del usuario ${selectedUser.name} ${selectedUser.surname}. ¿Deseas continuar?`}
+        onConfirm={() => {
+          handleDeleteUser(selectedUser.id);
+          setShowDelete(false);
+        }}
+        onClose={() => setShowDelete(false)}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
       />
     </Container>
   );

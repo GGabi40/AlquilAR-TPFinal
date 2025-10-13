@@ -50,9 +50,9 @@ export const updateUser = async (id, endpoint = "users", userData, token) => {
   }
 };
 
-export const delUser = async (id, endpoint = "users", token) => {
+export const delUser = async (id, token) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/${endpoint}/${id}/delete`, {
+    const response = await axios.delete(`${API_URL}/api/users/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -77,6 +77,24 @@ export const blockUser = async (id, token) => {
     return res.data;
   } catch (error) {
     console.error("Error al desactivar: ", error);
+    throw error;
+  }
+};
+
+export const updateRole = async (id, token, data) => {
+  try {
+    const res = await axios.patch(
+      `${API_URL}/api/users/${id}/updateRole`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error al actualizar rol: ", error);
     throw error;
   }
 };
