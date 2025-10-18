@@ -79,7 +79,7 @@ const Nav = () => {
             <li className="nav-item">
               <Link
                 className="nav-link px-3 py-1 text-white"
-                to="/add-property"
+                to="/publish-steps"
               >
                 Publicar
               </Link>

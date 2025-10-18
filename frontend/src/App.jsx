@@ -40,7 +40,7 @@ function App() {
           <Route path="/create-account" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/add-property" element={<PublishSteps />} />
+          <Route path="/publish-steps" element={<PublishSteps />} />
           <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
           <Route path="/add-property/images" element={<PropertyImages />} />

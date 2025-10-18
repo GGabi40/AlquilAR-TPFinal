@@ -204,3 +204,48 @@ ul.footer-terms-conditions > li > a:hover {
   color: rgb(222, 45, 80);
   display: inline;
 }
+
+.dotted-line {
+  border: none;
+  border-top: 3px dotted #012b59;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.small-benefit {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-benefit .fa-icon {
+  min-width: 30px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.small-benefit:hover .fa-icon {
+  transform: translateY(-3px);
+  color: #0056b3;
+}
+
+.card-step:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
+}
+
+.card-step:hover .step-image {
+  transform: scale(1.05);
+  filter: drop-shadow(0px 3px 10px rgba(0, 123, 255, 0.25));
+}
+
+.badge {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-step:hover .badge {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
