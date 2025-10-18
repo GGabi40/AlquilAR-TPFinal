@@ -1,11 +1,36 @@
 import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faBullhorn,
+  faStar,
+  faBuilding,
+  faHandHoldingHeart,
+  faHouse,
+  faVideoCamera,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../customStyle.css";
 
 const steps = [
-  { icon: "bi-house", text: "Danos más detalles sobre la propiedad" },
-  { icon: "bi-camera-video", text: "Subí fotos y videos" },
-  { icon: "bi-megaphone", text: "Publicá sin costo" },
+  { icon: faHouse, text: "Danos más detalles sobre la propiedad" },
+  { icon: faVideoCamera, text: "Subí fotos y videos" },
+  { icon: faBullhorn, text: "Publicá sin costo" },
+]; // agg imagenes
+
+const beneficios = [
+  {
+    icon: faBullhorn,
+    text: "Tu publicación llega a miles de inquilinos potenciales",
+  },
+  { icon: faStar, text: "Podés destacar tu propiedad fácilmente" },
+  {
+    icon: faBuilding,
+    text: "Gestioná tus propiedades desde un solo lugar",
+  },
+  {
+    icon: faHandHoldingHeart,
+    text: "Publicar es totalmente gratuito y rápido",
+  },
 ];
 
 const Publicar = () => {
@@ -34,19 +59,39 @@ const Publicar = () => {
             ¡Mostrá tu propiedad al mundo!
           </h1>
           <p className="lead mb-4">
-            Cargá los datos, subí tus fotos y encontrá inquilinos interesados en minutos.
+            Cargá los datos, subí tus fotos y encontrá inquilinos interesados en
+            minutos.
           </p>
-          <Button
-            variant="primary"
-            size="lg"
-            className="fw-bold px-4 py-2"
-          >
+          <Button variant="primary" size="lg" className="fw-bold px-4 py-2">
             Empezá ahora
           </Button>
         </Container>
       </section>
 
-      {/* Sección de pasos */}
+      <section className="benefits-section py-5 bg-white">
+        <Container>
+          <Row className="justify-content-center text-center mb-4">
+            <Col md={10}>
+              <hr className="dotted-line mb-5" />
+              <Row className="gy-4">
+                {beneficios.map((item, index) => (
+                  <Col key={index} xs={12} md={3}>
+                    <p className="fw-semibold text-muted small-benefit">
+                      <FontAwesomeIcon
+                        icon={item.icon}
+                        className="text-primary me-2 fs-4"
+                      />
+                      {item.text}
+                    </p>
+                  </Col>
+                ))}
+              </Row>
+              <hr className="dotted-line mt-5" />
+            </Col>
+          </Row>
+        </Container>
+      </section>
+
       <Container fluid className="py-5 bg-light">
         <Row className="justify-content-center text-center mb-4">
           <Col md={8}>
@@ -65,7 +110,10 @@ const Publicar = () => {
                   <span className="badge bg-primary rounded-circle fs-6 me-2">
                     {index + 1}
                   </span>
-                  <i className={`bi ${step.icon} fs-1 text-primary`}></i>
+                  <FontAwesomeIcon
+                    icon={step.icon}
+                    className="text-primary me-2 fs-4"
+                  />
                 </div>
                 <Card.Body>
                   <Card.Text className="fw-semibold">{step.text}</Card.Text>

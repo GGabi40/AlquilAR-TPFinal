@@ -204,3 +204,29 @@ ul.footer-terms-conditions > li > a:hover {
   color: rgb(222, 45, 80);
   display: inline;
 }
+
+.dotted-line {
+  border: none;
+  border-top: 3px dotted #012b59;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.small-benefit {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-benefit .fa-icon {
+  min-width: 30px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.small-benefit:hover .fa-icon {
+  transform: translateY(-3px);
+  color: #0056b3;
+}
