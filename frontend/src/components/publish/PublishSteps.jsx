@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
+import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBullhorn,
@@ -11,29 +12,43 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "../../customStyle.css";
 
-const steps = [
-  { icon: faHouse, text: "Danos más detalles sobre la propiedad" },
-  { icon: faVideoCamera, text: "Subí fotos y videos" },
-  { icon: faBullhorn, text: "Publicá sin costo" },
-]; // agg imagenes
+import { AuthenticationContext } from "../../services/auth.context";
 
-const beneficios = [
-  {
-    icon: faBullhorn,
-    text: "Tu publicación llega a miles de inquilinos potenciales",
-  },
-  { icon: faStar, text: "Podés destacar tu propiedad fácilmente" },
-  {
-    icon: faBuilding,
-    text: "Gestioná tus propiedades desde un solo lugar",
-  },
-  {
-    icon: faHandHoldingHeart,
-    text: "Publicar es totalmente gratuito y rápido",
-  },
-];
+const PublishSteps = () => {
+  const navigate = useNavigate();
+  const { token } = useContext(AuthenticationContext);
+  const [isLogged, setIsLogged] = useState(false);
 
-const Publicar = () => {
+  useEffect(() => {
+    if(token) setIsLogged(true);
+  }, [token]);
+
+  const handleClick = () => {
+    isLogged ? navigate("/add-property/location") : navigate("/create-account");
+  };
+
+  const steps = [
+    { icon: faHouse, text: "Danos más detalles sobre la propiedad" },
+    { icon: faVideoCamera, text: "Subí fotos y videos" },
+    { icon: faBullhorn, text: "Publicá sin costo" },
+  ]; // agg imagenes
+
+  const beneficios = [
+    {
+      icon: faBullhorn,
+      text: "Tu publicación llega a miles de inquilinos potenciales",
+    },
+    { icon: faStar, text: "Podés destacar tu propiedad fácilmente" },
+    {
+      icon: faBuilding,
+      text: "Gestioná tus propiedades desde un solo lugar",
+    },
+    {
+      icon: faHandHoldingHeart,
+      text: "Publicar es totalmente gratuito y rápido",
+    },
+  ];
+
   return (
     <>
       <section
@@ -62,7 +77,12 @@ const Publicar = () => {
             Cargá los datos, subí tus fotos y encontrá inquilinos interesados en
             minutos.
           </p>
-          <Button variant="primary" size="lg" className="fw-bold px-4 py-2">
+          <Button
+            variant="primary"
+            size="lg"
+            className="fw-bold px-4 py-2"
+            onClick={handleClick}
+          >
             Empezá ahora
           </Button>
         </Container>
@@ -125,8 +145,14 @@ const Publicar = () => {
 
         <Row className="justify-content-center text-center">
           <Col md={6}>
-            <Button variant="primary" size="lg" className="w-100 fw-bold">
-              Iniciar Sesión y Registrá tu Propiedad
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-100 fw-bold"
+              onClick={handleClick}
+            >
+              {isLogged ? "Registrá tu Propiedad" : "Iniciar Sesión y Registrá tu Propiedad"}
+              {" "}
             </Button>
           </Col>
         </Row>
@@ -135,4 +161,4 @@ const Publicar = () => {
   );
 };
 
-export default Publicar;
+export default PublishSteps;
