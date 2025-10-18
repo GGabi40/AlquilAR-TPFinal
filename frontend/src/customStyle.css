@@ -230,3 +230,22 @@ ul.footer-terms-conditions > li > a:hover {
   transform: translateY(-3px);
   color: #0056b3;
 }
+
+.card-step:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0, 123, 255, 0.15);
+}
+
+.card-step:hover .step-image {
+  transform: scale(1.05);
+  filter: drop-shadow(0px 3px 10px rgba(0, 123, 255, 0.25));
+}
+
+.badge {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-step:hover .badge {
+  transform: scale(1.15);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}

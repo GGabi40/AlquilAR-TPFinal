@@ -7,12 +7,13 @@ import {
   faStar,
   faBuilding,
   faHandHoldingHeart,
-  faHouse,
-  faVideoCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import "../../customStyle.css";
 
 import { AuthenticationContext } from "../../services/auth.context";
+import Step1 from "/public/illustrations/publish-steps/step-1.webp";
+import Step2 from "/public/illustrations/publish-steps/step-2.webp";
+import Step3 from "/public/illustrations/publish-steps/step-3.webp";
 
 const PublishSteps = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const PublishSteps = () => {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    if(token) setIsLogged(true);
+    if (token) setIsLogged(true);
   }, [token]);
 
   const handleClick = () => {
@@ -28,10 +29,10 @@ const PublishSteps = () => {
   };
 
   const steps = [
-    { icon: faHouse, text: "Danos más detalles sobre la propiedad" },
-    { icon: faVideoCamera, text: "Subí fotos y videos" },
-    { icon: faBullhorn, text: "Publicá sin costo" },
-  ]; // agg imagenes
+    { image: Step1, text: "Danos más detalles sobre la propiedad" },
+    { image: Step2, text: "Subí fotos y videos" },
+    { image: Step3, text: "Publicá sin costo" },
+  ];
 
   const beneficios = [
     {
@@ -122,21 +123,79 @@ const PublishSteps = () => {
           </Col>
         </Row>
 
-        <Row className="justify-content-center text-center align-items-center mb-5 gy-4">
+        <Row className="justify-content-center text-center align-items-stretch mb-5 gy-4">
           {steps.map((step, index) => (
             <Col key={index} xs={12} md={3} className="d-flex">
-              <Card className="p-3 shadow-sm card-step w-100">
-                <div className="step-icon mb-3">
-                  <span className="badge bg-primary rounded-circle fs-6 me-2">
+              <Card
+                className="p-4 shadow-sm card-step w-100 border-0 rounded-4 position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #ffffff 0%, #f8fcff 100%)",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                }}
+              >
+                <div
+                  className="position-absolute top-0 start-0 w-100 h-100"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 30% 20%, rgba(0,123,255,0.05) 0%, transparent 70%)",
+                    zIndex: 0,
+                  }}
+                ></div>
+
+                <div className="position-relative mb-3" style={{ zIndex: 1 }}>
+                  <span
+                    className="badge rounded-circle position-absolute top-0 start-50 translate-middle fs-6"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background:
+                        "linear-gradient(135deg, var(--bs-info) 0%, var(--bs-primary) 100%)",
+                      color: "#fff",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                      fontWeight: "600",
+                    }}
+                  >
                     {index + 1}
                   </span>
-                  <FontAwesomeIcon
-                    icon={step.icon}
-                    className="text-primary me-2 fs-4"
-                  />
+
+                  <div className="d-flex justify-content-center mt-4">
+                    <img
+                      src={step.image}
+                      alt={`Paso ${index + 1}`}
+                      style={{
+                        height: "160px",
+                        width: "auto",
+                        objectFit: "contain",
+                        filter: "drop-shadow(0px 0px 1px rgba(0, 0, 0, 1))",
+                        transition: "transform 0.3s ease",
+                      }}
+                      className="step-image"
+                    />
+                  </div>
                 </div>
-                <Card.Body>
-                  <Card.Text className="fw-semibold">{step.text}</Card.Text>
+
+                <Card.Body
+                  className="d-flex flex-column justify-content-center"
+                  style={{ zIndex: 1 }}
+                >
+                  <Card.Text className="fw-bold fs-6" style={{ color:"var(--bs-info-text-emphasis)" }}>
+                    {step.text}
+                  </Card.Text>
+                  <small
+                    className="text-white mb-2 fw-semibold fs-5 "
+                    style={{
+                      background: "var(--bs-primary)",
+                      padding: "10px 15px",
+                      borderRadius: "10px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+                    }}
+                  >
+                    Paso {index + 1}
+                  </small>
                 </Card.Body>
               </Card>
             </Col>
@@ -151,8 +210,9 @@ const PublishSteps = () => {
               className="w-100 fw-bold"
               onClick={handleClick}
             >
-              {isLogged ? "Registrá tu Propiedad" : "Iniciar Sesión y Registrá tu Propiedad"}
-              {" "}
+              {isLogged
+                ? "Registrá tu Propiedad"
+                : "Iniciar Sesión y Registrá tu Propiedad"}{" "}
             </Button>
           </Col>
         </Row>
