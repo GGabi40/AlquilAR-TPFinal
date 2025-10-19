@@ -10,7 +10,7 @@ import Notifications, {
   toastError,
 } from "../../ui/toaster/Notifications.jsx";
 
-import usePagination from "../../../hooks/usePagination";
+import usePagination from "../../../hooks/usePagination.js";
 import {
   blockUser,
   delUser,
