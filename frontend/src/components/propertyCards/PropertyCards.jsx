@@ -18,6 +18,7 @@ const PropertyCards = () => {
 
     const [filteredProperties, setFilteredProperties] = useState([]);
 
+    const [gridView, setGridView] = useState(false);
 
     const properties = [
         { id: 1, titulo: "San Lorenzo 1222", tipo: "Departamento", direccion: "Córdoba, Argentina", precio: 600000, hab: 3, img: "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D", localidad: "Rosario", provincia: "Santa Fe" },
@@ -29,7 +30,7 @@ const PropertyCards = () => {
     ];
     // ver buscador, los filtros si andan bien 
 
-    const handleApplyFilters  = () => {
+    const handleApplyFilters = () => {
         const results = properties.filter(p => {
             return (
                 (tipo === '' || p.tipo === tipo) &&
@@ -136,37 +137,52 @@ const PropertyCards = () => {
 
                         </Dropdown.Menu>
                     </Dropdown>
+
+                    <Button variant="outline-secondary" className="ms-2" onClick={() => setGridView(!gridView)}>
+                        {gridView ? 'Vista Lista' : 'Vista Cuadrícula'}
+                    </Button>
                 </Form>
             </Container>
 
-            <div className='d-flex flex-column align-items-center gap-3 w-100'>
-                {(filteredProperties.length > 0 ? filteredProperties : properties).map((p) => (
-                    <Card className="shadow-sm login-form" style={{ maxWidth: '500px', minWidth: '500px' }} key={p.id}>
-                        <Row className="g-0" style={{ minHeight: '150px' }}>
-                            <Col md={4} className='p-0'>
-                                <Card.Img
-                                    src={p.img}
-                                    alt={p.titulo}
-                                    style={{ width: "100%", height: '100%', objectFit: 'cover' }}
-                                />
-                            </Col>
-                            <Col md={8} className="d-flex flex-column justify-content-between p-2">
-                                <Card.Body>
-                                    <Card.Title style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.titulo}</Card.Title>
-                                    <Card.Text style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        <strong>Dirección:</strong> {p.direccion} <br />
-                                        <strong>Precio:</strong> ${p.precio} <br />
-                                        <strong>Habitaciones:</strong> {p.hab}
-                                    </Card.Text>
+            <div className={gridView ? 'container' : 'd-flex flex-column align-items-center gap-3'}>
+                <Row className={gridView ? 'g-3' : 'justify-content-center g-3 px-3'}>
+                    {(filteredProperties.length > 0 ? filteredProperties : properties).map((p) => (
+                        <Col key={p.id} md={gridView ? 4 : 12}>  {/* 4 = 3 cards por fila */}
+                            <Card
+                                className={`shadow-sm login-form ${!gridView ? 'mx-auto' : ''}`}
+                                style={{
+                                    width: gridView ? '100%' : '80%', 
+                                    maxWidth: '800px',             
+                                    minHeight: '200px'
+                                }}
+                            >
+                                <Row className="g-0" style={{ minHeight: '150px' }}>
+                                    <Col md={4} className='p-0'>
+                                        <Card.Img
+                                            src={p.img}
+                                            alt={p.titulo}
+                                            style={{ width: "100%", height: '100%', objectFit: 'cover' }}
+                                        />
+                                    </Col>
+                                    <Col md={8} className="d-flex flex-column justify-content-between p-2">
+                                        <Card.Body>
+                                            <Card.Title style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.titulo}</Card.Title>
+                                            <Card.Text style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                <strong>Dirección:</strong> {p.direccion} <br />
+                                                <strong>Precio:</strong> ${p.precio} <br />
+                                                <strong>Habitaciones:</strong> {p.hab}
+                                            </Card.Text>
 
-                                    <Button as={Link} to={`/property/${p.id}`} variant="primary">
-                                        + Información
-                                    </Button>
-                                </Card.Body>
-                            </Col>
-                        </Row>
-                    </Card>
-                ))}
+                                            <Button as={Link} to={`/property/${p.id}`} variant="primary">
+                                                + Información
+                                            </Button>
+                                        </Card.Body>
+                                    </Col>
+                                </Row>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
             </div>
 
         </div>
