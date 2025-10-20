@@ -7,12 +7,13 @@ const router = express.Router();
 
 router.post("/:propertyId", authenticate, async (req, res) => {
     try {
-        const { stars } = req.body;
+        const { stars, content } = req.body;
 
         const [rating, created] = await Rating.upsert({
-            user_id: req.user.id,
-            property_id: req.params.propertyId,
-            stars
+            userId: req.user.id,
+            propertyId: req.params.propertyId,
+            stars,
+            content
         }, { returning: true });
 
         res.json({
@@ -24,10 +25,11 @@ router.post("/:propertyId", authenticate, async (req, res) => {
     }
 });
 
-router.get(":propertyId", async (req, res) => {
+router.get("/:propertyId", async (req, res) => {
     try {
         const ratings = await Rating.findAll({
-            where: { propertyId: req.params.propertyId }
+            where: { propertyId: req.params.propertyId },
+            order: [["id", "DESC"]],
         });
         res.json(ratings);
     } catch (err) {
@@ -38,7 +40,7 @@ router.get(":propertyId", async (req, res) => {
 router.get("/:propertyId/average", async (req, res) => {
     try {
         const avg = await Rating.findOne({
-            attributes: [[sequelize.fn("AVG", sequelize.col("estrellas")), "promedio"]],
+            attributes: [[sequelize.fn("AVG", sequelize.col("stars")), "promedio"]],
             where: { property_id: req.params.propertyId },
             raw: true
         });

@@ -20,6 +20,10 @@ export const Rating = sequelize.define("Rating", {
         allowNull: false,
         validate: { min: 1, max: 5 }
     },
+    content: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    }
 }, {
     tableName: "ratings",
     timestamps: false,
