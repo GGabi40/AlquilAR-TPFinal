@@ -1,60 +1,31 @@
 import express from "express";
 import { Property } from "../models/Property.js";
-import { verifyToken as authenticate, roleMiddleware as authorizeRoles } from "../middleware/authMiddleware.js";
+import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
 import { User } from "../models/User.js";
-import * as propertyService from "../services/properties.services.js";
+import {
+    createNewProperty,
+    getPropertiesByOwner,
+    getPropertyById,
+    getAllProperties,
+    getFeaturedProperties,
+    updateProperty,
+    updateFeaturedProperty,
+    deleteProperty
+} from "../services/properties.services.js";
 
 const router = express.Router();
 
-router.get(
-    "/owner/:id",
-    authenticate,
-    authorizeRoles(["owner", "superadmin"]),
-    async (req, res) => {
-        try {
-            const { id } = req.params;
+/* Owners and Superadmin */
+router.post("/", verifyToken, roleMiddleware(["owner", "superadmin"]), createNewProperty);
+router.put("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), updateProperty);
+router.delete("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), deleteProperty);
+router.get("/owner/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), getPropertiesByOwner);
+router.patch("/:id/featured", verifyToken, roleMiddleware(["owner", "superadmin"]), updateFeaturedProperty);
 
-            const properties = await Property.findAll({
-                where: { ownerId: id },
-            });
-
-            res.json(properties);
-        } catch (error) {
-            console.error("Error al obtener propiedades:", error);
-            res.status(500).json({ message: "Error al obtener propiedades" });
-        }
-    }
-);
-
-router.get("/", authenticate, authorizeRoles(["superadmin"]), async (req, res) => {
-    try {
-        const properties = await Property.findAll({
-            include: [{ model: User, attributes: ["id", "correo"] }],
-            order: [["createdAt", "DESC"]],
-        });
-
-        res.json(properties);
-    } catch (error) {
-        console.error("Error al obtener todas las propiedades:", error);
-        res.status(500).json({ message: "Error al obtener propiedades" });
-    }
-});
-
-router.get("/featured", async (req, res) => {
-    try {
-        const properties = await Property.findAll({
-            where: { featured: true },
-            order: [["createdAt", "DESC"]],
-            limit: 9,
-        });
-
-        res.json(properties);
-    } catch (error) {
-        console.error("Error al actualizar propiedad destacada: ", error);
-        res.status(500).json({ message: "Error al actualizar propiedad destacada" });
-    }
-});
-
+/* Users */
+router.get("/", getAllProperties);
+router.get("/featured", getFeaturedProperties);
+router.get("/:id", getPropertyById);
 router.get("/recent", async (req, res) => {
     try {
         const properties = await Property.findAll({
@@ -69,36 +40,6 @@ router.get("/recent", async (req, res) => {
     }
 });
 
-router.patch("/:id/featured", authenticate, authorizeRoles(["owner", "superadmin"]), async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { featured } = req.body;
-
-        const property = await Property.findByPk(id);
-
-        if (!property) {
-            return res.status(404).json({ message: "Propiedad no encontrada" });
-        }
-
-        property.featured = featured;
-        await property.save();
-
-        res.json({
-            message: `Propiedad ${featured ? "marcada" : "desmarcada"} como destacada`,
-            property,
-        });
-    } catch (error) {
-        console.error("Error al actualizar propiedad destacada:", error);
-        res.status(500).json({ message: "Error al actualizar propiedad destacada" });
-    }
-});
-
-
-// router.post("/", authenticate, authorizeRoles(["owner", "superadmin"]), createProperty);
-
-// router.put("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), updateProperty);
-
-// router.delete("/:id", authenticate, authorizeRoles(["owner", "superadmin"]), deleteProperty);
 
 import { Op } from "sequelize";
 
