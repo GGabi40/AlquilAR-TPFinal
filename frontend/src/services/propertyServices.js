@@ -30,10 +30,10 @@ const PropertyServices = {
     updateApprovalStatus: async (id, newStatus, token) => {
         try {
             const response = await axios.put(
-             `${API_URL}/${id}/status`,
-              { status: newStatus },
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+                `${API_URL}/${id}/status`,
+                { status: newStatus },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
             return response.data;
         } catch (error) {
             console.error("Error actualizando estado:", error);
@@ -52,6 +52,15 @@ const PropertyServices = {
             throw error;
         }
     },
+
+    approveProperty: async (id, token) => {
+        return PropertyServices.updateApprovalStatus(id, "approved", token);
+    },
+
+    rejectProperty: async (id, token) => {
+        return PropertyServices.updateApprovalStatus(id, "rejected", token)
+    }
 };
 
 export default PropertyServices;
+export const { getAllProperties, approveProperty, rejectProperty, deleteProperty } = PropertyServices;
