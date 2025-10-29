@@ -3,8 +3,16 @@ import { Table, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPencil, faShield } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "../../../ui/modal/ConfirmModal.jsx";
-import { toastSuccess, toastError } from "../../../ui/toaster/Notifications.jsx";
-import { getAllUsers, blockUser, delUser, updateRole } from "../../../../services/userService.js";
+import {
+  toastSuccess,
+  toastError,
+} from "../../../ui/toaster/Notifications.jsx";
+import {
+  getAllUsers,
+  blockUser,
+  delUser,
+  updateRole,
+} from "../../../../services/userService.js";
 
 const UserTable = ({ token, userId }) => {
   const [users, setUsers] = useState([]);
@@ -35,7 +43,8 @@ const UserTable = ({ token, userId }) => {
     try {
       if (type === "delete") await delUser(item.id, token);
       if (type === "block") await blockUser(item.id, token);
-      if (type === "saveRole") await updateRole(item.id, token, { role: editedRole });
+      if (type === "saveRole")
+        await updateRole(item.id, token, { role: editedRole });
 
       setUsers((prev) =>
         prev
@@ -43,8 +52,7 @@ const UserTable = ({ token, userId }) => {
             u.id === item.id
               ? {
                   ...u,
-                  isBlocked:
-                    type === "block" ? !u.isBlocked : u.isBlocked,
+                  isBlocked: type === "block" ? !u.isBlocked : u.isBlocked,
                   role: type === "saveRole" ? editedRole : u.role,
                 }
               : u
@@ -52,9 +60,21 @@ const UserTable = ({ token, userId }) => {
           .filter((u) => (type === "delete" ? u.id !== item.id : true))
       );
 
-      toastSuccess(`${type} realizado correctamente`);
+      const actionMessages = {
+        delete: "Usuario eliminado correctamente",
+        block: "Estado de bloqueo actualizado correctamente",
+        saveRole: "Rol actualizado correctamente",
+      };
+
+      toastSuccess(actionMessages[type] || "Acción realizada correctamente");
     } catch (err) {
-      toastError(`Error al ${type}`);
+      const errorMessages = {
+        delete: "Error al eliminar usuario",
+        block: "Error al actualizar estado de bloqueo",
+        saveRole: "Error al actualizar rol",
+      };
+
+      toastError(errorMessages[type] || "Error al realizar la acción");
     } finally {
       closeModal();
       if (type === "saveRole") {
@@ -82,7 +102,9 @@ const UserTable = ({ token, userId }) => {
       case "delete":
         return `¿Seguro que deseas eliminar a ${item.name} ${item.surname}?`;
       case "block":
-        return `¿Deseas ${item.isBlocked ? "desbloquear" : "bloquear"} a ${item.name}?`;
+        return `¿Deseas ${item.isBlocked ? "desbloquear" : "bloquear"} a ${
+          item.name
+        }?`;
       case "saveRole":
         return `¿Confirmar cambio de rol a "${editedRole}" para ${item.name}?`;
       default:
@@ -157,9 +179,11 @@ const UserTable = ({ token, userId }) => {
                     <option value="user">Inquilino</option>
                   </select>
                 ) : (
-                  { superadmin: "SuperAdmin", owner: "Propietario", user: "Inquilino" }[
-                    u.role
-                  ]
+                  {
+                    superadmin: "SuperAdmin",
+                    owner: "Propietario",
+                    user: "Inquilino",
+                  }[u.role]
                 )}
               </td>
               <td>

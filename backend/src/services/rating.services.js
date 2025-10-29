@@ -1,5 +1,5 @@
-import { Rating } from "../models/Rating";
-import { sequelize } from "../config/db";
+import { Rating } from "../models/Rating.js";
+import { sequelize } from "../config/db.js";
 
 export const addOrUpdateRating = async (userId, propertyId, stars, content) => {
     const [rating, created] = await Rating.upsert(
