@@ -1,5 +1,7 @@
 import { Property } from "../models/Property.js";
 import { User } from "../models/User.js";
+import { Op } from "sequelize";
+
 
 export const getAllProperties = async (req, res) => {
   try {
@@ -156,6 +158,20 @@ export const getFeaturedProperties = async () => {
   }
 };
 
+// Traer propiedades recientes
+export const getRecentProperties = async (req, res) => {
+    try {
+        const properties = await Property.findAll({
+            order: [["createdAt", "DESC"]],
+            limit: 9,
+        });
+        res.json(properties);
+    } catch (error) {
+        console.error("Error al obtener propiedades recientes: ", error);
+        res.status(500).json({ message: "Error al obtener propiedades recientes" });
+    }
+}
+
 // Actualizar propiedad destacada
 export const updateFeaturedProperty = async (id, featured) => {
   try {
@@ -171,6 +187,69 @@ export const updateFeaturedProperty = async (id, featured) => {
   }
 };
 
+export const getSearchProperties = async (req, res) => {
+    try {
+        const {
+            address,
+            minPrice,
+            maxPrice,
+            keyword,
+            propertyType,
+            rentPreference,
+            status,
+            page = 1,
+            limit = 10
+        } = req.query;
+
+        const where = {};
+        
+        if (address) {
+            where.address = { [Op.like]: `%${address}%` };
+        }
+
+        if (minPrice && maxPrice) {
+            where.rentPrice = { [Op.between]: [minPrice, maxPrice] };
+        }
+
+        if (propertyType) {
+            where.propertyType = propertyType;
+        }
+
+        if (rentPreference) {
+            where.rentPreference = rentPreference;
+        }
+
+        if (status) {
+            where.status = status;
+        }
+
+        if (keyword) {
+            where[Op.or] = [
+                { address: { [Op.like]: `%${keyword}%` } },
+                { propertyType: { [Op.like]: `%${keyword}%` } }
+            ];
+        }
+
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Property.findAndCountAll({
+            where,
+            offset: parseInt(offset),
+            limit: parseInt(limit),
+            order: [["createdAt", "DESC"]]
+        });
+
+        res.json({
+            total: count,
+            page: parseInt(page),
+            totalPages: Math.ceil(count / limit),
+            properties: rows
+        });
+    } catch (error) {
+        console.error("Error en búsqueda:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
 
 //ver si sirve
 const validatePropertyData = (req) => {

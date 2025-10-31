@@ -10,7 +10,9 @@ import {
     getFeaturedProperties,
     updateProperty,
     updateFeaturedProperty,
-    deleteProperty
+    deleteProperty,
+    getRecentProperties,
+    getSearchProperties
 } from "../services/properties.services.js";
 
 const router = express.Router();
@@ -26,85 +28,8 @@ router.patch("/:id/featured", verifyToken, roleMiddleware(["owner", "superadmin"
 router.get("/", getAllProperties);
 router.get("/featured", getFeaturedProperties);
 router.get("/:id", getPropertyById);
-router.get("/recent", async (req, res) => {
-    try {
-        const properties = await Property.findAll({
-            order: [["createdAt", "DESC"]],
-            limit: 9,
-        });
+router.get("/recent", getRecentProperties);
 
-        res.json(properties);
-    } catch (error) {
-        console.error("Error al obtener propiedades recientes: ", error);
-        res.status(500).json({ message: "Error al obtener propiedades recientes" });
-    }
-});
-
-
-import { Op } from "sequelize";
-
-router.get("/search", async (req, res) => {
-    try {
-        const {
-            address,
-            minPrice,
-            maxPrice,
-            keyword,
-            propertyType,
-            rentPreference,
-            status,
-            page = 1,
-            limit = 10
-        } = req.query;
-
-        const where = {};
-        
-        if (address) {
-            where.address = { [Op.like]: `%${address}%` };
-        }
-
-        if (minPrice && maxPrice) {
-            where.rentPrice = { [Op.between]: [minPrice, maxPrice] };
-        }
-
-        if (propertyType) {
-            where.propertyType = propertyType;
-        }
-
-        if (rentPreference) {
-            where.rentPreference = rentPreference;
-        }
-
-        if (status) {
-            where.status = status;
-        }
-
-        if (keyword) {
-            where[Op.or] = [
-                { address: { [Op.like]: `%${keyword}%` } },
-                { propertyType: { [Op.like]: `%${keyword}%` } }
-            ];
-        }
-
-        const offset = (page - 1) * limit;
-
-        const { count, rows } = await Property.findAndCountAll({
-            where,
-            offset: parseInt(offset),
-            limit: parseInt(limit),
-            order: [["createdAt", "DESC"]]
-        });
-
-        res.json({
-            total: count,
-            page: parseInt(page),
-            totalPages: Math.ceil(count / limit),
-            properties: rows
-        });
-    } catch (error) {
-        console.error("Error en búsqueda:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-});
+router.get("/search", getSearchProperties);
 
 export default router;
