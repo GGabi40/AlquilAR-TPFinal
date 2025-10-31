@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
 import PropertyImage from "/illustrations/property-register/reg-prop-1.1.jpg";
 import PropertyTabs from './PropertyTabs';
+import { getProvinces, getLocalitiesByProvince } from '../../servicesLocation/ServicesLocation';
 
 import { toastSuccess, toastError } from "../ui/toaster/Notifications";
 
@@ -10,30 +11,37 @@ import { isEmpty, validateString } from "../../utils/validations";
 const PropertyForm = () => {
     const navigate = useNavigate();
 
-    const [provincia, setProvincia] = useState("");
-    const [localidad, setLocalidad] = useState("");
+    const [provincia, setProvincia] = useState([]);
+    const [localidad, setLocalidad] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState("");
     const [barrio, setBarrio] = useState("");
     const [direccion, setDireccion] = useState("");
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        getProvinces().then(setProvincia)
+    }, []);
+
+    useEffect(() => {
+        if (selectedProvince) {
+            getLocalitiesByProvince(selectedProvince).then(setLocalidad);
+        } else {
+            setLocalidad([]);
+        }
+    }, [selectedProvince]);
+
 
     const validateForm = () => {
         const newErrors = {};
         const regexEspacios = /^[a-zA-ZÀ-ÿ\s\.\-]+$/;
 
-        if (isEmpty(provincia)) {
+
+        if (isEmpty(selectedProvince)) {
             newErrors.provincia = "La provincia es obligatoria";
-        } else if (!validateString(provincia, 3, 50)) {
-            newErrors.provincia = "La provincia debe tener entre 3 y 50 caracteres";
-        } else if (!regexEspacios.test(provincia.trim())) {
-            newErrors.provincia = "La provicia solo puede contener letras y espacios"
         }
 
         if (isEmpty(localidad)) {
             newErrors.localidad = "La localidad es obligatoria";
-        } else if (!validateString(localidad, 3, 50)) {
-            newErrors.localidad = "La localidad debe tener entre 3 y 50 caracteres";
-        } else if (!regexEspacios.test(localidad.trim())) {
-            newErrors.localidad = "La localidad solo puede contener letras y espacios"
         }
 
         if (isEmpty(barrio)) {
@@ -97,32 +105,48 @@ const PropertyForm = () => {
                                     <PropertyTabs />
                                     <div className="mb-3">
                                         <label className="form-label d-inline">Provincia<span className="required-star"> *</span></label>
-                                        <input
-                                            type="text"
-                                            className={`form-control ${errors.provincia ? "is-invalid" : ""}`}
-                                            placeholder='Ingrese su Provincia'
+                                        <select
+                                            className={`form-select ${errors.provincia ? "is-invalid" : ""}`}
                                             value={provincia}
                                             onChange={(e) => {
-                                                setProvincia(e.target.value.trimStart());
+                                                setSelectedProvince(selectedProvince);
+                                                setLocalidad(""); // limpiar localidad al cambiar provincia
                                                 validateForm();
                                             }}
-                                        />
+                                            required
+                                        >
+                                            <option value="">Seleccione una provincia</option>
+                                            {provincia.map((prov) => (
+                                                <option key={prov} value={prov}>
+                                                    {prov}
+                                                </option>
+                                            ))}
+                                        </select>
                                         {errors.provincia && <div className="invalid-feedback">{errors.provincia}</div>}
                                     </div>
 
                                     <div className="mb-3">
                                         <label className="form-label d-inline">Localidad <span className="required-star">*</span>
                                         </label>
-                                        <input
-                                            type="text"
-                                            className={`form-control ${errors.localidad ? "is-invalid" : ""}`}
-                                            placeholder='Ingrese su Localidad/Ciudad'
+                                        <select
+                                            className={`form-select ${errors.localidad ? "is-invalid" : ""}`}
                                             value={localidad}
                                             onChange={(e) => {
-                                                setLocalidad(e.target.value.trimStart());
+                                                setLocalidad(e.target.value);
                                                 validateForm();
                                             }}
-                                        />
+                                            required
+                                            disabled={!provincia} // desactiva hasta que se elija una provincia
+                                        >
+                                            <option value="">
+                                                {provincia ? "Seleccione una localidad" : "Seleccione una provincia primero"}
+                                            </option>
+                                            {localidad.map((loc) => (
+                                                <option key={loc} value={loc}>
+                                                    {loc}
+                                                </option>
+                                            ))}
+                                        </select>
                                         {errors.localidad && <div className="invalid-feedback">{errors.localidad}</div>}
                                     </div>
 
