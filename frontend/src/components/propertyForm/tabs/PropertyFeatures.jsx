@@ -200,13 +200,17 @@ const PropertyFeatures = () => {
                 <FontAwesomeIcon icon={faRulerCombined} />
               </span>
               <input
-                type="text"
+                type="number"
+                placeholder="Ejemplo: 65"
                 className={`form-control ${
                   errors.superficie ? "is-invalid" : ""
                 }`}
                 value={superficie}
                 onChange={(e) => setSuperficie(e.target.value)}
               />
+              <span className="input-group-text">
+                m²
+              </span>
             </div>
             {errors.superficie && (
               <div className="invalid-feedback d-block">
@@ -222,7 +226,8 @@ const PropertyFeatures = () => {
                 <FontAwesomeIcon icon={faClockRotateLeft} />
               </span>
               <input
-                type="text"
+                type="number"
+                placeholder="Ejemplo: 10"
                 className={`form-control ${
                   errors.antiguedad ? "is-invalid" : ""
                 }`}
@@ -252,12 +257,16 @@ const PropertyFeatures = () => {
               </span>
               <input
                 type="text"
+                placeholder="Ingrese el monto mensual (ARS)"
                 className={`form-control ${
                   errors.precioAlquiler ? "is-invalid" : ""
                 }`}
                 value={precioAlquiler}
                 onChange={(e) => setPrecioAlquiler(e.target.value)}
               />
+              <span className="input-group-text">
+                AR$
+              </span>
             </div>
             {errors.precioAlquiler && (
               <div className="invalid-feedback d-block">
@@ -276,12 +285,16 @@ const PropertyFeatures = () => {
               </span>
               <input
                 type="text"
+                placeholder="Ingrese el monto mensual (ARS)"
                 className={`form-control ${
                   errors.precioExpensas ? "is-invalid" : ""
                 }`}
                 value={precioExpensas}
                 onChange={(e) => setPrecioExpensas(e.target.value)}
               />
+              <span className="input-group-text">
+                AR$
+              </span>
             </div>
             {errors.precioExpensas && (
               <div className="invalid-feedback d-block">
@@ -303,7 +316,7 @@ const PropertyFeatures = () => {
             className="form-control"
             rows="5"
             maxLength={300}
-            placeholder="Agregue detalles relevantes sobre la propiedad..."
+            placeholder="Agregue detalles relevantes: orientación, luminosidad, mascotas permitidas, etc."
             value={masInformacion}
             onChange={(e) => setMasInformacion(e.target.value)}
           />
