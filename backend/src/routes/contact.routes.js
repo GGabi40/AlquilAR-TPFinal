@@ -1,8 +1,8 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { Property } from "../models/Property";
-import { User } from "../models/User";
+import { Property } from "../models/Property.js";
+import { User } from "../models/User.js";
 
 dotenv.config();
 const router = express.Router();
