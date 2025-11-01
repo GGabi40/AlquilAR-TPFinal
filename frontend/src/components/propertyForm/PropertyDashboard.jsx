@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router";
 import PropertyTabs from "./tabs/PropertyTabs";
 import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
-import "./PropertyDashboard.css";
+import "./customStyles/PropertyDashboard.css";
 
 const PropertyDashboard = () => {
   return (

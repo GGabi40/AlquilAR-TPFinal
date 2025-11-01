@@ -1,0 +1,168 @@
+.form-section {
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+label {
+  font-weight: 500;
+  color: #333;
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+textarea.form-control {
+  resize: none;
+}
+
+.counter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.counter-group button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f8f9fa;
+  font-weight: bold;
+  color: #333;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.counter-group button:hover {
+  background: #e8f0ed;
+  color: #1a5e50;
+  transform: translateY(-1px);
+}
+
+.counter-group span {
+  min-width: 25px;
+  text-align: center;
+  font-weight: 500;
+}
+
+@media (min-width: 1200px) {
+  .property-step {
+    max-width: 950px;
+    margin: 0 auto;
+  }
+
+  .form-section .row {
+    margin-bottom: 1.2rem;
+  }
+
+  label {
+    font-size: 0.95rem;
+  }
+}
+
+/* 💻 Tablet (≤992px) */
+@media (max-width: 992px) {
+  .property-step {
+    padding: 1.2rem;
+  }
+
+  .form-section {
+    border-bottom: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-section .row {
+    row-gap: 1rem;
+  }
+
+  .counter-group {
+    justify-content: flex-start;
+  }
+
+  .btn {
+    font-size: 0.95rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 40%;
+  }
+}
+
+/* 📱 Móvil (769) */
+@media (max-width: 769px) {
+  .property-step {
+    padding: 0.5rem;
+  }
+
+  .step-title {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  .form-section {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .form-section .row {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .form-control,
+  .input-group {
+    width: 100%;
+  }
+
+  .counter-group {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .counter-group button {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+  }
+
+  .counter-group span {
+    font-size: 1rem;
+  }
+
+  textarea.form-control {
+    height: 130px;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .d-flex.justify-content-center.gap-3.mt-4 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+}
+
+/* 🧱 Extra: pantallas muy pequeñas (≤400px) */
+@media (max-width: 400px) {
+  .step-title {
+    font-size: 1rem;
+  }
+
+  .counter-group button {
+    width: 26px;
+    height: 26px;
+  }
+
+  label {
+    font-size: 0.85rem;
+  }
+}

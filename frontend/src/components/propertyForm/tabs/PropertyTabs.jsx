@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router";
-import "../PropertyTabs.css";
+import "../customStyles/PropertyTabs.css";
 
 const tabs = [
   { path: "/add-property/location", label: "Ubicación" },

@@ -6,7 +6,7 @@ import {
 } from "../../../servicesLocation/ServicesLocation";
 import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
 import { isEmpty, validateString } from "../../../utils/validations";
-import "../PropertyForm.css";
+import "../customStyles/PropertyForm.css";
 
 const PropertyForm = () => {
   const navigate = useNavigate();

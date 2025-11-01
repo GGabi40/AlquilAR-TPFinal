@@ -1,384 +1,337 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
-import PropertyTabs from './PropertyTabs';
-
 import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
-
 import { isEmpty } from "../../../utils/validations";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faRulerCombined,
+  faClockRotateLeft,
+  faMoneyBillWave,
+  faReceipt,
+  faCircleInfo,
+} from "@fortawesome/free-solid-svg-icons";
+import "../customStyles/PropertyFeatures.css";
 
 const PropertyFeatures = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [habitaciones, setHabitaciones] = useState(0);
+  const [ambientes, setAmbientes] = useState(1);
+  const [banios, setBanios] = useState(1);
+  const [superficie, setSuperficie] = useState("");
+  const [antiguedad, setAntiguedad] = useState("");
+  const [precioAlquiler, setPrecioAlquiler] = useState("");
+  const [precioExpensas, setPrecioExpensas] = useState("");
+  const [masInformacion, setMasInformacion] = useState("");
+  const [errors, setErrors] = useState({});
 
-    const [habitaciones, setHabitaciones] = useState(0);
-    const [ambientes, setAmbientes] = useState(1);
-    const [banios, setBanios] = useState(1);
-    const [superficie, setSuperficie] = useState("");
-    const [antiguedad, setAntiguedad] = useState("");
-    const [precioAlquiler, setPrecioAlquiler] = useState("");
-    const [precioExpensas, setPrecioExpensas] = useState("");
-    const [masInformacion, setMasInformacion] = useState("");
-    const [errors, setErrors] = useState({});
+  const handleSumar = (setter, valor) => setter(valor + 1);
+  const handleRestar = (setter, valor) => valor > 0 && setter(valor - 1);
+  const handleRestarBase = (setter, valor) => valor > 1 && setter(valor - 1);
 
+  const validateForm = () => {
+    const newErrors = {};
 
-    const handleSumar = (setter, valor) => setter(valor + 1);
-    const handleRestar = (setter, valor) => {
-        if (valor > 0) setter(valor - 1);
-    };
-    const handleRestarBase = (setter, valor) => {
-        if (valor > 1) setter(valor - 1);
-    };
+    const tipoPropiedad = document.querySelector(
+      'input[name="tipoPropiedad"]:checked'
+    );
+    if (!tipoPropiedad)
+      newErrors.tipoPropiedad = "Debe seleccionar un tipo de propiedad";
 
-    const validateForm = () => {
-        const newErrors = {};
+    const cochera = document.querySelector('input[name="cochera"]:checked');
+    if (!cochera) newErrors.cochera = "Debe indicar si tiene cochera";
 
-        const tipoPropiedad = document.querySelector('input[name="tipoPropiedad"]:checked');
-        if (!tipoPropiedad) newErrors.tipoPropiedad = "Debe seleccionar un tipo de propiedad";
+    const alquileres = document.querySelectorAll(
+      'input[name="alquiler"]:checked'
+    );
+    if (alquileres.length === 0)
+      newErrors.alquiler = "Debe seleccionar al menos un tipo de alquiler";
 
-        const cochera = document.querySelector('input[name="cochera"]:checked');
-        if (!cochera) newErrors.cochera = "Debe indicar si tiene cochera";
+    if (ambientes < 1) newErrors.ambientes = "Debe indicar al menos 1 ambiente";
+    if (banios < 1) newErrors.banios = "Debe indicar al menos 1 baño";
 
-        const alquileres = document.querySelectorAll('input[name="alquiler"]:checked');
-        if (alquileres.length === 0) newErrors.alquiler = "Debe seleccionar al menos un tipo de alquiler";
+    if (superficie && parseFloat(superficie) <= 1)
+      newErrors.superficie = "Ingrese un número válido";
+    if (antiguedad && parseInt(antiguedad) < 0)
+      newErrors.antiguedad = "Ingrese un número válido";
 
-        if (ambientes < 1) newErrors.ambientes = "Debe indicar al menos 1 ambiente";
-        if (banios < 1) newErrors.banios = "Debe indicar al menos 1 baño";
-
-        if (superficie && parseFloat(superficie) <= 1) newErrors.superficie = "Ingrese un número válido";
-        if (antiguedad && parseInt(antiguedad) < 0) newErrors.antiguedad = "Ingrese un número válido";
-
-        if (isEmpty(precioAlquiler) || isNaN(precioAlquiler) || parseFloat(precioAlquiler) <= 0)
-            newErrors.precioAlquiler = "Ingrese un precio de alquiler válido";
-        if (isEmpty(precioExpensas) || isNaN(precioExpensas) || parseFloat(precioExpensas) < 0)
-            newErrors.precioExpensas = "Ingrese un valor válido de expensas";
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }
-
-    const handleSubmit = () => {
-        if (validateForm()) {
-            toastSuccess("Datos guardados correctamente 🚀");
-            navigate("/add-property/images");
-        } else {
-            toastError("Por favor, ingrese correctamente los datos en el formulario");
-        }
-    }
-
-    return (
-        <div className="container my-5">
-
-            <div className="row justify-content-center align-items-center">
-
-                <div className="col-md-6 d-flex justify-content-center align-items-center">
-                    <img
-                        src={PropertyImageFeatures}
-                        alt="Ilustración de registro de caracteristicas de la propiedad en AlquilAR"
-                        className="illustration-login img-fluid d-none d-md-block"
-                    />
-
-                    <h2 className="d-block d-md-none text-center fw-bold mt-3">
-                        AlquilAR tu hogar
-                    </h2>
-                </div>
-
-                <div className='col-md-6 d-flex justify-content-center align-items-center  login-form'>
-                    <div className='card shadow h-100'>
-
-                        <div className='register-form'>
-                            <div className='card shadow h-100'>
-                                <div className='card-body d-flex flex-column justify-content-center text-dark'>
-                                    <h2 className='card-title text-center mb-4'>Registro de tu Propiedad</h2>
-                                    <PropertyTabs />
-
-
-
-                                    <div className='row mb-3'>
-                                        <div className='col-md-6'>
-                                            <div>
-                                                <label className="form-label d-block d-inline">Elija su propiedad<span className="required-star"> *</span></label>
-                                                <input
-                                                    type="radio"
-                                                    name="tipoPropiedad"
-                                                    id="casa"
-                                                    className="form-check-input"
-                                                />
-                                                <label htmlFor="casa" className='me-3'>
-                                                    Casa
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="tipoPropiedad"
-                                                    id="departamento"
-                                                    className="form-check-input"
-                                                />
-                                                <label htmlFor="departamento">
-                                                    Departamento
-                                                </label>
-                                                {errors.tipoPropiedad && <div className="text-danger">{errors.tipoPropiedad}</div>}
-                                            </div>
-                                        </div>
-                                        <br />
-
-                                        <div className='col-md-6'>
-                                            <label className="form-label d-block d-inline">¿Cómo te gustaría alquilar?<span className="required-star"> *</span></label>
-                                            <div>
-                                                <input
-                                                    type='checkbox'
-                                                    name="alquiler"
-                                                    id="alquilercompleto"
-                                                    className='form-check-label' />
-                                                <label htmlFor="alquilercompleto" className="me-3">Alquiler Permanente</label>
-                                                <br />
-                                                <input
-                                                    type='checkbox'
-                                                    name="alquiler"
-                                                    id="alquilertemporario"
-                                                    className='form-check-label' />
-                                                <label htmlFor="alquilertemporario">Alquiler Temporal</label>
-                                                {errors.alquiler && <div className="text-danger">{errors.alquiler}</div>}
-                                            </div>
-                                        </div>
-                                        <br />
-
-                                    </div>
-
-                                    <div className='row mb-3'>
-                                        <div className='col-md-3'>
-                                            <label className='d-block me-3 d-inline'>Cochera<span className="required-star"> *</span></label>
-                                            <input
-                                                type="radio"
-                                                name="cochera"
-                                                id="tienecochera"
-                                                className='form-check-input' />
-                                            <label htmlFor="si" className="me-3">
-                                                Sí
-                                            </label>
-                                            <input
-                                                type="radio"
-                                                name="cochera"
-                                                id="notienecochera"
-                                                className='form-check-input' />
-                                            <label htmlFor="no">
-                                                No
-                                            </label>
-                                            {errors.cochera && <div className="text-danger">{errors.cochera}</div>}
-                                        </div>
-
-                                        <div className='col-md-3'>
-                                            <label className='d-inline'>Habitaciones</label> <br />
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-secondary btn-sm ms-2"
-                                                onClick={() => handleRestar(setHabitaciones, habitaciones)}
-                                            >
-                                                -
-                                            </button>
-                                            <span className="mx-2">{habitaciones}</span>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-primary btn-sm"
-                                                onClick={() => handleSumar(setHabitaciones, habitaciones)}
-                                            >
-                                                +
-                                            </button>
-                                            {errors.habitaciones && <div className="text-danger">{errors.habitaciones}</div>}
-                                        </div>
-
-                                        <div className='col-md-3'>
-                                            <label>Ambientes </label> <br />
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-secondary btn-sm ms-2"
-                                                onClick={() => handleRestarBase(setAmbientes, ambientes)}
-                                            >
-                                                -
-                                            </button>
-                                            <span className='mx-2'>{ambientes}</span>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-primary btn-sm"
-                                                onClick={() => handleSumar(setAmbientes, ambientes)}
-                                            >
-                                                +
-                                            </button>
-                                            {errors.ambientes && <div className="text-danger">{errors.ambientes}</div>}
-                                        </div>
-
-                                        <div className='col-md-3'>
-                                            <label className='d-inline'>Baños</label> <br />
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-secondary btn-sm ms-2"
-                                                onClick={() => handleRestarBase(setBanios, banios)}
-                                            >
-                                                -
-                                            </button>
-                                            <span className='mx-2'>{banios}</span>
-                                            <button
-                                                type="button"
-                                                className="btn btn-outline-primary btn-sm"
-                                                onClick={() => handleSumar(setBanios, banios)}
-                                            >
-                                                +
-                                            </button>
-                                            {errors.banios && <div className="text-danger">{errors.banios}</div>}
-                                        </div>
-
-                                    </div>
-
-                                    <div className='row mb-3'>
-                                        <div className='col-md-6'>
-                                            <label>Superficie(mts<sup>2</sup>): </label>
-                                            <input
-                                                type="text"
-                                                name="superficie"
-                                                id="superficie"
-                                                className={`form-control ${errors.superficie ? "is-invalid" : ""}`}
-                                                value={superficie}
-                                                onChange={(e) => {
-                                                    setSuperficie(e.target.value);
-                                                    if (e.target.value && (isNaN(e.target.value) || parseFloat(e.target.value) <= 0)) {
-                                                        setErrors(prev => ({ ...prev, superficie: "Ingrese un número válido" }));
-                                                    } else {
-                                                        setErrors(prev => {
-                                                            const { superficie, ...rest } = prev;
-                                                            return rest;
-                                                        });
-                                                    }
-                                                }}
-                                            />
-                                            {errors.superficie && <div className="invalid-feedback">{errors.superficie}</div>}
-                                        </div>
-                                        <div className='col-md-6'>
-                                            <label>Antigüedad(años): </label>
-                                            <input
-                                                type="text"
-                                                name="antiguedad"
-                                                id="antiguedad"
-                                                className={`form-control ${errors.antiguedad ? "is-invalid" : ""}`}
-                                                value={antiguedad}
-                                                onChange={(e) => {
-                                                    setAntiguedad(e.target.value);
-                                                    if (e.target.value && (isNaN(e.target.value) || parseFloat(e.target.value) < 0)) {
-                                                        setErrors(prev => ({ ...prev, antiguedad: "Ingrese un número válido" }));
-                                                    } else {
-                                                        setErrors(prev => {
-                                                            const { antiguedad, ...rest } = prev;
-                                                            return rest;
-                                                        });
-                                                    }
-                                                }}
-                                            />
-                                            {errors.antiguedad && <div className="text-danger">{errors.antiguedad}</div>}
-                                        </div>
-                                    </div>
-
-                                    <div className='row mb-3'>
-                                        <div className='col-md-6'>
-                                            <label className='d-inline'>Precio Alquiler<span className="required-star"> *</span></label>
-                                            <input
-                                                type="text"
-                                                name="precioAlquiler"
-                                                id="precioAlquiler"
-                                                className={`form-control ${errors.precioAlquiler ? "is-invalid" : ""}`}
-                                                value={precioAlquiler}
-                                                onChange={(e) => {
-                                                    setPrecioAlquiler(e.target.value);
-                                                    if (e.target.value && (isNaN(e.target.value) || parseFloat(e.target.value) <= 0)) {
-                                                        setErrors(prev => ({ ...prev, precioAlquiler: "Ingrese un número válido" }));
-                                                    } else {
-                                                        setErrors(prev => {
-                                                            const { precioAlquiler, ...rest } = prev;
-                                                            return rest;
-                                                        });
-                                                    }
-                                                }}
-                                            />
-                                            {errors.precioAlquiler && <div className="text-danger">{errors.precioAlquiler}</div>}
-                                        </div>
-                                        <div className='col-md-6'>
-                                            <label className='d-inline'>Precio Expensas<span className="required-star"> *</span></label>
-                                            <input
-                                                type="text"
-                                                name="precioExpensas"
-                                                id="precioExpensas"
-                                                className={`form-control ${errors.precioExpensas ? "is-invalid" : ""}`}
-                                                value={precioExpensas}
-                                                onChange={(e) => {
-                                                    setPrecioExpensas(e.target.value);
-                                                    if (e.target.value && (isNaN(e.target.value) || parseFloat(e.target.value) <= 0)) {
-                                                        setErrors(prev => ({ ...prev, precioExpensas: "Ingrese un número válido" }));
-                                                    } else {
-                                                        setErrors(prev => {
-                                                            const { precioExpensas, ...rest } = prev;
-                                                            return rest;
-                                                        });
-                                                    }
-                                                }}
-                                            />
-                                            {errors.precioExpensas && <div className="text-danger">{errors.precioExpensas}</div>}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label>Más Información:</label>
-                                    <textarea
-                                        name="masinformacion"
-                                        id="masinformacion"
-                                        rows="8"
-                                        cols="50"
-                                        maxLength={500}
-                                        placeholder='Ingrese los datos que crea importantes sobre el inmueble...'
-                                        className={`form-control ${masInformacion.length > 300 ? "is-invalid" : ""}`}
-                                        value={masInformacion}
-                                        onChange={(e) => setMasInformacion(e.target.value)}
-                                    />
-                                    <div
-                                        className='mt-1'
-                                        style={{
-                                            fontSize: "0.9rem",
-                                            fontWeight: "500",
-                                            textAlign: "right",
-                                            color:
-                                                masInformacion.length > 270
-                                                    ? "rgba(226, 63, 79, 1)"
-                                                    : masInformacion.length > 240
-                                                        ? "rgba(241, 107, 49, 0.953)"
-                                                        : masInformacion.length > 200
-                                                            ? "rgb(235, 202, 39)"
-                                                            : "rgb(121, 194, 121)",
-                                        }}
-                                    >
-                                        {masInformacion.length} /300
-
-                                        {masInformacion.length > 300 && (
-                                            <div className="text-danger" style={{ fontSize: "0.85rem" }}>
-                                                Te pasaste del límite recomendado (300 caracteres).
-                                            </div>
-                                        )}
-                                    </div><br />
-
-                                    <div className='d-flex justify-content-center gap-3 mt-2'>
-                                        <button type="button" className="btn btn-secondary w-25" onClick={() => navigate("/add-property/location")}>
-                                            Volver
-                                        </button>
-                                        <button type="button" className="btn btn-primary w-25" onClick={handleSubmit}>
-                                            Continuar
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
+    if (
+      isEmpty(precioAlquiler) ||
+      isNaN(precioAlquiler) ||
+      parseFloat(precioAlquiler) <= 0
     )
-}
+      newErrors.precioAlquiler = "Ingrese un precio de alquiler válido";
 
-export default PropertyFeatures
+    if (
+      isEmpty(precioExpensas) ||
+      isNaN(precioExpensas) ||
+      parseFloat(precioExpensas) < 0
+    )
+      newErrors.precioExpensas = "Ingrese un valor válido de expensas";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (validateForm()) {
+      toastSuccess("Datos guardados correctamente 🚀");
+      navigate("/add-property/images");
+    } else {
+      toastError("Por favor, complete correctamente los campos requeridos");
+    }
+  };
+
+  return (
+    <div className="property-step fade-in">
+      <h3 className="step-title">Características de la Propiedad</h3>
+
+      {/* BLOQUE 1 - Tipo */}
+      <div className="form-section">
+        <div className="row">
+          <div className="col-md-6">
+            <label className="form-label">
+              Tipo de propiedad<span className="required-star">*</span>
+            </label>
+            <div className="d-flex align-items-center gap-3">
+              <label>
+                <input type="radio" name="tipoPropiedad" id="casa" /> Casa
+              </label>
+              <label>
+                <input type="radio" name="tipoPropiedad" id="departamento" />{" "}
+                Departamento
+              </label>
+            </div>
+            {errors.tipoPropiedad && (
+              <div className="text-danger">{errors.tipoPropiedad}</div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label">
+              Tipo de alquiler<span className="required-star">*</span>
+            </label>
+            <div className="d-flex align-items-center gap-3">
+              <label>
+                <input type="checkbox" name="alquiler" id="permanente" />{" "}
+                Permanente
+              </label>
+              <label>
+                <input type="checkbox" name="alquiler" id="temporal" /> Temporal
+              </label>
+            </div>
+            {errors.alquiler && (
+              <div className="text-danger">{errors.alquiler}</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* BLOQUE 2 - Cochera y contadores */}
+      <div className="form-section mt-3">
+        <div className="row">
+          <div className="col-md-3">
+            <label className="form-label">
+              Cochera<span className="required-star">*</span>
+            </label>
+            <div className="d-flex align-items-center gap-3">
+              <label>
+                <input type="radio" name="cochera" id="cochera-si" /> Sí
+              </label>
+              <label>
+                <input type="radio" name="cochera" id="cochera-no" /> No
+              </label>
+            </div>
+            {errors.cochera && (
+              <div className="text-danger">{errors.cochera}</div>
+            )}
+          </div>
+
+          <div className="col-md-3">
+            <label>Habitaciones</label>
+            <div className="counter-group">
+              <button
+                onClick={() => handleRestar(setHabitaciones, habitaciones)}
+              >
+                -
+              </button>
+              <span>{habitaciones}</span>
+              <button
+                onClick={() => handleSumar(setHabitaciones, habitaciones)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <label>Ambientes</label>
+            <div className="counter-group">
+              <button onClick={() => handleRestarBase(setAmbientes, ambientes)}>
+                -
+              </button>
+              <span>{ambientes}</span>
+              <button onClick={() => handleSumar(setAmbientes, ambientes)}>
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <label>Baños</label>
+            <div className="counter-group">
+              <button onClick={() => handleRestarBase(setBanios, banios)}>
+                -
+              </button>
+              <span>{banios}</span>
+              <button onClick={() => handleSumar(setBanios, banios)}>+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* BLOQUE 3 - Superficie / antigüedad */}
+      <div className="form-section mt-4">
+        <div className="row">
+          <div className="col-md-6">
+            <label>Superficie (m²)</label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faRulerCombined} />
+              </span>
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.superficie ? "is-invalid" : ""
+                }`}
+                value={superficie}
+                onChange={(e) => setSuperficie(e.target.value)}
+              />
+            </div>
+            {errors.superficie && (
+              <div className="invalid-feedback d-block">
+                {errors.superficie}
+              </div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label>Antigüedad (años)</label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faClockRotateLeft} />
+              </span>
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.antiguedad ? "is-invalid" : ""
+                }`}
+                value={antiguedad}
+                onChange={(e) => setAntiguedad(e.target.value)}
+              />
+            </div>
+            {errors.antiguedad && (
+              <div className="invalid-feedback d-block">
+                {errors.antiguedad}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* BLOQUE 4 - Precios */}
+      <div className="form-section mt-4">
+        <div className="row">
+          <div className="col-md-6">
+            <label>
+              Precio de Alquiler<span className="required-star">*</span>
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faMoneyBillWave} />
+              </span>
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.precioAlquiler ? "is-invalid" : ""
+                }`}
+                value={precioAlquiler}
+                onChange={(e) => setPrecioAlquiler(e.target.value)}
+              />
+            </div>
+            {errors.precioAlquiler && (
+              <div className="invalid-feedback d-block">
+                {errors.precioAlquiler}
+              </div>
+            )}
+          </div>
+
+          <div className="col-md-6">
+            <label>
+              Expensas<span className="required-star">*</span>
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <FontAwesomeIcon icon={faReceipt} />
+              </span>
+              <input
+                type="text"
+                className={`form-control ${
+                  errors.precioExpensas ? "is-invalid" : ""
+                }`}
+                value={precioExpensas}
+                onChange={(e) => setPrecioExpensas(e.target.value)}
+              />
+            </div>
+            {errors.precioExpensas && (
+              <div className="invalid-feedback d-block">
+                {errors.precioExpensas}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* BLOQUE 5 - Más información */}
+      <div className="form-section mt-4">
+        <label>Más información</label>
+        <div className="input-group">
+          <span className="input-group-text">
+            <FontAwesomeIcon icon={faCircleInfo} />
+          </span>
+          <textarea
+            className="form-control"
+            rows="5"
+            maxLength={300}
+            placeholder="Agregue detalles relevantes sobre la propiedad..."
+            value={masInformacion}
+            onChange={(e) => setMasInformacion(e.target.value)}
+          />
+        </div>
+        <small className="text-muted d-block text-end">
+          {masInformacion.length}/300
+        </small>
+      </div>
+
+      {/* Botones */}
+      <div className="d-flex justify-content-center gap-3 mt-4">
+        <button
+          type="button"
+          className="btn btn-secondary w-25"
+          onClick={() => navigate("/add-property/location")}
+        >
+          Volver
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary w-25"
+          onClick={handleSubmit}
+        >
+          Continuar
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default PropertyFeatures;
