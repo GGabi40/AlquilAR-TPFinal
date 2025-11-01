@@ -1,5 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouseCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import PropertyTabs from "./tabs/PropertyTabs";
 import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
 import "./customStyles/PropertyDashboard.css";
@@ -10,10 +12,9 @@ const PropertyDashboard = () => {
       {/* CABECERA SUPERIOR: Ícono + Título */}
       <header className="dashboard-header">
         <div className="icon-wrapper">
-          <img
-            src={PropertyImageFeatures}
-            alt="Ícono de registro de propiedad"
-            className="dashboard-icon"
+          <FontAwesomeIcon
+            icon={faHouseCircleCheck}
+            className="dashboard-fa-icon"
           />
         </div>
         <h2 className="dashboard-title">Registro de Propiedad</h2>

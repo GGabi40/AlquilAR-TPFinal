@@ -37,13 +37,11 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  opacity: 0.9;
+.dashboard-fa-icon {
+  font-size: 2rem;
+  color: #1a5e50;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
-
 .dashboard-title {
   font-size: 1.8rem;
   font-weight: 700;
