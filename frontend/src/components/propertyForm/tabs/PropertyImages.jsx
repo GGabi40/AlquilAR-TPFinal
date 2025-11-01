@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import PropertyTabs from "./PropertyTabs";
-import PropertyImageDoc from "/illustrations/property-register/reg-prop-3.1.jpg";
 import Slider from "react-slick";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
