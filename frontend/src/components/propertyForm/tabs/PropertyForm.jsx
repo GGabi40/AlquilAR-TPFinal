@@ -20,7 +20,16 @@ const PropertyForm = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    getProvinces().then(setProvincias);
+    const fetchProvinces = async () => {
+      try {
+        const provs = await getProvinces();
+        console.log(provincias);
+        setProvincias(provs);
+      } catch (err) {
+        console.error("Error al cargar las provincias", err);
+      }
+    };
+    fetchProvinces();
   }, []);
 
   useEffect(() => {

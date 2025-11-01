@@ -11,6 +11,7 @@ import ratingsRoutes from './routes/ratings.routes.js';
 import postsRoutes from './routes/posts.routes.js';
 import rentalsRoutes from './routes/rental.routes.js';
 import contactRoutes from './routes/contact.routes.js';
+import locationRoutes from './routes/locations.routes.js';
 import { port, sequelize } from './config/db.js';
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use("/api/ratings", ratingsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/rentals", rentalsRoutes);
 app.use("/api/contacto", contactRoutes);
+app.use('/api/location', locationRoutes);
 
 try {
     await sequelize.sync({ alter: true });

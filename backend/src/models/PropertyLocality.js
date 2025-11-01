@@ -7,7 +7,7 @@ export const PropertyLocality = sequelize.define("PropertyLocality", {
         primaryKey: true,
         autoIncrement: true
     },
-    nameL: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     }
