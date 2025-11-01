@@ -4,9 +4,9 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Login from "./components/auth/login/Login";
 import MainLayout from "./components/ui/MainLayout";
 import Home from "./components/home/Home";
-import PropertyForm from "./components/propertyForm/PropertyForm";
-import PropertyFeatures from "./components/propertyForm/PropertyFeatures";
-import PropertyImages from "./components/propertyForm/PropertyImages";
+import PropertyForm from "./components/propertyForm/tabs/PropertyForm.jsx";
+import PropertyFeatures from "./components/propertyForm/tabs/PropertyFeatures.jsx";
+import PropertyImages from "./components/propertyForm/tabs/PropertyImages.jsx";
 import Register from "./components/auth/register/Register";
 import OwnerDashboard from "./components/dashboards/ownerDashboard/OwnerDashboard";
 import PropertyDetail from "./components/propertyDetail/PropertyDetail";
@@ -25,6 +25,7 @@ import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
 import ResetPassword from "./components/auth/resetPassword/ResetPassword";
 import Profile from "./components/profile/Profile";
 import Protected from "./ProtectedRoute";
+import PropertyDashboard from "./components/propertyForm/PropertyDashboard.jsx";
 
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
 import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
@@ -41,9 +42,16 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
-          <Route path="/add-property/location" element={<PropertyForm />} />
+
+          <Route path="/add-property" element={<PropertyDashboard />}>
+            <Route path="location" element={<PropertyForm />} />
+            <Route path="features" element={<PropertyFeatures />} />
+            <Route path="images" element={<PropertyImages />} />
+          </Route>
+
+          {/* <Route path="/add-property/location" element={<PropertyForm />} />
           <Route path="/add-property/features" element={<PropertyFeatures />} />
-          <Route path="/add-property/images" element={<PropertyImages />} />
+          <Route path="/add-property/images" element={<PropertyImages />} /> */}
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />

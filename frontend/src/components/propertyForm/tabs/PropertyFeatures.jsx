@@ -3,9 +3,9 @@ import { useNavigate } from "react-router";
 import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
 import PropertyTabs from './PropertyTabs';
 
-import { toastSuccess, toastError } from "../ui/toaster/Notifications";
+import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
 
-import { isEmpty } from "../../utils/validations";
+import { isEmpty } from "../../../utils/validations";
 
 const PropertyFeatures = () => {
 

@@ -1,0 +1,51 @@
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+  margin-bottom: 2rem;
+  position: relative;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-button {
+  position: relative;
+  background: none;
+  border: none;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  padding: 0.75rem 0;
+  transition: color 0.3s ease;
+}
+
+.tab-button:hover {
+  color: #1a5e50;
+}
+
+.tab-button.active {
+  color: #1a5e50;
+  font-weight: 600;
+}
+
+.tab-button .active-line {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #1a5e50, #3cc3a0);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.tabs-container::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: #e0e0e0;
+}
