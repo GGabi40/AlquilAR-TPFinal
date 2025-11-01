@@ -1,0 +1,46 @@
+.property-step {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.step-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a5e50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #333;
+}
+
+.required-star {
+  color: #e63946;
+  margin-left: 4px;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #1a5e50;
+  box-shadow: 0 0 4px rgba(26, 94, 80, 0.4);
+}
+
+.btn-primary {
+  background-color: #1a5e50;
+  border-color: #1a5e50;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #157258;
+  transform: translateY(-1px);
+}
