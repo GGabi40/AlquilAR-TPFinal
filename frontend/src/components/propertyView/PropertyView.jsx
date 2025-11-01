@@ -42,12 +42,12 @@ const PropertyDetail = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:3001/api/contact", { // cambia la URL por la de tu backend
+            const response = await fetch("http://localhost:3001/api/contact", { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ ...formData, propertyId: property.id, }), // convertís el objeto en JSON
+                body: JSON.stringify({ ...formData, propertyId: property.id, }), 
             });
 
             if (!response.ok) {
@@ -57,12 +57,12 @@ const PropertyDetail = () => {
             const result = await response.json();
             console.log("Respuesta del servidor:", result);
 
-            alert("✅ Tu mensaje fue enviado al propietario.");
+            alert("Tu mensaje fue enviado al propietario.");
             setShowModal(false);
             setFormData({ nombre: "", email: "", telefono: "", mensaje: "" });
         } catch (error) {
             console.error("Error:", error);
-            alert("❌ Ocurrió un error al enviar el mensaje.");
+            alert("Ocurrió un error al enviar el mensaje.");
         }
     };
 
