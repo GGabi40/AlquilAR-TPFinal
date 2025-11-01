@@ -43,43 +43,44 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
 
-          <Route path="/add-property" element={<PropertyDashboard />}>
-            <Route path="location" element={<PropertyForm />} />
-            <Route path="features" element={<PropertyFeatures />} />
-            <Route path="images" element={<PropertyImages />} />
-          </Route>
-
-          {/* <Route path="/add-property/location" element={<PropertyForm />} />
-          <Route path="/add-property/features" element={<PropertyFeatures />} />
-          <Route path="/add-property/images" element={<PropertyImages />} /> */}
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
+
           <Route path="/properties" element={<PropertyCards />} />{" "}
           {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
+
           {/* Owner */}
-          <Route element={<Protected allowedRoles={["owner"]} />}>
+          <Route element={<Protected allowedRoles={["owner", "superadmin"]} />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
+
             {/* Falta id de usuario */}
             <Route path="/owner/property/:id" element={<PropertyDetail />} />
+
+            <Route path="/add-property" element={<PropertyDashboard />}>
+              <Route path="location" element={<PropertyForm />} />
+              <Route path="features" element={<PropertyFeatures />} />
+              <Route path="images" element={<PropertyImages />} />
+            </Route>
           </Route>
+
+          {/* Superadmin */}
           <Route element={<Protected allowedRoles={["superadmin"]} />}>
             <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
           </Route>
+
           {/* User */}
           <Route element={<Protected allowedRoles={["user"]} />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
           </Route>
-          <Route
-            element={
-              <Protected allowedRoles={["user", "owner", "superadmin"]} />
-            }
-          >
+
+          <Route element={<Protected allowedRoles={["user", "owner", "superadmin"]} />}>
             <Route path="/user/profile" element={<Profile />} />
           </Route>
+
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Route>

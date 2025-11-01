@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 export const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.findAll({
-      include: [{ model: User, attributes: ["id", "correo"] }],
+      include: [{ model: User, attributes: ["id", "email"] }],
       order: [["createdAt", "DESC"]],
     });
 
@@ -35,7 +35,6 @@ export const getPropertyById = async (req, res) => {
     res.status(500).json({ message: "Error al obtener la propiedad" })
   }
 }
-
 
 //POST
 export const createNewProperty = async (req, res) => {
@@ -250,6 +249,29 @@ export const getSearchProperties = async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor" });
     }
 }
+
+
+export const requestNewProperty = async (req,res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId);
+
+    if(!user) return res.status(404).json({ message: "Usuario no encontrado." });
+
+    const propertyData = {
+      ...req.body,
+      ownerId: user.id,
+      status: "pending"
+    };
+
+    const newProperty = await Property.create(propertyData);
+
+    res.status(200).json({ property: newProperty });
+  } catch (error) {
+    console.error("Eror al solicitar nueva propiedad: ", error);
+    res.status(500).json({ message: "Eror al enviar la solicitud." });
+  }
+};
 
 //ver si sirve
 const validatePropertyData = (req) => {

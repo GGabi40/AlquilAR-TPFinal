@@ -21,17 +21,25 @@ export const Property = sequelize.define("Property", {
         allowNull:true,
     },
     status: {
-        type: DataTypes.ENUM('disponible', 'no disponible', 'en revision'),
-        defaultValue: 'disponible',
+        type: DataTypes.ENUM('available', 'unavailable', 'pending', 'rejected'),
+        defaultValue: 'pending',
         allowNull: false
     },
     rentPreference:{
-        type: DataTypes.ENUM('alquiler temporal', 'alquiler completo'),
-        defaultValue: 'alquiler completo',
+        type: DataTypes.ENUM('temporal', 'complete'),
+        defaultValue: 'complete',
         allowNull: false
     },
     address: {
         type:DataTypes.STRING,
         allowNull: false,
+    },
+    ownerId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: 'Users',
+            key: 'id'
+        }
     }
 });

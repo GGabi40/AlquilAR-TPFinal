@@ -8,7 +8,7 @@ import {
   registerUser,
   resetPassword,
   updateUser,
-  deleteUser,
+  deleteUser
 } from "../services/auth.services.js";
 
 import { blockUser, updateUserRole } from "../services/superadmin.services.js";
