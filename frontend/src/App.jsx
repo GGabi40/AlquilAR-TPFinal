@@ -48,22 +48,17 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
+
           <Route path="/properties" element={<PropertyCards />} />{" "}
           {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
+
           {/* Owner */}
-          <Route element={<Protected allowedRoles={["owner"]} />}>
+          <Route element={<Protected allowedRoles={["owner", "superadmin"]} />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
+
             {/* Falta id de usuario */}
             <Route path="/owner/property/:id" element={<PropertyDetail />} />
-          </Route>
-          <Route element={<Protected allowedRoles={["superadmin"]} />}>
-            <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
-          </Route>
-
-          {/* User */}
-          <Route element={<Protected allowedRoles={["user", "owner", "superadmin"]} />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
 
             <Route path="/add-property" element={<PropertyDashboard />}>
               <Route path="location" element={<PropertyForm />} />
@@ -72,13 +67,20 @@ function App() {
             </Route>
           </Route>
 
-          <Route
-            element={
-              <Protected allowedRoles={["user", "owner", "superadmin"]} />
-            }
-          >
+          {/* Superadmin */}
+          <Route element={<Protected allowedRoles={["superadmin"]} />}>
+            <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
+          </Route>
+
+          {/* User */}
+          <Route element={<Protected allowedRoles={["user"]} />}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+          </Route>
+
+          <Route element={<Protected allowedRoles={["user", "owner", "superadmin"]} />}>
             <Route path="/user/profile" element={<Profile />} />
           </Route>
+
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Route>
