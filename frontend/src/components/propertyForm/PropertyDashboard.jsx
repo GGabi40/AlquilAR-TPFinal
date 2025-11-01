@@ -3,7 +3,6 @@ import { Outlet } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouseCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import PropertyTabs from "./tabs/PropertyTabs";
-import PropertyImageFeatures from "/illustrations/property-register/reg-prop-2.1.jpg";
 import "./customStyles/PropertyDashboard.css";
 
 const PropertyDashboard = () => {
