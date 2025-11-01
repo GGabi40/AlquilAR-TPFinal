@@ -12,8 +12,11 @@ import {
     updateFeaturedProperty,
     deleteProperty,
     getRecentProperties,
-    getSearchProperties
+    getSearchProperties,
+    requestNewProperty
 } from "../services/properties.services.js";
+
+import { approveProperty, rejectProperty } from "../services/superadmin.services.js";
 
 const router = express.Router();
 
@@ -24,7 +27,13 @@ router.delete("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), dele
 router.get("/owner/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), getPropertiesByOwner);
 router.patch("/:id/featured", verifyToken, roleMiddleware(["owner", "superadmin"]), updateFeaturedProperty);
 
+/* Superadmin */
+router.patch("/:id/approve", verifyToken, roleMiddleware(["superadmin"]), approveProperty);
+router.patch("/:id/reject", verifyToken, roleMiddleware(["superadmin"]), rejectProperty)
+
+
 /* Users */
+router.post("/request", verifyToken, roleMiddleware(["user"]), requestNewProperty);
 router.get("/", getAllProperties);
 router.get("/featured", getFeaturedProperties);
 router.get("/:id", getPropertyById);

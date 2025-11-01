@@ -12,8 +12,8 @@ import { Rental } from "./Rental.js";
 import { User } from "./User.js";
 
 /* --- PROPERTY --- */
-User.hasMany(Property, { foreignKey: "ownerId" });
-Property.belongsTo(User, { foreignKey: "ownerId" });
+User.hasMany(Property, { foreignKey: "ownerId", sourceKey: 'id' });
+Property.belongsTo(User, { foreignKey: "ownerId", targetKey: 'id' });
 
 Property.hasMany(Post, { foreignKey: "propertyId" });
 Post.belongsTo(Property, { foreignKey: "propertyId" });
@@ -22,7 +22,7 @@ Property.hasMany(Rental, { foreignKey: "propertyId" });
 Rental.belongsTo(Property, { foreignKey: "propertyId" });
 
 /* --- PROPERTY DETAILS --- */
-Property.hasOne(PropertyDetails, { foreignKey: "propertyId" });
+Property.hasOne(PropertyDetails, { foreignKey: "propertyId", onDelete: "CASCADE" });
 PropertyDetails.belongsTo(Property, { foreignKey: "propertyId" });
 
 PropertyDetails.hasMany(PropertyImages, { foreignKey: "propertyDetailsId" });
