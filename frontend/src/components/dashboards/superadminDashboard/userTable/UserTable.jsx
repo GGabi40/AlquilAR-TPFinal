@@ -14,7 +14,7 @@ import {
   updateRole,
 } from "../../../../services/userService.js";
 
-const UserTable = ({ token, userId }) => {
+const UserTable = ({ token, userId, role }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState(null);
@@ -188,14 +188,27 @@ const UserTable = ({ token, userId }) => {
               </td>
               <td>
                 {editingUserId === u.id ? (
-                  <Button
-                    size="sm"
-                    variant="success"
-                    className="me-2"
-                    onClick={() => openModal("saveRole", u)}
-                  >
-                    Guardar
-                  </Button>
+                  <div className="fade-in" style={{ display: 'inline' }}>
+                    <Button
+                      size="sm"
+                      variant="success"
+                      className="me-2"
+                      onClick={() => openModal("saveRole", u)}
+                    >
+                      Guardar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="me-2"
+                      onClick={() => {
+                        setEditingUserId(null);
+                        setEditedRole(null);
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
                 ) : (
                   <Button
                     size="sm"

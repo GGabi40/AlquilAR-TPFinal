@@ -3,12 +3,12 @@ import { Container, Tabs, Tab } from "react-bootstrap";
 import Notifications from "../../ui/toaster/Notifications.jsx";
 import { AuthenticationContext } from "../../../services/auth.context";
 
-import UserTable from "./UserTable/UserTable.jsx";
+import UserTable from "./userTable/UserTable.jsx";
 import PropertyTable from "./propertyTable/PropertyTable.jsx";
 import RequestApprovalTable from "./requestApprovalTable/RequestApprovelTable.jsx";
 
 export default function SuperadminDashboard() {
-  const { token, userId } = useContext(AuthenticationContext);
+  const { token, userId, role } = useContext(AuthenticationContext);
   const [key, setKey] = useState("users");
 
   return (
@@ -25,7 +25,7 @@ export default function SuperadminDashboard() {
         className="mt-3 mb-3"
       >
         <Tab eventKey="users" title="Usuarios">
-          <UserTable token={token} userId={userId} />
+          <UserTable token={token} userId={userId} role={role} />
         </Tab>
 
         <Tab eventKey="propiedades" title="Propiedades">

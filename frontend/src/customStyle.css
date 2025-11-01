@@ -249,3 +249,12 @@ ul.footer-terms-conditions > li > a:hover {
   transform: scale(1.15);
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
