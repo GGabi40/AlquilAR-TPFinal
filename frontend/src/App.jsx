@@ -43,15 +43,6 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
 
-          <Route path="/add-property" element={<PropertyDashboard />}>
-            <Route path="location" element={<PropertyForm />} />
-            <Route path="features" element={<PropertyFeatures />} />
-            <Route path="images" element={<PropertyImages />} />
-          </Route>
-
-          {/* <Route path="/add-property/location" element={<PropertyForm />} />
-          <Route path="/add-property/features" element={<PropertyFeatures />} />
-          <Route path="/add-property/images" element={<PropertyImages />} /> */}
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -69,10 +60,18 @@ function App() {
           <Route element={<Protected allowedRoles={["superadmin"]} />}>
             <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
           </Route>
+
           {/* User */}
-          <Route element={<Protected allowedRoles={["user"]} />}>
+          <Route element={<Protected allowedRoles={["user", "owner", "superadmin"]} />}>
             <Route path="/user/dashboard" element={<UserDashboard />} />
+
+            <Route path="/add-property" element={<PropertyDashboard />}>
+              <Route path="location" element={<PropertyForm />} />
+              <Route path="features" element={<PropertyFeatures />} />
+              <Route path="images" element={<PropertyImages />} />
+            </Route>
           </Route>
+
           <Route
             element={
               <Protected allowedRoles={["user", "owner", "superadmin"]} />
