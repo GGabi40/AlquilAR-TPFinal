@@ -1,0 +1,135 @@
+.property-step {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.step-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a5e50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+label {
+  font-weight: 500;
+  color: #333;
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+.preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* iframe preview */
+.preview-video iframe {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ============= RESPONSIVE DESIGN ============= */
+
+@media (max-width: 992px) {
+  .property-step {
+    padding: 1rem;
+  }
+
+  .step-title {
+    font-size: 1.2rem;
+  }
+
+  .preview-image {
+    height: 180px;
+  }
+
+  .btn {
+    width: 40%;
+  }
+}
+
+@media (max-width: 576px) {
+  .property-step {
+    padding: 0.5rem;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+
+  .preview-image {
+    height: 150px;
+  }
+
+  .preview-video iframe {
+    height: 160px;
+  }
+
+  .d-flex.justify-content-center.gap-3.mt-4 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .btn {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doc-preview {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 0.8rem;
+  background-color: #fafafa;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.doc-preview-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.doc-preview-pdf {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 8px;
+}
+
+@media (max-width: 576px) {
+  .doc-preview-img,
+  .doc-preview-pdf {
+    height: 220px;
+  }
+}
