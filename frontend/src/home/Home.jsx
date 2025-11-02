@@ -9,10 +9,10 @@ export default function Home() {
   const [tipo, setTipo] = useState("casas");
   const navigate = useNavigate();
 
-  const { data: featured, loading: loadingFeatured } = useProperties("/properties/featured");
-  const { data: recent, loading: loadingRecent } = useProperties("/properties/recent");
+  // const { data: featured, loading: loadingFeatured } = useProperties("/properties/featured");
+  // const { data: recent, loading: loadingRecent } = useProperties("/properties/recent");
 
-  const chunkArray = (arr, size) => {
+  /* const chunkArray = (arr, size) => {
     const chunks = [];
     for (let i = 0; i < arr.length; i += size) {
       chunks.push(arr.slice(i, i + size));
@@ -24,7 +24,7 @@ export default function Home() {
   const recentChunks = chunkArray(
     recent.filter((p) => p.tipo === tipo),
     3
-  );
+  ); */
 
   return (
     <Container>
@@ -48,7 +48,7 @@ export default function Home() {
 
       <Container className="my-5">
         <h3 className="mb-3 fw-bold">Propiedades destacadas</h3>
-        {loadingFeatured ? (
+        {/* {loadingFeatured ? (
           <p>Cargando destacadas...</p>
         ) : (
           <Carousel>
@@ -79,7 +79,7 @@ export default function Home() {
               </Carousel.Item>
             ))}
           </Carousel>
-        )}
+        )} */}
       </Container>
 
       <Container className="my-5">
@@ -89,7 +89,7 @@ export default function Home() {
           <Nav.Item><Nav.Link eventKey="departamentos">Departamentos</Nav.Link></Nav.Item>
         </Nav>
 
-        {loadingRecent ? (
+        {/* {loadingRecent ? (
           <p>Cargando recientes...</p>
         ) : (
           <Carousel variant="dark">
@@ -123,7 +123,7 @@ export default function Home() {
               </Carousel.Item>
             ))}
           </Carousel>
-        )}
+        )} */}
       </Container>
 
       <Container className="text-center my-5">

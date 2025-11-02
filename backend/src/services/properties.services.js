@@ -144,7 +144,7 @@ export const getPropertiesByOwner = async (ownerId) => {
 };
 
 // Traer propiedades destacadas
-export const getFeaturedProperties = async () => {
+/* export const getFeaturedProperties = async () => {
   try {
     return await Property.findAll({
       where: { featured: true },
@@ -155,7 +155,7 @@ export const getFeaturedProperties = async () => {
     console.error("Error al obtener propiedades destacadas:", error);
     throw new Error("Error al obtener propiedades destacadas");
   }
-};
+}; */
 
 // Traer propiedades recientes
 export const getRecentProperties = async (req, res) => {

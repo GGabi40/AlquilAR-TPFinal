@@ -7,7 +7,6 @@ import {
     getPropertiesByOwner,
     getPropertyById,
     getAllProperties,
-    getFeaturedProperties,
     updateProperty,
     updateFeaturedProperty,
     deleteProperty,
@@ -35,7 +34,7 @@ router.patch("/:id/reject", verifyToken, roleMiddleware(["superadmin"]), rejectP
 /* Users */
 router.post("/request", verifyToken, roleMiddleware(["user"]), requestNewProperty);
 router.get("/", getAllProperties);
-router.get("/featured", getFeaturedProperties);
+// router.get("/featured", getFeaturedProperties);
 router.get("/:id", getPropertyById);
 router.get("/recent", getRecentProperties);
 
