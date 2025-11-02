@@ -1,61 +1,51 @@
-const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
+const JSON_API_URL = "https://ggabi40.github.io/alquilar-api/provincias_localidades_argentina.json";
+
+let provinciasCache = []; // para guardar los datos en memoria una vez cargados
 
 export const getProvinces = async () => {
   try {
-    const res = await fetch("https://nominatim.openstreetmap.org/search.php?q=provincias%20de%20Argentina&format=jsonv2",
-      {
-        headers: {
-          "User-Agent": "AlquilAR-App",
-        },
-        timeout: 1500,
-      }
-    );
+    if (provinciasCache.length > 0) return provinciasCache.map(p => p.nombre);
 
+    const res = await fetch(JSON_API_URL);
     const data = await res.json();
-    console.log("Datos de nominatim provincias: ", data.display_name);
 
-    const provincias = [
-      ...new Set(
-        data
-          .map((p) => {
-            const name = p.display_name?.split(",")[4]?.trim();
-            return name && name !== "Argentina" ? name : null;
-          })
-          .filter(Boolean)
-      ),
-    ].sort();
+    provinciasCache = data.provincias;
+    console.log("Provincias disponibles:", provinciasCache.length);
 
-    console.log("provincias : ", provincias);
-    return provincias;
+    return provinciasCache.map(p => p.nombre);
   } catch (error) {
-    console.error("Error cargando provincias desde Nominatim:", error);
+    console.error("Error cargando provincias:", error);
     return [];
   }
 };
 
-export const getLocalitiesByProvince = async (province) => {
+export const getLocalitiesByProvince = async (provinceName) => {
   try {
-    const res = await fetch(
-      `${NOMINATIM_BASE_URL}/search?country=Argentina&state=${encodeURIComponent(
-        province
-      )}&featuretype=city&format=json&addressdetails=1&limit=500`,
-      {
-        headers: {
-          "User-Agent": "AlquilAR-App",
-        },
-      }
+    if (provinciasCache.length === 0) {
+      const res = await fetch(JSON_API_URL);
+      const data = await res.json();
+      provinciasCache = data.provincias;
+    }
+
+    const normalizar = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const provincia = provinciasCache.find(
+      p => normalizar(p.nombre) ===
+        normalizar(provinceName)
     );
 
-    const data = await res.json();
+    if (!provincia || !Array.isArray(provincia.localidades)) {
+      console.warn(`No se encontró la provincia: ${provinceName}`);
+      return [];
+    }
 
-    // Extraemos los nombres de localidades
-    const localidades = [
-      ...new Set(data.map((l) => l.address.city || l.address.town || l.display_name.split(",")[0])),
-    ].sort();
-
-    return localidades;
+    console.log(`Localidades encontradas para ${provinceName}:`, provincia.localidades.length);
+    return provincia.localidades
+      .filter(loc => loc)
+      .map(loc => loc.nombre)
+      .sort();
   } catch (error) {
-    console.error("Error cargando localidades desde Nominatim:", error);
+    console.error("Error cargando localidades:", error);
     return [];
   }
 };

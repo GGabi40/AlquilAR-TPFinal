@@ -20,25 +20,34 @@ const PropertyForm = () => {
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const fetchProvinces = async () => {
+    const fetchProvincias = async () => {
       try {
         const provs = await getProvinces();
-        console.log(provincias);
         setProvincias(provs);
-      } catch (err) {
-        console.error("Error al cargar las provincias", err);
+      } catch (error) {
+        console.error("Error al cargar provincias:", error);
       }
     };
-    fetchProvinces();
+    fetchProvincias();
   }, []);
 
-  useEffect(() => {
-    if (selectedProvince) {
-      getLocalitiesByProvince(selectedProvince).then(setLocalidades);
-    } else {
+  const handleProvinceChange = async (e) => {
+    const provincia = e.target.value;
+    setSelectedProvince(provincia);
+    setSelectedLocality("");
+    setLocalidades([]);
+
+    if (!provincia) return;
+
+    try {
+      const localidades = await getLocalitiesByProvince(provincia);
+      setLocalidades(localidades);
+    } catch (error) {
+      console.error("Error al cargar las localidades:", error);
       setLocalidades([]);
     }
-  }, [selectedProvince]);
+
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -92,14 +101,11 @@ const PropertyForm = () => {
         <select
           className={`form-select ${errors.provincia ? "is-invalid" : ""}`}
           value={selectedProvince}
-          onChange={(e) => {
-            setSelectedProvince(e.target.value);
-            setSelectedLocality("");
-          }}
+          onChange={handleProvinceChange}
         >
           <option value="">Seleccione una provincia</option>
-          {provincias.map((prov) => (
-            <option key={prov} value={prov}>
+          {provincias.map((prov, index) => (
+            <option key={index} value={prov}>
               {prov}
             </option>
           ))}
@@ -118,15 +124,15 @@ const PropertyForm = () => {
           className={`form-select ${errors.localidad ? "is-invalid" : ""}`}
           value={selectedLocality}
           onChange={(e) => setSelectedLocality(e.target.value)}
-          disabled={!selectedProvince}
+          disabled={!selectedProvince || localidades.length === 0}
         >
           <option value="">
             {selectedProvince
               ? "Seleccione una localidad"
               : "Seleccione una provincia primero"}
           </option>
-          {localidades.map((loc) => (
-            <option key={loc} value={loc}>
+          {localidades.map((loc, index) => (
+            <option key={index} value={loc}>
               {loc}
             </option>
           ))}

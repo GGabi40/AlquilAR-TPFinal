@@ -53,18 +53,18 @@ function App() {
           {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
 
+          <Route path="/add-property" element={<PropertyDashboard />}>
+            <Route path="location" element={<PropertyForm />} />
+            <Route path="features" element={<PropertyFeatures />} />
+            <Route path="images" element={<PropertyImages />} />
+          </Route>
+
           {/* Owner */}
           <Route element={<Protected allowedRoles={["owner", "superadmin"]} />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
 
             {/* Falta id de usuario */}
             <Route path="/owner/property/:id" element={<PropertyDetail />} />
-
-            <Route path="/add-property" element={<PropertyDashboard />}>
-              <Route path="location" element={<PropertyForm />} />
-              <Route path="features" element={<PropertyFeatures />} />
-              <Route path="images" element={<PropertyImages />} />
-            </Route>
           </Route>
 
           {/* Superadmin */}
