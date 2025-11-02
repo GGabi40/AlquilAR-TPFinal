@@ -30,11 +30,11 @@ app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/rentals", rentalsRoutes);
-app.use("/api/contacto", contactRoutes);
+app.use("/api/contact", contactRoutes);
 app.use('/api/location', locationRoutes);
 
 try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     app.listen(port, () => {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });
