@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faStar } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { toastSuccess, toastError } from "../../../ui/toaster/Notifications";
 import ConfirmModal from "../../../ui/modal/ConfirmModal.jsx";
 import {
@@ -20,7 +20,7 @@ const PropertyTable = ({ token }) => {
     const fetchProperties = async () => {
       try {
         const res = await getAllProperties();
-        setProperties(res);
+        setProperties(Array.isArray(res) ? res : []);
       } catch (err) {
         toastError("No se pudieron cargar las propiedades");
       } finally {
@@ -36,9 +36,9 @@ const PropertyTable = ({ token }) => {
   const handleConfirm = async () => {
     const { type, item } = modal;
     try {
-      if (type === "delete") await deleteProperty(item.id, token);
-      if (type === "approve") await approveProperty(item.id, token);
-      if (type === "reject") await rejectProperty(item.id, token);
+      if (type === "delete") await deleteProperty(item.idProperty, token);
+      if (type === "approve") await approveProperty(item.idProperty, token);
+      if (type === "reject") await rejectProperty(item.idProperty, token);
 
       setProperties((prev) =>
         prev
@@ -48,7 +48,7 @@ const PropertyTable = ({ token }) => {
                   ...p,
                   status:
                     type === "approve"
-                      ? "approved"
+                      ? "available"
                       : type === "reject"
                       ? "rejected"
                       : p.status,
@@ -68,7 +68,7 @@ const PropertyTable = ({ token }) => {
           : "Propiedad eliminada correctamente"
       );
     } catch {
-      toastError(`Error al ${type}`);
+      toastError(`Error al ${type} la propiedad`);
     } finally {
       closeModal();
     }
@@ -77,52 +77,56 @@ const PropertyTable = ({ token }) => {
   if (loading) return <p>Cargando propiedades...</p>;
 
   if (!Array.isArray(properties) || properties.length === 0) {
-  return (
-    <div className="text-center mt-4">
-      <p className="text-black">
-        🏠 Aún no hay propiedades registradas en el sistema.
-      </p>
-    </div>
-  );
-}
+    return (
+      <div className="text-center mt-4">
+        <p className="text-black">
+          🏠 Aún no hay propiedades registradas en el sistema.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
       <Table striped bordered hover responsive>
-        <thead>
+        <thead className="table-light">
           <tr>
-            <th>Título</th>
-            <th>Ubicación</th>
+            <th>#ID</th>
+            <th>Tipo</th>
+            <th>Dirección</th>
+            <th>Precio / Expensas</th>
             <th>Propietario</th>
-            <th>Disponible</th>
-            <th>Destacada</th>
+            <th>Preferencia</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {properties.map((p) => (
-            <tr key={p.id}>
-              <td>{p.title}</td>
-              <td>{p.location}</td>
-              <td>{p.owner?.email || "N/A"}</td>
-              <td>{p.available ? "Sí" : "No"}</td>
+            <tr key={p.idProperty}>
+              <td>{p.idProperty}</td>
+              <td className="text-capitalize">{p.propertyType}</td>
+              <td>{p.address}</td>
               <td>
-                <Button
-                  size="sm"
-                  variant={p.featured ? "success" : "secondary"}
-                  onClick={() => openModal("toggleFeatured", p)}
-                >
-                  <FontAwesomeIcon icon={faStar} className="me-2" />
-                  {p.featured ? "Quitar" : "Destacar"}
-                </Button>
+                <span className="fw-bold text-success">${p.rentPrice}</span>
+                {p.expensesPrice && (
+                  <span className="text-muted ms-1">
+                    + ${p.expensesPrice} exp.
+                  </span>
+                )}
               </td>
+              <td>{p.owner?.email || "N/A"}</td>
+              <td className="text-capitalize">{p.rentPreference}</td>
               <td>
-                {p.status === "approved"
-                  ? "Aprobada"
-                  : p.status === "rejected"
-                  ? "Rechazada"
-                  : "Pendiente"}
+                {p.status === "available" ? (
+                  <Badge bg="success">Aprobada</Badge>
+                ) : p.status === "rejected" ? (
+                  <Badge bg="danger">Rechazada</Badge>
+                ) : (
+                  <Badge bg="warning" text="dark">
+                    Pendiente
+                  </Badge>
+                )}
               </td>
               <td>
                 {p.status === "pending" && (
@@ -133,6 +137,7 @@ const PropertyTable = ({ token }) => {
                       className="me-2"
                       onClick={() => openModal("approve", p)}
                     >
+                      <FontAwesomeIcon icon={faCheck} className="me-2" />
                       Aprobar
                     </Button>
                     <Button
@@ -141,6 +146,7 @@ const PropertyTable = ({ token }) => {
                       className="me-2"
                       onClick={() => openModal("reject", p)}
                     >
+                      <FontAwesomeIcon icon={faXmark} className="me-2" />
                       Rechazar
                     </Button>
                   </>
@@ -177,15 +183,11 @@ const getTitle = (type, item) => {
   if (!item) return "";
   switch (type) {
     case "delete":
-      return `Eliminar "${item.title}"`;
+      return `Eliminar propiedad #${item.idProperty}`;
     case "approve":
-      return `Aprobar "${item.title}"`;
+      return `Aprobar propiedad #${item.idProperty}`;
     case "reject":
-      return `Rechazar "${item.title}"`;
-    case "toggleFeatured":
-      return item.featured
-        ? `Quitar destacada de "${item.title}"`
-        : `Destacar "${item.title}"`;
+      return `Rechazar propiedad #${item.idProperty}`;
     default:
       return "";
   }
@@ -195,15 +197,11 @@ const getMessage = (type, item) => {
   if (!item) return "";
   switch (type) {
     case "delete":
-      return `⚠️ Esta acción eliminará la propiedad "${item.title}".`;
+      return `⚠️ Esta acción eliminará la propiedad en "${item.address}".`;
     case "approve":
-      return `¿Deseas aprobar la propiedad "${item.title}"?`;
+      return `¿Deseas aprobar la propiedad ubicada en "${item.address}"?`;
     case "reject":
-      return `⚠️ ¿Deseas rechazar la propiedad "${item.title}"?`;
-    case "toggleFeatured":
-      return item.featured
-        ? `Quitar la propiedad de destacadas?`
-        : `Destacar la propiedad?`;
+      return `⚠️ ¿Deseas rechazar la propiedad ubicada en "${item.address}"?`;
     default:
       return "";
   }
@@ -217,8 +215,6 @@ const getConfirmText = (type) => {
       return "Aprobar";
     case "reject":
       return "Rechazar";
-    case "toggleFeatured":
-      return "Confirmar";
     default:
       return "Confirmar";
   }
@@ -232,8 +228,6 @@ const getVariant = (type) => {
       return "success";
     case "reject":
       return "warning";
-    case "toggleFeatured":
-      return "primary";
     default:
       return "primary";
   }

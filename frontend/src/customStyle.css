@@ -280,3 +280,19 @@ html, body {
 footer {
   margin-top: auto;
 }
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--bs-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 50px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

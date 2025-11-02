@@ -20,7 +20,7 @@ import {
   faHandshake,
   faRoute,
 } from "@fortawesome/free-solid-svg-icons";
-import { getRecentProperties } from "../../services/propertyServices";
+import { getAllProperties } from "../../services/propertyServices";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
@@ -38,19 +38,22 @@ export default function Home() {
   useEffect(() => {
     const fetchRecent = async () => {
       try {
-        const res = await getRecentProperties();
-        const data = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.data)
-        ? res.data
-        : res?.properties || [];
-      setRecent(data);
+        const data = await getAllProperties();
+
+        const available = data.filter((p) => p.status === "available");
+
+        const sorted = [...available].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        setRecent(sorted.slice(0, 5));
       } catch (err) {
         console.error(err);
-        toastError("No se pudieron cargar las propiedades recientes");
-        return setRecent([]);
+        toastError("No se pudieron cargar las propiedades");
+        setRecent([]);
       }
     };
+
     fetchRecent();
   }, []);
 
@@ -156,44 +159,13 @@ export default function Home() {
         </Row>
       </Container>
 
-      {/* <Container className="my-5">
-        <h3 className="mb-3 fw-bold">Propiedades destacadas</h3>
-        <Carousel>
-          {featuredChunks.map((chunk, i) => (
-            <Carousel.Item key={i}>
-              <Row>
-                {chunk.map((p) => (
-                  <Col key={p.id} md={4}>
-                    <Card className="shadow-sm">
-                      <Card.Img variant="top" src={p.img} />
-                      <Card.Body>
-                        <Card.Title>{p.titulo}</Card.Title>
-                        <Card.Text className="text-success fw-bold">
-                          ${p.precio} - {p.hab} Hab.
-                        </Card.Text>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)}
-                        >
-                          Ver más
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-          </Carousel>
-          </Container> */}
-
       <Container className="my-5">
-        <h3 className="mb-3 fw-bold">Propiedades Recientes</h3>
+        <h3 className="mb-3 fw-bold text-center">Propiedades Recientes</h3>
         <Nav
           variant="tabs"
           defaultActiveKey="casas"
           onSelect={(k) => setTipo(k)}
+          className="justify-content-center mb-3"
         >
           <Nav.Item>
             <Nav.Link eventKey="casas">Casas</Nav.Link>
@@ -204,26 +176,43 @@ export default function Home() {
         </Nav>
 
         {recentChunks.length > 0 ? (
-          <Carousel variant="dark" className="mt-3">
+          <Carousel
+            variant="dark"
+            className="mt-3 recent-carousel"
+            indicators={false}
+          >
             {recentChunks.map((chunk, i) => (
               <Carousel.Item key={i}>
-                <Row>
+                <Row className="justify-content-center g-4 px-4">
                   {chunk.map((p) => (
-                    <Col key={p.idProperty} md={4}>
-                      <Card className="shadow-sm">
+                    <Col key={p.idProperty} xs={10} sm={6} md={4} lg={3}>
+                      <Card className="shadow-sm h-100 position-relative">
+                        {p.status === "available" && (
+                          <span className="status-badge">Disponible</span>
+                        )}
+
                         <Card.Img
                           variant="top"
                           src={p.imageUrl || "/photos/no-image.png"}
-                          style={{ height: "200px", objectFit: "cover" }}
+                          alt={p.address}
+                          style={{
+                            height: "200px",
+                            objectFit: "cover",
+                          }}
                         />
-                        <Card.Body>
-                          <Card.Title>{p.title}</Card.Title>
-                          <Card.Text className="text-success fw-bold">
-                            ${p.rentPrice} / mes
-                          </Card.Text>
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <div>
+                            <Card.Title className="fw-semibold">
+                              {p.address || "Dirección oculta"}
+                            </Card.Title>
+                            <Card.Text className="text-success fw-bold mb-3">
+                              ${p.rentPrice} / mes
+                            </Card.Text>
+                          </div>
                           <Button
                             variant="primary"
                             size="sm"
+                            className="rounded-pill"
                             onClick={() =>
                               navigate(`/propiedad/${p.idProperty}`)
                             }

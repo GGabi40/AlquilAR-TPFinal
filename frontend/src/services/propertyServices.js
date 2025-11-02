@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_URL = "/properties";
+const API_URL = "http://localhost:3000";
 
 const PropertyServices = {
   getAllProperties: async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_URL}/api/properties`);
       return response.data;
     } catch (error) {
       console.error("Error al traer propiedades:", error);
@@ -31,26 +31,6 @@ const PropertyServices = {
       return response.data;
     } catch (error) {
       console.error("Error al traer propiedades del dueño:", error);
-      throw error;
-    }
-  },
-
-  getFeaturedProperties: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/featured`);
-      return response.data;
-    } catch (error) {
-      console.error("Error al traer destacadas:", error);
-      throw error;
-    }
-  },
-
-  getRecentProperties: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/recent`);
-      return response.data;
-    } catch (error) {
-      console.error("Error al traer recientes:", error);
       throw error;
     }
   },
@@ -100,18 +80,6 @@ const PropertyServices = {
       throw error;
     }
   },
-
-  /* toggleFeaturedProperty: async (id, token) => {
-    try {
-      const response = await axios.patch(`${API_URL}/${id}/featured`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error al destacar propiedad:", error);
-      throw error;
-    }
-  }, */
 
   requestNewProperty: async (propertyData, token) => {
     try {

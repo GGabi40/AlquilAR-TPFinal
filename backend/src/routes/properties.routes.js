@@ -10,7 +10,6 @@ import {
     updateProperty,
     updateFeaturedProperty,
     deleteProperty,
-    getRecentProperties,
     getSearchProperties,
     requestNewProperty
 } from "../services/properties.services.js";
@@ -32,11 +31,10 @@ router.patch("/:id/reject", verifyToken, roleMiddleware(["superadmin"]), rejectP
 
 
 /* Users */
-router.post("/request", verifyToken, roleMiddleware(["user"]), requestNewProperty);
+router.post("/request", verifyToken, roleMiddleware(["user", "owner"]), requestNewProperty);
 router.get("/", getAllProperties);
 // router.get("/featured", getFeaturedProperties);
 router.get("/:id", getPropertyById);
-router.get("/recent", getRecentProperties);
 
 router.get("/search", getSearchProperties);
 

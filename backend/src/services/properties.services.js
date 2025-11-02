@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 export const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.findAll({
-      include: [{ model: User, attributes: ["id", "email"] }],
+      include: [{ model: User, as: "owner", attributes: ["id", "email"] }],
       order: [["createdAt", "DESC"]],
     });
 
@@ -156,20 +156,6 @@ export const getPropertiesByOwner = async (ownerId) => {
     throw new Error("Error al obtener propiedades destacadas");
   }
 }; */
-
-// Traer propiedades recientes
-export const getRecentProperties = async (req, res) => {
-    try {
-        const properties = await Property.findAll({
-            order: [["createdAt", "DESC"]],
-            limit: 9,
-        });
-        res.json(properties);
-    } catch (error) {
-        console.error("Error al obtener propiedades recientes: ", error);
-        res.status(500).json({ message: "Error al obtener propiedades recientes" });
-    }
-}
 
 // Actualizar propiedad destacada
 export const updateFeaturedProperty = async (id, featured) => {
