@@ -20,10 +20,10 @@ import {
   faHandshake,
   faRoute,
 } from "@fortawesome/free-solid-svg-icons";
+import { getAllProperties } from "../../services/propertyServices";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
-  const [featured, setFeatured] = useState([]);
   const [recent, setRecent] = useState([]);
   const navigate = useNavigate();
 
@@ -36,21 +36,35 @@ export default function Home() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/properties/featured")
-      .then((res) => setFeatured(res.data));
-    axios
-      .get("http://localhost:3000/api/properties/recent")
-      .then((res) => setRecent(res.data));
+    const fetchRecent = async () => {
+      try {
+        const data = await getAllProperties();
+
+        const available = data.filter((p) => p.status === "available");
+
+        const sorted = [...available].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        setRecent(sorted.slice(0, 5));
+      } catch (err) {
+        console.error(err);
+        toastError("No se pudieron cargar las propiedades");
+        setRecent([]);
+      }
+    };
+
+    fetchRecent();
   }, []);
 
-  const featuredChunks = chunkArray(featured, 3);
   const recentChunks = chunkArray(
-    recent.filter((p) => p.tipo === tipo),
+    Array.isArray(recent)
+      ? recent.filter((p) => p.propertyType === tipo.slice(0, -1))
+      : [],
     3
   );
 
-  const handleClick= (route) => {
+  const handleClick = (route) => {
     navigate(`${route}`);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -79,7 +93,7 @@ export default function Home() {
             />
             <Button
               className="d-flex align-items-center rounded-pill px-4 btn-primary"
-              onClick={() => handleClick('properties')}
+              onClick={() => handleClick("properties")}
             >
               <FontAwesomeIcon icon={faSearch} className="me-2" />
               Buscar
@@ -146,43 +160,12 @@ export default function Home() {
       </Container>
 
       <Container className="my-5">
-        <h3 className="mb-3 fw-bold">Propiedades destacadas</h3>
-        <Carousel>
-          {featuredChunks.map((chunk, i) => (
-            <Carousel.Item key={i}>
-              <Row>
-                {chunk.map((p) => (
-                  <Col key={p.id} md={4}>
-                    <Card className="shadow-sm">
-                      <Card.Img variant="top" src={p.img} />
-                      <Card.Body>
-                        <Card.Title>{p.titulo}</Card.Title>
-                        <Card.Text className="text-success fw-bold">
-                          ${p.precio} - {p.hab} Hab.
-                        </Card.Text>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)} /* cambiar ruta */
-                        >
-                          Ver más
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      </Container>
-
-      <Container className="my-5">
-        <h3 className="mb-3 fw-bold">Propiedades Recientes</h3>
+        <h3 className="mb-3 fw-bold text-center">Propiedades Recientes</h3>
         <Nav
           variant="tabs"
           defaultActiveKey="casas"
           onSelect={(k) => setTipo(k)}
+          className="justify-content-center mb-3"
         >
           <Nav.Item>
             <Nav.Link eventKey="casas">Casas</Nav.Link>
@@ -192,40 +175,83 @@ export default function Home() {
           </Nav.Item>
         </Nav>
 
-        <Carousel variant="dark">
-          {recentChunks.map((chunk, i) => (
-            <Carousel.Item key={i}>
-              <Row>
-                {chunk.map((p) => (
-                  <Col key={p.id} md={4}>
-                    <Card className="shadow-sm">
-                      <Card.Img variant="top" src={p.imgUrl} />
-                      <Card.Body>
-                        <Card.Title>{p.titulo}</Card.Title>
-                        <Card.Text className="text-success fw-bold">
-                          ${p.precio} - {p.hab} Hab.
-                        </Card.Text>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => navigate(`/propiedad/${p.id}`)}
-                        >
-                          Ver más
-                        </Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-        </Carousel>
+        {recentChunks.length > 0 ? (
+          <Carousel
+            variant="dark"
+            className="mt-3 recent-carousel"
+            indicators={false}
+          >
+            {recentChunks.map((chunk, i) => (
+              <Carousel.Item key={i}>
+                <Row className="justify-content-center g-4 px-4">
+                  {chunk.map((p) => (
+                    <Col key={p.idProperty} xs={10} sm={6} md={4} lg={3}>
+                      <Card className="shadow-sm h-100 position-relative">
+                        {p.status === "available" && (
+                          <span className="status-badge">Disponible</span>
+                        )}
+
+                        <Card.Img
+                          variant="top"
+                          src={p.imageUrl || "/photos/no-image.png"}
+                          alt={p.address}
+                          style={{
+                            height: "200px",
+                            objectFit: "cover",
+                          }}
+                        />
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <div>
+                            <Card.Title className="fw-semibold">
+                              {p.address || "Dirección oculta"}
+                            </Card.Title>
+                            <Card.Text className="text-success fw-bold mb-3">
+                              ${p.rentPrice} / mes
+                            </Card.Text>
+                          </div>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            className="rounded-pill"
+                            onClick={() =>
+                              navigate(`/propiedad/${p.idProperty}`)
+                            }
+                          >
+                            Ver más
+                          </Button>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              </Carousel.Item>
+            ))}
+          </Carousel>
+        ) : (
+          <div className="text-center mt-4 py-5 bg-light rounded-3 shadow-sm">
+            <p className="fw-bold fs-5 mb-2">
+              🏡 Aún no hay propiedades recientes registradas.
+            </p>
+            <p className="text-muted mb-4">
+              ¡Sé el primero en compartir tu propiedad y encontrá tu inquilino!
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              className="rounded-pill px-4"
+              onClick={() => navigate("/publish-steps")}
+            >
+              Publicar mi propiedad
+            </Button>
+          </div>
+        )}
       </Container>
 
       <div
         className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
         style={{
-          backgroundImage: "url('/illustrations/bg-protruding-squares-2.svg')",
+          backgroundImage:
+            "url('/public/illustrations/bg-protruding-squares-2.svg')",
           backgroundSize: "auto",
         }}
       >
@@ -237,7 +263,7 @@ export default function Home() {
           variant="light"
           size="lg"
           className="fw-bold text-dark px-4 py-2 rounded-pill shadow-lg"
-          onClick={() => handleClick('create-account')}
+          onClick={() => handleClick("create-account")}
         >
           Sumate a AlquilAR
         </Button>

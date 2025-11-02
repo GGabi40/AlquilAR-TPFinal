@@ -53,7 +53,14 @@ export const updateUserRole = async (req, res) => {
 export const approveProperty = async (req, res) => {
   try {
     const { id } = req.params;
-    const property = await Property.findByPk(id, { include: User });
+    const property = await Property.findByPk(id, { include: [
+      {
+        model: User, 
+        as: "owner",
+        attributes: ["id", "name", "surname", "email"]
+      }
+    ]
+  });
 
     if(!property) return res.status(404).json({ message: "Propiedad no encontrada." });
 
