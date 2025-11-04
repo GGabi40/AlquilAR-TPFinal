@@ -114,3 +114,24 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.property-dashboard-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa; /* o tu fondo global */
+  padding-top: 2rem;
+}
+
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.5rem;
+  position: relative;
+  z-index: 3;
+  background-color: #fff;
+}

@@ -62,7 +62,7 @@ const PropertyImages = () => {
 
   const handlePreview = () => {
     if (handleValidation()) {
-      navigate("/property/preview");
+      // navigate("/property/preview"); -> Abrir un modal con lo que se hizo
     } else {
       alert("Por favor completá los campos obligatorios antes de continuar.");
     }
