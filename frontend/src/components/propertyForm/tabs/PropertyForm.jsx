@@ -16,6 +16,8 @@ import {
   faMapPin,
 } from "@fortawesome/free-solid-svg-icons";
 
+import Notifications from "../../ui/toaster/Notifications";
+
 const PropertyForm = () => {
   const { updateSection } = useContext(PropertyContext);
   const navigate = useNavigate();
@@ -107,6 +109,7 @@ const PropertyForm = () => {
 
   return (
     <div className="property-step fade-in">
+      <Notifications />
       <h3 className="step-title">Datos de Ubicación</h3>
 
       <form onSubmit={handleSubmit}>

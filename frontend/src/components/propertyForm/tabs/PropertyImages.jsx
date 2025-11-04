@@ -8,6 +8,7 @@ import {
   faFileSignature,
 } from "@fortawesome/free-solid-svg-icons";
 import { toastError, toastSuccess } from "../../ui/toaster/Notifications";
+import Notifications from "../../ui/toaster/Notifications";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -110,6 +111,7 @@ const PropertyImages = () => {
 
   return (
     <div className="property-step fade-in">
+      <Notifications />
       {/* BLOQUE 1 - Subida de imágenes */}
       <div className="form-section">
         <label className="form-label">

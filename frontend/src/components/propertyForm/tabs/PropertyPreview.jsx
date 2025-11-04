@@ -20,6 +20,9 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../customStyles/PropertyPreview.css";
 
+import { toastSuccess,toastError } from "../../ui/toaster/Notifications";
+import Notifications from "../../ui/toaster/Notifications";
+
 const PropertyPreview = () => {
   const { formData } = useContext(PropertyContext);
   const navigate = useNavigate();
@@ -35,8 +38,12 @@ const PropertyPreview = () => {
 
   const { location = {}, features = {}, images = [] } = formData;
 
+  /* ACÁ SE HARÁ UN POST */
+  
   return (
     <div className="property-step fade-in">
+      <Notifications />
+
       <h3 className="step-title text-center mb-4">Vista previa de la propiedad</h3>
 
       {/* BLOQUE 1 - IMÁGENES */}

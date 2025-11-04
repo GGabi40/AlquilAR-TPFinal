@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "../customStyles/PropertyFeatures.css";
 import { PropertyContext } from "../../../services/property.context";
+import Notifications from "../../ui/toaster/Notifications";
 
 const PropertyFeatures = () => {
   const navigate = useNavigate();
@@ -112,6 +113,7 @@ const PropertyFeatures = () => {
 
   return (
     <div className="property-step fade-in">
+      <Notifications />
       <h3 className="step-title">Características de la Propiedad</h3>
 
       {/* BLOQUE 1 - Tipo */}
