@@ -29,6 +29,7 @@ import PropertyDashboard from "./components/propertyForm/PropertyDashboard.jsx";
 
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
 import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
+import PruebaUpload from "./components/propertyForm/pruebaUpload.jsx";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/test" element={<PruebaUpload />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
