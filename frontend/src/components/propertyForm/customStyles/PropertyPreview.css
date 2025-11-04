@@ -1,0 +1,131 @@
+.property-step {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.4s ease-in;
+}
+
+.step-title {
+  font-weight: 600;
+  color: #333;
+  letter-spacing: 0.5px;
+}
+
+.preview-section {
+  border: 1px solid #e6e6e6;
+  border-radius: 0.8rem;
+  padding: 1.2rem 1.5rem;
+  background-color: #fafafa;
+  transition: all 0.3s ease-in-out;
+}
+
+.preview-section h5 {
+  font-weight: 600;
+  color: #0d6efd;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.preview-section ul {
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
+.preview-section li {
+  margin-bottom: 0.4rem;
+  color: #444;
+}
+
+.preview-section strong {
+  color: #000;
+}
+
+/* === Imágenes === */
+
+.preview-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* === Documentos === */
+
+.doc-preview-slider {
+  margin-top: 1rem;
+}
+
+.doc-slide {
+  text-align: center;
+}
+
+.doc-preview-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 0.8rem;
+}
+
+.doc-preview-pdf {
+  width: 100%;
+  height: 300px;
+  border: none;
+  border-radius: 0.8rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* === Video === */
+
+.preview-video iframe {
+  border-radius: 0.8rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+/* === Botones === */
+
+.btn {
+  font-weight: 500;
+  border-radius: 0.6rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* === Responsive === */
+
+@media (max-width: 768px) {
+  .property-step {
+    padding: 1.5rem;
+  }
+
+  .preview-image,
+  .doc-preview-img {
+    height: 200px;
+  }
+
+  .doc-preview-pdf {
+    height: 250px;
+  }
+
+  .btn {
+    width: 100% !important;
+  }
+}
+
+/* === Animaciones === */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

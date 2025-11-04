@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router";
 import {
   getProvinces,
@@ -7,17 +7,28 @@ import {
 import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
 import { isEmpty, validateString } from "../../../utils/validations";
 import "../customStyles/PropertyForm.css";
+import { PropertyContext } from "../../../services/property.context";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMapMarkedAlt,
+  faCity,
+  faHome,
+  faMapPin,
+} from "@fortawesome/free-solid-svg-icons";
 
 const PropertyForm = () => {
+  const { updateSection } = useContext(PropertyContext);
   const navigate = useNavigate();
 
+  const [data, setData] = useState({
+    provincia: "",
+    localidad: "",
+    barrio: "",
+    direccion: "",
+  });
+  const [errors, setErrors] = useState({});
   const [provincias, setProvincias] = useState([]);
   const [localidades, setLocalidades] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedLocality, setSelectedLocality] = useState("");
-  const [barrio, setBarrio] = useState("");
-  const [direccion, setDireccion] = useState("");
-  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchProvincias = async () => {
@@ -31,10 +42,14 @@ const PropertyForm = () => {
     fetchProvincias();
   }, []);
 
+  const handleChange = (field, value) => {
+    setData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleProvinceChange = async (e) => {
     const provincia = e.target.value;
-    setSelectedProvince(provincia);
-    setSelectedLocality("");
+    handleChange("provincia", provincia);
+    handleChange("localidad", "");
     setLocalidades([]);
 
     if (!provincia) return;
@@ -43,10 +58,9 @@ const PropertyForm = () => {
       const localidades = await getLocalitiesByProvince(provincia);
       setLocalidades(localidades);
     } catch (error) {
-      console.error("Error al cargar las localidades:", error);
+      console.error("Error al cargar localidades:", error);
       setLocalidades([]);
     }
-
   };
 
   const validateForm = () => {
@@ -54,34 +68,36 @@ const PropertyForm = () => {
     const regexBarrio = /^[a-zA-ZÀ-ÿ\s.\-]+$/;
     const regexDireccion = /^[a-zA-ZÀ-ÿ0-9\s.\-]+ [0-9]+$/;
 
-    if (isEmpty(selectedProvince))
+    if (isEmpty(data.provincia))
       newErrors.provincia = "La provincia es obligatoria";
-    if (isEmpty(selectedLocality))
+    if (isEmpty(data.localidad))
       newErrors.localidad = "La localidad es obligatoria";
 
-    if (isEmpty(barrio)) {
+    if (isEmpty(data.barrio)) {
       newErrors.barrio = "El barrio es obligatorio";
-    } else if (!validateString(barrio, 3, 50)) {
+    } else if (!validateString(data.barrio, 3, 50)) {
       newErrors.barrio = "Debe tener entre 3 y 50 caracteres";
-    } else if (!regexBarrio.test(barrio.trim())) {
+    } else if (!regexBarrio.test(data.barrio.trim())) {
       newErrors.barrio = "Solo se permiten letras y espacios";
     }
 
-    if (isEmpty(direccion)) {
+    if (isEmpty(data.direccion)) {
       newErrors.direccion = "La dirección es obligatoria";
-    } else if (!validateString(direccion, 3, 50)) {
+    } else if (!validateString(data.direccion, 3, 50)) {
       newErrors.direccion = "Debe tener entre 3 y 50 caracteres";
-    } else if (!regexDireccion.test(direccion.trim())) {
-      newErrors.direccion =
-        "Debe contener calle y número (Ej: San Martín 1234)";
+    } else if (!regexDireccion.test(data.direccion.trim())) {
+      newErrors.direccion = "Debe contener calle y número (Ej: San Martín 1234)";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     if (validateForm()) {
+      updateSection("location", data);
       toastSuccess("Datos guardados correctamente 🚀");
       navigate("/add-property/features");
     } else {
@@ -93,98 +109,116 @@ const PropertyForm = () => {
     <div className="property-step fade-in">
       <h3 className="step-title">Datos de Ubicación</h3>
 
-      {/* Provincia */}
-      <div className="mb-3">
-        <label className="form-label">
-          Provincia<span className="required-star">*</span>
-        </label>
-        <select
-          className={`form-select ${errors.provincia ? "is-invalid" : ""}`}
-          value={selectedProvince}
-          onChange={handleProvinceChange}
-        >
-          <option value="">Seleccione una provincia</option>
-          {provincias.map((prov, index) => (
-            <option key={index} value={prov}>
-              {prov}
-            </option>
-          ))}
-        </select>
-        {errors.provincia && (
-          <div className="invalid-feedback">{errors.provincia}</div>
-        )}
-      </div>
+      <form onSubmit={handleSubmit}>
+        {/* Provincia */}
+        <div className="mb-3 position-relative">
+          <label className="form-label">
+            Provincia<span className="required-star">*</span>
+          </label>
+          <div className="input-group">
+            <span className="input-group-text bg-light">
+              <FontAwesomeIcon icon={faMapMarkedAlt} />
+            </span>
+            <select
+              className={`form-select ${errors.provincia ? "is-invalid" : ""}`}
+              value={data.provincia}
+              onChange={handleProvinceChange}
+            >
+              <option value="">Seleccione una provincia</option>
+              {provincias.map((prov, index) => (
+                <option key={index} value={prov}>
+                  {prov}
+                </option>
+              ))}
+            </select>
+          </div>
+          {errors.provincia && (
+            <div className="invalid-feedback d-block">{errors.provincia}</div>
+          )}
+        </div>
 
-      {/* Localidad */}
-      <div className="mb-3">
-        <label className="form-label">
-          Localidad<span className="required-star">*</span>
-        </label>
-        <select
-          className={`form-select ${errors.localidad ? "is-invalid" : ""}`}
-          value={selectedLocality}
-          onChange={(e) => setSelectedLocality(e.target.value)}
-          disabled={!selectedProvince || localidades.length === 0}
-        >
-          <option value="">
-            {selectedProvince
-              ? "Seleccione una localidad"
-              : "Seleccione una provincia primero"}
-          </option>
-          {localidades.map((loc, index) => (
-            <option key={index} value={loc}>
-              {loc}
-            </option>
-          ))}
-        </select>
-        {errors.localidad && (
-          <div className="invalid-feedback">{errors.localidad}</div>
-        )}
-      </div>
+        {/* Localidad */}
+        <div className="mb-3 position-relative">
+          <label className="form-label">
+            Localidad<span className="required-star">*</span>
+          </label>
+          <div className="input-group">
+            <span className="input-group-text bg-light">
+              <FontAwesomeIcon icon={faCity} />
+            </span>
+            <select
+              className={`form-select ${errors.localidad ? "is-invalid" : ""}`}
+              value={data.localidad}
+              onChange={(e) => handleChange("localidad", e.target.value)}
+              disabled={!data.provincia || localidades.length === 0}
+            >
+              <option value="">
+                {data.provincia
+                  ? "Seleccione una localidad"
+                  : "Seleccione una provincia primero"}
+              </option>
+              {localidades.map((loc, index) => (
+                <option key={index} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
+          </div>
+          {errors.localidad && (
+            <div className="invalid-feedback d-block">{errors.localidad}</div>
+          )}
+        </div>
 
-      {/* Barrio */}
-      <div className="mb-3">
-        <label className="form-label">
-          Barrio<span className="required-star">*</span>
-        </label>
-        <input
-          type="text"
-          className={`form-control ${errors.barrio ? "is-invalid" : ""}`}
-          placeholder="Ingrese el barrio de la propiedad"
-          value={barrio}
-          onChange={(e) => setBarrio(e.target.value)}
-        />
-        {errors.barrio && (
-          <div className="invalid-feedback">{errors.barrio}</div>
-        )}
-      </div>
+        {/* Barrio */}
+        <div className="mb-3 position-relative">
+          <label className="form-label">
+            Barrio<span className="required-star">*</span>
+          </label>
+          <div className="input-group">
+            <span className="input-group-text bg-light">
+              <FontAwesomeIcon icon={faHome} />
+            </span>
+            <input
+              type="text"
+              className={`form-control ${errors.barrio ? "is-invalid" : ""}`}
+              placeholder="Ingrese el barrio de la propiedad"
+              value={data.barrio}
+              onChange={(e) => handleChange("barrio", e.target.value)}
+            />
+          </div>
+          {errors.barrio && (
+            <div className="invalid-feedback d-block">{errors.barrio}</div>
+          )}
+        </div>
 
-      {/* Dirección */}
-      <div className="mb-4">
-        <label className="form-label">
-          Dirección<span className="required-star">*</span>
-        </label>
-        <input
-          type="text"
-          className={`form-control ${errors.direccion ? "is-invalid" : ""}`}
-          placeholder="Ejemplo: San Martín 1234"
-          value={direccion}
-          onChange={(e) => setDireccion(e.target.value)}
-        />
-        {errors.direccion && (
-          <div className="invalid-feedback">{errors.direccion}</div>
-        )}
-      </div>
+        {/* Dirección */}
+        <div className="mb-4 position-relative">
+          <label className="form-label">
+            Dirección<span className="required-star">*</span>
+          </label>
+          <div className="input-group">
+            <span className="input-group-text bg-light">
+              <FontAwesomeIcon icon={faMapPin} />
+            </span>
+            <input
+              type="text"
+              className={`form-control ${errors.direccion ? "is-invalid" : ""}`}
+              placeholder="Ejemplo: San Martín 1234"
+              value={data.direccion}
+              onChange={(e) => handleChange("direccion", e.target.value)}
+            />
+          </div>
+          {errors.direccion && (
+            <div className="invalid-feedback d-block">{errors.direccion}</div>
+          )}
+        </div>
 
-      <div className="d-flex justify-content-center mt-4">
-        <button
-          type="button"
-          className="btn btn-primary w-50"
-          onClick={handleSubmit}
-        >
-          Continuar
-        </button>
-      </div>
+        <div className="d-flex justify-content-center mt-4">
+          <button type="submit" className="btn btn-primary w-50">
+            Continuar
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

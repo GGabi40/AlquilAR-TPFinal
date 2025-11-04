@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
 import { isEmpty } from "../../../utils/validations";
@@ -9,63 +9,90 @@ import {
   faMoneyBillWave,
   faReceipt,
   faCircleInfo,
+  faHouse,
+  faCouch,
+  faBath,
 } from "@fortawesome/free-solid-svg-icons";
 import "../customStyles/PropertyFeatures.css";
+import { PropertyContext } from "../../../services/property.context";
 
 const PropertyFeatures = () => {
   const navigate = useNavigate();
+  const { updateSection } = useContext(PropertyContext);
+  
 
-  const [habitaciones, setHabitaciones] = useState(0);
-  const [ambientes, setAmbientes] = useState(1);
-  const [banios, setBanios] = useState(1);
-  const [superficie, setSuperficie] = useState("");
-  const [antiguedad, setAntiguedad] = useState("");
-  const [precioAlquiler, setPrecioAlquiler] = useState("");
-  const [precioExpensas, setPrecioExpensas] = useState("");
-  const [masInformacion, setMasInformacion] = useState("");
+  const [data, setData] = useState({
+    tipoPropiedad: "",
+    alquileres: [],
+    cochera: "",
+    habitaciones: 0,
+    ambientes: 1,
+    banios: 1,
+    superficie: "",
+    antiguedad: "",
+    precioAlquiler: "",
+    precioExpensas: "",
+    masInformacion: "",
+  });
+
   const [errors, setErrors] = useState({});
 
-  const handleSumar = (setter, valor) => setter(valor + 1);
-  const handleRestar = (setter, valor) => valor > 0 && setter(valor - 1);
-  const handleRestarBase = (setter, valor) => valor > 1 && setter(valor - 1);
+  const handleChange = (field, value) => {
+    setData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setData((prev) => {
+      const updated = checked
+        ? [...prev.alquileres, value]
+        : prev.alquileres.filter((v) => v !== value);
+      return { ...prev, alquileres: updated };
+    });
+  };
+
+  const handleCounter = (field, type) => {
+    setData((prev) => {
+      const current = prev[field];
+      if (type === "sumar") return { ...prev, [field]: current + 1 };
+      if (type === "restar") {
+        const min = field === "ambientes" || field === "banios" ? 1 : 0;
+        return { ...prev, [field]: current > min ? current - 1 : current };
+      }
+      return prev;
+    });
+  };
 
   const validateForm = () => {
     const newErrors = {};
 
-    const tipoPropiedad = document.querySelector(
-      'input[name="tipoPropiedad"]:checked'
-    );
-    if (!tipoPropiedad)
+    if (!data.tipoPropiedad)
       newErrors.tipoPropiedad = "Debe seleccionar un tipo de propiedad";
-
-    const cochera = document.querySelector('input[name="cochera"]:checked');
-    if (!cochera) newErrors.cochera = "Debe indicar si tiene cochera";
-
-    const alquileres = document.querySelectorAll(
-      'input[name="alquiler"]:checked'
-    );
-    if (alquileres.length === 0)
+    if (data.alquileres.length === 0)
       newErrors.alquiler = "Debe seleccionar al menos un tipo de alquiler";
+    if (!data.cochera)
+      newErrors.cochera = "Debe indicar si tiene cochera";
+    if (data.ambientes < 1)
+      newErrors.ambientes = "Debe indicar al menos 1 ambiente";
+    if (data.banios < 1)
+      newErrors.banios = "Debe indicar al menos 1 baño";
 
-    if (ambientes < 1) newErrors.ambientes = "Debe indicar al menos 1 ambiente";
-    if (banios < 1) newErrors.banios = "Debe indicar al menos 1 baño";
-
-    if (superficie && parseFloat(superficie) <= 1)
+    if (data.superficie && parseFloat(data.superficie) <= 1)
       newErrors.superficie = "Ingrese un número válido";
-    if (antiguedad && parseInt(antiguedad) < 0)
+    if (data.antiguedad && parseInt(data.antiguedad) < 0)
       newErrors.antiguedad = "Ingrese un número válido";
 
     if (
-      isEmpty(precioAlquiler) ||
-      isNaN(precioAlquiler) ||
-      parseFloat(precioAlquiler) <= 0
+      isEmpty(data.precioAlquiler) ||
+      isNaN(data.precioAlquiler) ||
+      parseFloat(data.precioAlquiler) <= 0
     )
       newErrors.precioAlquiler = "Ingrese un precio de alquiler válido";
 
     if (
-      isEmpty(precioExpensas) ||
-      isNaN(precioExpensas) ||
-      parseFloat(precioExpensas) < 0
+      isEmpty(data.precioExpensas) ||
+      isNaN(data.precioExpensas) ||
+      parseFloat(data.precioExpensas) < 0
     )
       newErrors.precioExpensas = "Ingrese un valor válido de expensas";
 
@@ -76,6 +103,7 @@ const PropertyFeatures = () => {
   const handleSubmit = () => {
     if (validateForm()) {
       toastSuccess("Datos guardados correctamente 🚀");
+      updateSection("features", data);
       navigate("/add-property/images");
     } else {
       toastError("Por favor, complete correctamente los campos requeridos");
@@ -95,10 +123,23 @@ const PropertyFeatures = () => {
             </label>
             <div className="d-flex align-items-center gap-3">
               <label>
-                <input type="radio" name="tipoPropiedad" id="casa" /> Casa
+                <input
+                  type="radio"
+                  name="tipoPropiedad"
+                  value="Casa"
+                  checked={data.tipoPropiedad === "Casa"}
+                  onChange={(e) => handleChange("tipoPropiedad", e.target.value)}
+                />{" "}
+                Casa
               </label>
               <label>
-                <input type="radio" name="tipoPropiedad" id="departamento" />{" "}
+                <input
+                  type="radio"
+                  name="tipoPropiedad"
+                  value="Departamento"
+                  checked={data.tipoPropiedad === "Departamento"}
+                  onChange={(e) => handleChange("tipoPropiedad", e.target.value)}
+                />{" "}
                 Departamento
               </label>
             </div>
@@ -113,11 +154,22 @@ const PropertyFeatures = () => {
             </label>
             <div className="d-flex align-items-center gap-3">
               <label>
-                <input type="checkbox" name="alquiler" id="permanente" />{" "}
+                <input
+                  type="checkbox"
+                  value="Permanente"
+                  checked={data.alquileres.includes("Permanente")}
+                  onChange={handleCheckboxChange}
+                />{" "}
                 Permanente
               </label>
               <label>
-                <input type="checkbox" name="alquiler" id="temporal" /> Temporal
+                <input
+                  type="checkbox"
+                  value="Temporal"
+                  checked={data.alquileres.includes("Temporal")}
+                  onChange={handleCheckboxChange}
+                />{" "}
+                Temporal
               </label>
             </div>
             {errors.alquiler && (
@@ -136,10 +188,24 @@ const PropertyFeatures = () => {
             </label>
             <div className="d-flex align-items-center gap-3">
               <label>
-                <input type="radio" name="cochera" id="cochera-si" /> Sí
+                <input
+                  type="radio"
+                  name="cochera"
+                  value="Sí"
+                  checked={data.cochera === "Sí"}
+                  onChange={(e) => handleChange("cochera", e.target.value)}
+                />{" "}
+                Sí
               </label>
               <label>
-                <input type="radio" name="cochera" id="cochera-no" /> No
+                <input
+                  type="radio"
+                  name="cochera"
+                  value="No"
+                  checked={data.cochera === "No"}
+                  onChange={(e) => handleChange("cochera", e.target.value)}
+                />{" "}
+                No
               </label>
             </div>
             {errors.cochera && (
@@ -147,44 +213,54 @@ const PropertyFeatures = () => {
             )}
           </div>
 
+          {/* Habitaciones */}
           <div className="col-md-3">
-            <label>Habitaciones</label>
+            <label>
+              <FontAwesomeIcon icon={faHouse} className="me-2 text-primary" />
+              Habitaciones
+            </label>
             <div className="counter-group">
-              <button
-                onClick={() => handleRestar(setHabitaciones, habitaciones)}
-              >
+              <button onClick={() => handleCounter("habitaciones", "restar")}>
                 -
               </button>
-              <span>{habitaciones}</span>
-              <button
-                onClick={() => handleSumar(setHabitaciones, habitaciones)}
-              >
+              <span>{data.habitaciones}</span>
+              <button onClick={() => handleCounter("habitaciones", "sumar")}>
                 +
               </button>
             </div>
           </div>
 
+          {/* Ambientes */}
           <div className="col-md-3">
-            <label>Ambientes</label>
+            <label>
+              <FontAwesomeIcon icon={faCouch} className="me-2 text-primary" />
+              Ambientes
+            </label>
             <div className="counter-group">
-              <button onClick={() => handleRestarBase(setAmbientes, ambientes)}>
+              <button onClick={() => handleCounter("ambientes", "restar")}>
                 -
               </button>
-              <span>{ambientes}</span>
-              <button onClick={() => handleSumar(setAmbientes, ambientes)}>
+              <span>{data.ambientes}</span>
+              <button onClick={() => handleCounter("ambientes", "sumar")}>
                 +
               </button>
             </div>
           </div>
 
+          {/* Baños */}
           <div className="col-md-3">
-            <label>Baños</label>
+            <label>
+              <FontAwesomeIcon icon={faBath} className="me-2 text-primary" />
+              Baños
+            </label>
             <div className="counter-group">
-              <button onClick={() => handleRestarBase(setBanios, banios)}>
+              <button onClick={() => handleCounter("banios", "restar")}>
                 -
               </button>
-              <span>{banios}</span>
-              <button onClick={() => handleSumar(setBanios, banios)}>+</button>
+              <span>{data.banios}</span>
+              <button onClick={() => handleCounter("banios", "sumar")}>
+                +
+              </button>
             </div>
           </div>
         </div>
@@ -194,9 +270,11 @@ const PropertyFeatures = () => {
       <div className="form-section mt-4">
         <div className="row">
           <div className="col-md-6">
-            <label>Superficie (m²)</label>
+            <label>
+              Superficie (m²)
+            </label>
             <div className="input-group">
-              <span className="input-group-text">
+              <span className="input-group-text bg-light">
                 <FontAwesomeIcon icon={faRulerCombined} />
               </span>
               <input
@@ -205,12 +283,10 @@ const PropertyFeatures = () => {
                 className={`form-control ${
                   errors.superficie ? "is-invalid" : ""
                 }`}
-                value={superficie}
-                onChange={(e) => setSuperficie(e.target.value)}
+                value={data.superficie}
+                onChange={(e) => handleChange("superficie", e.target.value)}
               />
-              <span className="input-group-text">
-                m²
-              </span>
+              <span className="input-group-text">m²</span>
             </div>
             {errors.superficie && (
               <div className="invalid-feedback d-block">
@@ -222,7 +298,7 @@ const PropertyFeatures = () => {
           <div className="col-md-6">
             <label>Antigüedad (años)</label>
             <div className="input-group">
-              <span className="input-group-text">
+              <span className="input-group-text bg-light">
                 <FontAwesomeIcon icon={faClockRotateLeft} />
               </span>
               <input
@@ -231,8 +307,8 @@ const PropertyFeatures = () => {
                 className={`form-control ${
                   errors.antiguedad ? "is-invalid" : ""
                 }`}
-                value={antiguedad}
-                onChange={(e) => setAntiguedad(e.target.value)}
+                value={data.antiguedad}
+                onChange={(e) => handleChange("antiguedad", e.target.value)}
               />
             </div>
             {errors.antiguedad && (
@@ -252,7 +328,7 @@ const PropertyFeatures = () => {
               Precio de Alquiler<span className="required-star">*</span>
             </label>
             <div className="input-group">
-              <span className="input-group-text">
+              <span className="input-group-text bg-light">
                 <FontAwesomeIcon icon={faMoneyBillWave} />
               </span>
               <input
@@ -261,12 +337,12 @@ const PropertyFeatures = () => {
                 className={`form-control ${
                   errors.precioAlquiler ? "is-invalid" : ""
                 }`}
-                value={precioAlquiler}
-                onChange={(e) => setPrecioAlquiler(e.target.value)}
+                value={data.precioAlquiler}
+                onChange={(e) =>
+                  handleChange("precioAlquiler", e.target.value)
+                }
               />
-              <span className="input-group-text">
-                AR$
-              </span>
+              <span className="input-group-text">AR$</span>
             </div>
             {errors.precioAlquiler && (
               <div className="invalid-feedback d-block">
@@ -280,7 +356,7 @@ const PropertyFeatures = () => {
               Expensas<span className="required-star">*</span>
             </label>
             <div className="input-group">
-              <span className="input-group-text">
+              <span className="input-group-text bg-light">
                 <FontAwesomeIcon icon={faReceipt} />
               </span>
               <input
@@ -289,12 +365,12 @@ const PropertyFeatures = () => {
                 className={`form-control ${
                   errors.precioExpensas ? "is-invalid" : ""
                 }`}
-                value={precioExpensas}
-                onChange={(e) => setPrecioExpensas(e.target.value)}
+                value={data.precioExpensas}
+                onChange={(e) =>
+                  handleChange("precioExpensas", e.target.value)
+                }
               />
-              <span className="input-group-text">
-                AR$
-              </span>
+              <span className="input-group-text">AR$</span>
             </div>
             {errors.precioExpensas && (
               <div className="invalid-feedback d-block">
@@ -309,7 +385,7 @@ const PropertyFeatures = () => {
       <div className="form-section mt-4">
         <label>Más información</label>
         <div className="input-group">
-          <span className="input-group-text">
+          <span className="input-group-text bg-light">
             <FontAwesomeIcon icon={faCircleInfo} />
           </span>
           <textarea
@@ -317,12 +393,12 @@ const PropertyFeatures = () => {
             rows="5"
             maxLength={300}
             placeholder="Agregue detalles relevantes: orientación, luminosidad, mascotas permitidas, etc."
-            value={masInformacion}
-            onChange={(e) => setMasInformacion(e.target.value)}
+            value={data.masInformacion}
+            onChange={(e) => handleChange("masInformacion", e.target.value)}
           />
         </div>
         <small className="text-muted d-block text-end">
-          {masInformacion.length}/300
+          {data.masInformacion.length}/300
         </small>
       </div>
 
