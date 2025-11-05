@@ -32,7 +32,7 @@ import {
 import Notifications from "../../ui/toaster/Notifications";
 
 const PropertyPreview = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { formData } = useContext(PropertyContext);
   const { token } = useContext(AuthenticationContext);
@@ -52,8 +52,8 @@ const PropertyPreview = () => {
   const handlePublish = async (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+    // if (isSubmitting) return;
+    // setIsSubmitting(true);
 
     if (!token) {
       toastError("Debe iniciar sesión para publicar una propiedad.");
@@ -79,7 +79,7 @@ const PropertyPreview = () => {
       await requestNewProperty(sendToDatabase, token);
 
       toastSuccess("Propiedad publicada con éxito.");
-      setTimeout(() => navigate("/dashboard"), 2000);
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("Error al pubicar: ", error);
       toastError("Error al enviar la propiedad al servidor.");
@@ -301,7 +301,7 @@ const PropertyPreview = () => {
           className="btn btn-success w-25"
           onClick={handlePublish}
         >
-          {isSubmitting ? "Publicando..." : "Publicar"}
+          Publicar
         </button>
       </div>
     </div>

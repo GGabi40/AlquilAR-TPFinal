@@ -25,14 +25,22 @@ Rental.belongsTo(Property, { foreignKey: "propertyId" });
 Property.hasOne(PropertyDetails, { foreignKey: "propertyId", onDelete: "CASCADE" });
 PropertyDetails.belongsTo(Property, { foreignKey: "propertyId" });
 
-PropertyDetails.hasMany(PropertyImages, { foreignKey: "propertyDetailsId" });
+PropertyDetails.hasMany(PropertyImages, { foreignKey: "propertyDetailsId", onDelete: "CASCADE" });
 PropertyImages.belongsTo(PropertyDetails, { foreignKey: "propertyDetailsId" });
 
-PropertyDetails.hasMany(PropertyVideos, { foreignKey: "propertyDetailsId" });
+PropertyDetails.hasMany(PropertyVideos, { foreignKey: "propertyDetailsId", onDelete: "CASCADE" });
 PropertyVideos.belongsTo(PropertyDetails, { foreignKey: "propertyDetailsId" });
 
 Property.hasMany(PropertyDocuments, { foreignKey: "propertyId" });
 PropertyDocuments.belongsTo(Property, { foreignKey: "propertyId" });
+
+
+/* --- PROPERTY LOCATION --- */
+Property.belongsTo(PropertyLocality, { foreignKey: "localityId", as: "locality" });
+PropertyLocality.hasMany(Property, { foreignKey: "localityId", as: "properties"});;
+
+Property.belongsTo(PropertyProvince, { foreign: "provinceId", as: "province" });
+PropertyProvince.hasMany(Property, { foreignKey: "provinceId", as: "properties"});
 
 
 /* --- RENTAL --- */

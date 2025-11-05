@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 export const PropertyDocuments = sequelize.define("PropertyDocuments", {
-    idDocument: {
+    documentId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
