@@ -3,7 +3,6 @@ import { Property } from "../models/Property.js";
 import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
 import { User } from "../models/User.js";
 import {
-    createNewProperty,
     getPropertiesByOwner,
     getPropertyById,
     getAllProperties,
@@ -19,7 +18,6 @@ import { approveProperty, rejectProperty } from "../services/superadmin.services
 const router = express.Router();
 
 /* Owners and Superadmin */
-router.post("/", verifyToken, roleMiddleware(["owner", "superadmin"]), createNewProperty);
 router.put("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), updateProperty);
 router.delete("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), deleteProperty);
 router.get("/owner/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), getPropertiesByOwner);

@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 export const PropertyProvince = sequelize.define("PropertyProvince", {
-    idProvince: {
+    provinceId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true

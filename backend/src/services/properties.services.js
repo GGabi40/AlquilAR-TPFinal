@@ -1,12 +1,26 @@
-import { Property } from "../models/Property.js";
+import { sequelize } from "../config/db.js";
 import { User } from "../models/User.js";
-import { Op } from "sequelize";
+import { Property } from "../models/Property.js";
+import { PropertyDetails } from "../models/PropertyDetails.js";
+import { PropertyLocality } from "../models/PropertyLocality.js";
+import { PropertyProvince } from "../models/PropertyProvince.js";
+import { PropertyImages } from "../models/PropertyImages.js";
+import { PropertyVideos } from "../models/PropertyVideos.js";
+import { PropertyDocuments } from "../models/PropertyDocuments.js";
 
 
 export const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.findAll({
-      include: [{ model: User, as: "owner", attributes: ["id", "email"] }],
+      include: [
+        { model: User, as: "owner", attributes: ["id", "email"] },
+        { model: PropertyDetails },
+        { model: PropertyLocality, as: "locality" },
+        { model: PropertyProvince, as: "province" },
+        { model: PropertyDetails,
+          include: [ { model: PropertyImages }, { model: PropertyVideos }, { model: PropertyDocuments } ]
+         }
+      ],
       order: [["createdAt", "DESC"]],
     });
 
@@ -34,43 +48,6 @@ export const getPropertyById = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Error al obtener la propiedad" })
   }
-}
-
-//POST
-export const createNewProperty = async (req, res) => {
-  try {
-    const result = validatePropertyData(req.body);
-    if (result.error) {
-      return res.status(400).json({ message: result.message });
-    }
-
-    const { propertyType, rentPrice, expensesPrice, status, rentPreference, address, numRooms, numBedrooms, numBathrooms, propertyAge, totalArea, URLImages, URLVideo, URLDocument, nameP, nameL } = req.body;
-    const newProperty = await Property.create({
-      propertyType, 
-      rentPrice, 
-      expensesPrice, 
-      status, 
-      rentPreference, 
-      address, 
-      numRooms, 
-      numBedrooms, 
-      numBathrooms, 
-      propertyAge, 
-      totalArea, 
-      URLImages, 
-      URLVideo, 
-      URLDocument, 
-      nameP, 
-      nameL,
-    });
-
-    res.json(newProperty);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "No se pudo crear la propiedad"});
-  }
-
 }
 
 //PUT-UPDATE
@@ -237,29 +214,104 @@ export const getSearchProperties = async (req, res) => {
 }
 
 
-export const requestNewProperty = async (req,res) => {
+/* REQUEST */
+
+export const requestNewProperty = async (req, res) => {
+  const t = await sequelize.transaction();
   try {
     const userId = req.user.id;
-    const user = await User.findByPk(userId);
+    const user = await User.findByPk(userId, { transaction: t });
 
-    if(!user) return res.status(404).json({ message: "Usuario no encontrado." });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado." });
 
-    const propertyData = {
-      ...req.body,
-      ownerId: user.id,
-      status: "pending"
-    };
+    const existingProperty = await Property.findOne({
+      where: { ownerId: user.id, address: req.body.address },
+      transaction: t,
+    });
+    if (existingProperty) {
+      await t.rollback();
+      return res.status(400).json({
+        message: "Ya existe una propiedad registrada con esta dirección.",
+      });
+    }
 
-    const newProperty = await Property.create(propertyData);
+    // Crear o reutilizar provincia
+    let province = await PropertyProvince.findOne({
+      where: { name: req.body.nameP },
+      transaction: t,
+    });
+    if (!province) {
+      province = await PropertyProvince.create(
+        { name: req.body.nameP },
+        { transaction: t }
+      );
+    }
 
-    res.status(200).json({ property: newProperty });
+    // localidad
+    let locality = await PropertyLocality.findOne({
+      where: { name: req.body.nameL },
+      transaction: t,
+    });
+    if (!locality) {
+      locality = await PropertyLocality.create(
+        { name: req.body.nameL },
+        { transaction: t }
+      );
+    }
+
+    const property = await Property.create(
+      {
+        propertyType: req.body.propertyType,
+        rentPrice: req.body.rentPrice,
+        expensesPrice: req.body.expensesPrice,
+        rentPreference: req.body.rentPreference,
+        address: req.body.address,
+        ownerId: user.id,
+        status: "pending",
+        provinceId: province.provinceId,
+        localityId: locality.localityId,
+      },
+      { transaction: t }
+    );
+
+    // Crear los detalles técnicos de la propiedad
+    const details = await PropertyDetails.create(
+      {
+        numRooms: req.body.numRooms,
+        numBedrooms: req.body.numBedrooms,
+        numBathrooms: req.body.numBathrooms,
+        propertyAge: req.body.propertyAge,
+        totalArea: req.body.totalArea,
+        propertyId: property.idProperty
+      },
+      { transaction: t }
+    );
+
+    // Crear imágenes / videos / documentos
+    // cuando haya upload:
+    /*
+    const images = req.body.URLImages?.map((url) => ({
+      URLImages: url,
+      alt: "Imagen de la propiedad",
+      propertyDetailsId: details.idPropertyDetails,
+    }));
+    if (images?.length) await PropertyImages.bulkCreate(images, { transaction: t });
+    */
+
+    await t.commit();
+
+    res.status(200).json({ property, details, province, locality });
   } catch (error) {
-    console.error("Eror al solicitar nueva propiedad: ", error);
-    res.status(500).json({ message: "Eror al enviar la solicitud." });
+    console.error("Error al solicitar nueva propiedad:", error);
+    await t.rollback();
+    res
+      .status(500)
+      .json({ message: "Error al crear la propiedad con sus relaciones." });
   }
 };
 
-//ver si sirve
+
 const validatePropertyData = (req) => {
   const result = {
     error: false,

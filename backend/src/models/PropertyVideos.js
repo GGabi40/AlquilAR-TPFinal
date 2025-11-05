@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 export const PropertyVideos = sequelize.define("PropertyVideos", {
-    idPropertyVideo: {
+    propertyVideoId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true

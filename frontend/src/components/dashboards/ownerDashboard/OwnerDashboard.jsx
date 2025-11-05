@@ -7,7 +7,7 @@ export default function OwnerDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
-  const { data: propiedades, loading, loadMore, hasMore } = usePagination(`/properties/owner/${user.id}`);
+  const { data: propiedades, loading, loadMore, hasMore } = usePagination(`/properties/owner/`);
 
   return (
     <div>
