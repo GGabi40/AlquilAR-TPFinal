@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3000/api";
 
 const PropertyServices = {
   getAllProperties: async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/properties`);
+      const response = await axios.get(`${API_URL}/properties`);
       return response.data;
     } catch (error) {
       console.error("Error al traer propiedades:", error);
@@ -71,7 +71,7 @@ const PropertyServices = {
 
   deleteProperty: async (id, token) => {
     try {
-      const response = await axios.delete(`${API_URL}/${id}`, {
+      const response = await axios.delete(`${API_URL}/properties/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -83,7 +83,7 @@ const PropertyServices = {
 
   requestNewProperty: async (propertyData, token) => {
     try {
-      const response = await axios.post(`${API_URL}/request`, propertyData, {
+      const response = await axios.post(`${API_URL}/properties/request`, propertyData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -95,7 +95,7 @@ const PropertyServices = {
 
   approveProperty: async (id, token) => {
     try {
-      const response = await axios.patch(`${API_URL}/${id}/approve`, {}, {
+      const response = await axios.patch(`${API_URL}/properties/${id}/approve`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -107,7 +107,7 @@ const PropertyServices = {
 
   rejectProperty: async (id, token) => {
     try {
-      const response = await axios.patch(`${API_URL}/${id}/reject`, {}, {
+      const response = await axios.patch(`${API_URL}/properties/${id}/reject`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;

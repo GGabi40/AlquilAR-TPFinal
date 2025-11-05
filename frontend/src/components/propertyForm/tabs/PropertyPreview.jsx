@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
 import Slider from "react-slick";
-import { PropertyContext } from "../../../services/property.context";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMapMarkerAlt,
@@ -20,11 +20,22 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../customStyles/PropertyPreview.css";
 
-import { toastSuccess,toastError } from "../../ui/toaster/Notifications";
+import { PropertyContext } from "../../../services/property.context";
+import { AuthenticationContext } from "../../../services/auth.context";
+import { requestNewProperty } from "../../../services/propertyServices";
+
+import {
+  toastSuccess,
+  toastError,
+  toastInfo,
+} from "../../ui/toaster/Notifications";
 import Notifications from "../../ui/toaster/Notifications";
 
 const PropertyPreview = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { formData } = useContext(PropertyContext);
+  const { token } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   const sliderSettings = {
@@ -38,13 +49,50 @@ const PropertyPreview = () => {
 
   const { location = {}, features = {}, images = [] } = formData;
 
-  /* ACÁ SE HARÁ UN POST */
-  
+  const handlePublish = async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    if (!token) {
+      toastError("Debe iniciar sesión para publicar una propiedad.");
+      return;
+    }
+
+    const sendToDatabase = {
+      propertyType: features.tipoPropiedad,
+      rentPrice: features.precioAlquiler,
+      expensesPrice: features.precioExpensas,
+      rentPreference: features.alquileres?.join(", "),
+      address: location.direccion,
+      numRooms: features.ambientes,
+      numBedrooms: features.habitaciones,
+      numBathrooms: features.banios,
+      propertyAge: features.antiguedad,
+      totalArea: features.superficie,
+      nameP: location.provincia,
+      nameL: location.localidad,
+    };
+
+    try {
+      await requestNewProperty(sendToDatabase, token);
+
+      toastSuccess("Propiedad publicada con éxito.");
+      setTimeout(() => navigate("/dashboard"), 2000);
+    } catch (error) {
+      console.error("Error al pubicar: ", error);
+      toastError("Error al enviar la propiedad al servidor.");
+    }
+  };
+
   return (
     <div className="property-step fade-in">
       <Notifications />
 
-      <h3 className="step-title text-center mb-4">Vista previa de la propiedad</h3>
+      <h3 className="step-title text-center mb-4">
+        Vista previa de la propiedad
+      </h3>
 
       {/* BLOQUE 1 - IMÁGENES */}
       {images.length > 0 && (
@@ -74,25 +122,34 @@ const PropertyPreview = () => {
       {/* BLOQUE 2 - UBICACIÓN */}
       <div className="preview-section">
         <h5>
-          <FontAwesomeIcon icon={faMapMarkerAlt} className="me-2 text-primary" />
+          <FontAwesomeIcon
+            icon={faMapMarkerAlt}
+            className="me-2 text-primary"
+          />
           Ubicación
         </h5>
         <ul className="list-unstyled ms-3">
           <li>
             <FontAwesomeIcon icon={faCity} className="me-2 text-secondary" />
-            <strong>Provincia:</strong> {location.provincia || "No especificada"}
+            <strong>Provincia:</strong>{" "}
+            {location.provincia || "No especificada"}
           </li>
           <li>
             <FontAwesomeIcon icon={faCity} className="me-2 text-secondary" />
-            <strong>Localidad:</strong> {location.localidad || "No especificada"}
+            <strong>Localidad:</strong>{" "}
+            {location.localidad || "No especificada"}
           </li>
           <li>
             <FontAwesomeIcon icon={faHome} className="me-2 text-secondary" />
             <strong>Barrio:</strong> {location.barrio || "No especificado"}
           </li>
           <li>
-            <FontAwesomeIcon icon={faMapMarkerAlt} className="me-2 text-secondary" />
-            <strong>Dirección:</strong> {location.direccion || "No especificada"}
+            <FontAwesomeIcon
+              icon={faMapMarkerAlt}
+              className="me-2 text-secondary"
+            />
+            <strong>Dirección:</strong>{" "}
+            {location.direccion || "No especificada"}
           </li>
         </ul>
       </div>
@@ -100,7 +157,10 @@ const PropertyPreview = () => {
       {/* BLOQUE 3 - CARACTERÍSTICAS */}
       <div className="preview-section mt-4">
         <h5>
-          <FontAwesomeIcon icon={faRulerCombined} className="me-2 text-primary" />
+          <FontAwesomeIcon
+            icon={faRulerCombined}
+            className="me-2 text-primary"
+          />
           Características
         </h5>
         <ul className="list-unstyled ms-3">
@@ -125,17 +185,26 @@ const PropertyPreview = () => {
             <strong>Baños:</strong> {features.banios ?? "-"}
           </li>
           <li>
-            <FontAwesomeIcon icon={faRulerCombined} className="me-2 text-secondary" />
+            <FontAwesomeIcon
+              icon={faRulerCombined}
+              className="me-2 text-secondary"
+            />
             <strong>Superficie:</strong>{" "}
             {features.superficie ? `${features.superficie} m²` : "-"}
           </li>
           <li>
-            <FontAwesomeIcon icon={faClockRotateLeft} className="me-2 text-secondary" />
+            <FontAwesomeIcon
+              icon={faClockRotateLeft}
+              className="me-2 text-secondary"
+            />
             <strong>Antigüedad:</strong>{" "}
             {features.antiguedad ? `${features.antiguedad} años` : "-"}
           </li>
           <li>
-            <FontAwesomeIcon icon={faMoneyBillWave} className="me-2 text-secondary" />
+            <FontAwesomeIcon
+              icon={faMoneyBillWave}
+              className="me-2 text-secondary"
+            />
             <strong>Precio alquiler:</strong>{" "}
             {features.precioAlquiler ? `$${features.precioAlquiler}` : "-"}
           </li>
@@ -146,7 +215,10 @@ const PropertyPreview = () => {
           </li>
           {features.masInformacion && (
             <li className="mt-2">
-              <FontAwesomeIcon icon={faCircleInfo} className="me-2 text-secondary" />
+              <FontAwesomeIcon
+                icon={faCircleInfo}
+                className="me-2 text-secondary"
+              />
               <strong>Más información:</strong> {features.masInformacion}
             </li>
           )}
@@ -177,7 +249,10 @@ const PropertyPreview = () => {
       {images.document && images.document.length > 0 && (
         <div className="preview-section mt-4">
           <h5>
-            <FontAwesomeIcon icon={faFileSignature} className="me-2 text-primary" />
+            <FontAwesomeIcon
+              icon={faFileSignature}
+              className="me-2 text-primary"
+            />
             Documentación
           </h5>
           <div className="doc-preview-slider mt-3">
@@ -221,8 +296,12 @@ const PropertyPreview = () => {
         >
           Volver
         </button>
-        <button type="button" className="btn btn-success w-25">
-          Publicar
+        <button
+          type="submit"
+          className="btn btn-success w-25"
+          onClick={handlePublish}
+        >
+          {isSubmitting ? "Publicando..." : "Publicar"}
         </button>
       </div>
     </div>

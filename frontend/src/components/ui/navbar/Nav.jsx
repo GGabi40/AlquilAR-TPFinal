@@ -132,7 +132,7 @@ const Nav = () => {
                   <li>
                     <li>
                       {user.role === "owner" && (
-                        <Link className="dropdown-item" to="/my-properties">
+                        <Link className="dropdown-item" to="/owner/dashboard">
                           Mis propiedades
                         </Link>
                       )}

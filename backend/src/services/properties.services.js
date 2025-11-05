@@ -244,6 +244,11 @@ export const requestNewProperty = async (req,res) => {
 
     if(!user) return res.status(404).json({ message: "Usuario no encontrado." });
 
+    const existingProperty = await Property.findOne(
+      { where: { ownerId: user.id, address: req.body.address }});
+
+    if (existingProperty) return res.status(400).json({ message: 'Ya existe una propiedad registrada con esta dirección.' });
+
     const propertyData = {
       ...req.body,
       ownerId: user.id,
