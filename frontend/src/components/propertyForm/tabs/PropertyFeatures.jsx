@@ -393,14 +393,14 @@ const PropertyFeatures = () => {
           <textarea
             className="form-control"
             rows="5"
-            maxLength={300}
+            maxLength={500}
             placeholder="Agregue detalles relevantes: orientación, luminosidad, mascotas permitidas, etc."
             value={data.masInformacion}
             onChange={(e) => handleChange("masInformacion", e.target.value)}
           />
         </div>
         <small className="text-muted d-block text-end">
-          {data.masInformacion.length}/300
+          {data.masInformacion.length}/500
         </small>
       </div>
 

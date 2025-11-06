@@ -38,7 +38,20 @@ export const getPropertyById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const propertyById = await Property.findByPk(id);
+    const propertyById = await Property.findByPk(id, {
+      include: [
+        { model: User, as: "owner", attributes: ["id", "email", "name"] },
+        { model: PropertyDetails, 
+          include: [
+            { model: PropertyImages },
+            { model: PropertyVideos },
+            { model: PropertyDocuments }
+          ]
+        },
+        { model: PropertyProvince, as: "province", attributes: ["provinceId", "name"] },
+        { model: PropertyLocality, as: "locality", attributes: ["localityId", "name"] }
+      ]
+    });
 
     if (!propertyById)
       return res.status(404).json({ message: "No se encontro ninguna propiedad" });
