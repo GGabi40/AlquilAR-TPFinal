@@ -16,9 +16,9 @@ const properties = [
         servicios: ["Luz", "Gas"],
         hab: 3,
         img: [
-            "https://via.placeholder.com/600x400?text=Imagen+1",
+            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D",
             "https://via.placeholder.com/600x400?text=Imagen+2",
-            "https://via.placeholder.com/600x400?text=Imagen+3"
+            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D"
         ],
         localidad: "Rosario",
         provincia: "Santa Fe",
