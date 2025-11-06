@@ -6,9 +6,13 @@ import Footer from './footer/Footer'
 const MainLayout = () => {
   return (
     <>
+      <div className="main-layout">
       <Nav />
-      <Outlet />
+      <div className="content-wrapper">
+        <Outlet />
+      </div>
       <Footer />
+    </div>
     </>
   );
 }

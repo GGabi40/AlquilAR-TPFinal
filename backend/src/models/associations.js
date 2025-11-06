@@ -12,8 +12,8 @@ import { Rental } from "./Rental.js";
 import { User } from "./User.js";
 
 /* --- PROPERTY --- */
-User.hasMany(Property, { foreignKey: "ownerId", sourceKey: 'id' });
-Property.belongsTo(User, { foreignKey: "ownerId", targetKey: 'id' });
+User.hasMany(Property, { foreignKey: "ownerId", sourceKey: 'id', as: 'ownedProperties' });
+Property.belongsTo(User, { foreignKey: "ownerId", targetKey: 'id', as: 'owner' });
 
 Property.hasMany(Post, { foreignKey: "propertyId" });
 Post.belongsTo(Property, { foreignKey: "propertyId" });
@@ -25,14 +25,22 @@ Rental.belongsTo(Property, { foreignKey: "propertyId" });
 Property.hasOne(PropertyDetails, { foreignKey: "propertyId", onDelete: "CASCADE" });
 PropertyDetails.belongsTo(Property, { foreignKey: "propertyId" });
 
-PropertyDetails.hasMany(PropertyImages, { foreignKey: "propertyDetailsId" });
+PropertyDetails.hasMany(PropertyImages, { foreignKey: "propertyDetailsId", onDelete: "CASCADE" });
 PropertyImages.belongsTo(PropertyDetails, { foreignKey: "propertyDetailsId" });
 
-PropertyDetails.hasMany(PropertyVideos, { foreignKey: "propertyDetailsId" });
+PropertyDetails.hasMany(PropertyVideos, { foreignKey: "propertyDetailsId", onDelete: "CASCADE" });
 PropertyVideos.belongsTo(PropertyDetails, { foreignKey: "propertyDetailsId" });
 
 Property.hasMany(PropertyDocuments, { foreignKey: "propertyId" });
 PropertyDocuments.belongsTo(Property, { foreignKey: "propertyId" });
+
+
+/* --- PROPERTY LOCATION --- */
+Property.belongsTo(PropertyLocality, { foreignKey: "localityId", as: "locality" });
+PropertyLocality.hasMany(Property, { foreignKey: "localityId", as: "properties"});;
+
+Property.belongsTo(PropertyProvince, { foreign: "provinceId", as: "province" });
+PropertyProvince.hasMany(Property, { foreignKey: "provinceId", as: "properties"});
 
 
 /* --- RENTAL --- */

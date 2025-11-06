@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router";
-import PropertyTabs from "./PropertyTabs";
 import Slider from "react-slick";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,63 +7,96 @@ import {
   faVideo,
   faFileSignature,
 } from "@fortawesome/free-solid-svg-icons";
+import { toastError, toastSuccess } from "../../ui/toaster/Notifications";
+import Notifications from "../../ui/toaster/Notifications";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../customStyles/PropertyImages.css";
 
+import { PropertyContext } from "../../../services/property.context";
+
+import ConfirmModal from "../../ui/modal/ConfirmModal";
+
 const PropertyImages = () => {
   const navigate = useNavigate();
+  const { updateSection, formData } = useContext(PropertyContext);
 
-  const [videoUrl, setVideoUrl] = useState("");
-  const [images, setImages] = useState([]);
-  const [document, setDocument] = useState(null);
+  const [data, setData] = useState({
+    videoUrl: "",
+    images: [],
+    documents: [],
+  });
+
   const [errors, setErrors] = useState({});
 
+  const handleChange = (field, value) => {
+    setData((prev) => ({ ...prev, [field]: value }));
+  };
+
   const handleVideoChange = (e) => {
-    const url = e.target.value;
-    if (url === "" || url.includes("youtube.com") || url.includes("youtu.be")) {
-      setVideoUrl(url);
-    } else {
+    const url = e.target.value.trim();
+
+    // Validar solo si hay algo escrito
+    if (url && !url.includes("youtube.com") && !url.includes("youtu.be")) {
       setErrors((prev) => ({
         ...prev,
         video: "Por favor, ingresa un enlace de YouTube válido",
       }));
+    } else {
+      setErrors((prev) => {
+        const { video, ...rest } = prev;
+        return rest;
+      });
     }
+
+    handleChange("videoUrl", url);
   };
 
   const handleImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 10) {
-      setErrors((prev) => ({
-        ...prev,
-        images: "Solo podés subir hasta 10 imágenes",
-      }));
+      toastError("Solo podés subir hasta 10 imágenes");
       e.target.value = null;
       return;
     }
-    setImages(files);
-    setErrors((prev) => {
-      const { images, ...rest } = prev;
-      return rest;
-    });
+    handleChange("images", files);
+  };
+
+  const handleDocumentsChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 5) {
+      toastError("Solo podés subir hasta 5 archivos");
+      e.target.value = null;
+      return;
+    }
+    handleChange("documents", files);
   };
 
   const handleValidation = () => {
     const newErrors = {};
-    if (images.length === 0)
-      newErrors.images = "Debés subir al menos una imagen";
-    if (!document)
-      newErrors.document = "Debés subir un documento de la propiedad";
+
+    // Solo validar el video si está vacío o mal escrito
+    if (
+      data.videoUrl &&
+      !data.videoUrl.includes("youtube.com") &&
+      !data.videoUrl.includes("youtu.be")
+    ) {
+      newErrors.video = "Por favor, ingresa un enlace de YouTube válido";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handlePreview = () => {
     if (handleValidation()) {
-      navigate("/property/preview");
+      toastSuccess("Datos guardados correctamente 🚀");
+      updateSection("images", data);
+
+      navigate('/add-property/preview');
     } else {
-      alert("Por favor completá los campos obligatorios antes de continuar.");
+      toastError("Por favor, revisá los campos con error.");
     }
   };
 
@@ -79,30 +111,29 @@ const PropertyImages = () => {
 
   return (
     <div className="property-step fade-in">
+      <Notifications />
       {/* BLOQUE 1 - Subida de imágenes */}
       <div className="form-section">
         <label className="form-label">
           <FontAwesomeIcon icon={faCamera} className="me-2 text-success" />
           Subí las mejores fotos de tu propiedad
-          <span className="required-star"> *</span>
         </label>
         <small className="text-muted d-block mb-2">(Hasta 10 imágenes)</small>
         <input
           type="file"
           name="fotos"
           id="fotos"
-          className={`form-control ${errors.images ? "is-invalid" : ""}`}
+          className="form-control"
           accept="image/*"
           multiple
           onChange={handleImagesChange}
         />
-        {errors.images && <div className="text-danger">{errors.images}</div>}
 
-        {images.length > 0 && (
+        {data.images.length > 0 && (
           <div className="d-flex justify-content-center mt-3">
             <div style={{ width: "85%", maxWidth: "350px" }}>
               <Slider {...sliderSettings}>
-                {images.map((img, index) => (
+                {data.images.map((img, index) => (
                   <div key={index}>
                     <img
                       src={URL.createObjectURL(img)}
@@ -122,6 +153,7 @@ const PropertyImages = () => {
         <label className="form-label">
           <FontAwesomeIcon icon={faVideo} className="me-2 text-success" />
           Agregá un video de la propiedad
+          <span className="required-star"> *</span>
         </label>
         <input
           type="url"
@@ -129,17 +161,17 @@ const PropertyImages = () => {
           id="video"
           className={`form-control ${errors.video ? "is-invalid" : ""}`}
           placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX"
-          value={videoUrl}
+          value={data.videoUrl}
           onChange={handleVideoChange}
         />
-        {errors.video && <div className="text-danger">{errors.video}</div>}
+        {errors.video && <div className="invalid-feedback d-block">{errors.video}</div>}
 
-        {videoUrl && (
+        {data.videoUrl && !errors.video && (
           <div className="preview-video mt-3">
             <iframe
               width="100%"
               height="200"
-              src={videoUrl.replace("watch?v=", "embed/")}
+              src={data.videoUrl.replace("watch?v=", "embed/")}
               title="Video de la propiedad"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -156,7 +188,6 @@ const PropertyImages = () => {
             className="me-2 text-success"
           />
           Documentación / Escritura de la propiedad
-          <span className="required-star"> *</span>
         </label>
 
         <small className="text-muted d-block mb-2">
@@ -168,62 +199,42 @@ const PropertyImages = () => {
           id="documentacion"
           accept=".pdf, image/*"
           multiple
-          className={`form-control ${errors.document ? "is-invalid" : ""}`}
-          onChange={(e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 5) {
-              setErrors((prev) => ({
-                ...prev,
-                documents: "Solo podés subir hasta 5 archivos",
-              }));
-              e.target.value = null;
-              return;
-            }
-            setErrors((prev) => {
-              const { documents, ...rest } = prev;
-              return rest;
-            });
-            setDocument(files);
-          }}
+          className="form-control"
+          onChange={handleDocumentsChange}
         />
-        {errors.document && (
-          <div className="text-danger">{errors.document}</div>
-        )}
 
         {/* Vista previa del documento */}
-        {document && document.length > 0 && (
+        {data.documents.length > 0 && (
           <div className="doc-preview-multiple mt-3">
-            {document && document.length > 0 && (
-              <div className="doc-preview-slider mt-3">
-                <Slider {...sliderSettings}>
-                  {document.map((file, index) => (
-                    <div key={index} className="doc-slide">
-                      <p className="small text-muted mb-2 text-center">
-                        <strong>{file.name}</strong>
-                      </p>
+            <div className="doc-preview-slider mt-3">
+              <Slider {...sliderSettings}>
+                {data.documents.map((file, index) => (
+                  <div key={index} className="doc-slide">
+                    <p className="small text-muted mb-2 text-center">
+                      <strong>{file.name}</strong>
+                    </p>
 
-                      {file.type.includes("image") ? (
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`Documento ${index + 1}`}
-                          className="doc-preview-img"
-                        />
-                      ) : file.type === "application/pdf" ? (
-                        <iframe
-                          src={URL.createObjectURL(file)}
-                          title={`Documento PDF ${index + 1}`}
-                          className="doc-preview-pdf"
-                        ></iframe>
-                      ) : (
-                        <p className="text-secondary small text-center">
-                          No se puede previsualizar este tipo de archivo.
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </Slider>
-              </div>
-            )}
+                    {file.type.includes("image") ? (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={`Documento ${index + 1}`}
+                        className="doc-preview-img"
+                      />
+                    ) : file.type === "application/pdf" ? (
+                      <iframe
+                        src={URL.createObjectURL(file)}
+                        title={`Documento PDF ${index + 1}`}
+                        className="doc-preview-pdf"
+                      ></iframe>
+                    ) : (
+                      <p className="text-secondary small text-center">
+                        No se puede previsualizar este tipo de archivo.
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </Slider>
+            </div>
           </div>
         )}
       </div>

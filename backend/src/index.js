@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 import './models/associations.js';
 
@@ -12,6 +13,7 @@ import postsRoutes from './routes/posts.routes.js';
 import rentalsRoutes from './routes/rental.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import locationRoutes from './routes/locations.routes.js';
+// import uploadRoutes from './routes/upload.routes.js';
 import { port, sequelize } from './config/db.js';
 
 dotenv.config();
@@ -23,6 +25,10 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// if (!fs.existsSync("uploads")) {
+//   fs.mkdirSync("uploads");
+// }
+
 app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use("/api/properties", propertiesRoutes);
@@ -30,11 +36,12 @@ app.use("/api/favorites", favoritesRoutes);
 app.use("/api/ratings", ratingsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/rentals", rentalsRoutes);
-app.use("/api/contacto", contactRoutes);
+app.use("/api/contact", contactRoutes);
 app.use('/api/location', locationRoutes);
+// app.use('/api/upload', uploadRoutes);
 
 try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     app.listen(port, () => {
         console.log(`Corriendo servidor en http://localhost:${port}`);
     });

@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
 export const PropertyLocality = sequelize.define("PropertyLocality", {
-    idLocality: {
+    localityId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true

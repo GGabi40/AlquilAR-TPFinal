@@ -41,5 +41,21 @@ export const Property = sequelize.define("Property", {
             model: 'Users',
             key: 'id'
         }
-    }
+    },
+    localityId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: "PropertyLocalities",
+      key: "localityId",
+    },
+  },
+  provinceId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: "PropertyProvinces",
+      key: "provinceId",
+    },
+  },
 });
