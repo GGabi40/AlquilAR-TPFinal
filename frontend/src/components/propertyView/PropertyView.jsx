@@ -16,9 +16,9 @@ const properties = [
         servicios: ["Luz", "Gas"],
         hab: 3,
         img: [
-            "https://via.placeholder.com/600x400?text=Imagen+1",
+            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D",
             "https://via.placeholder.com/600x400?text=Imagen+2",
-            "https://via.placeholder.com/600x400?text=Imagen+3"
+            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D"
         ],
         localidad: "Rosario",
         provincia: "Santa Fe",
@@ -47,7 +47,6 @@ const PropertyDetail = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         alert("Tu mensaje fue enviado al propietario.");
-        setShowModal(false);
     };
 
     return (
@@ -90,21 +89,59 @@ const PropertyDetail = () => {
 
                 {/* Datos principales */}
                 <Row className="mb-3">
-                    <Col md={6}>
-                        <p>
-                            <strong>Precio:</strong> ${property.precio}
-                        </p>
-                        <p>
-                            <strong>Expensas:</strong> ${property.expensas}
-                        </p>
-                        <p>
-                            <strong>Servicios:</strong> {property.servicios.join(" ")}
-                        </p>
+                    <Col md={8}>
+                        <div className="mb-3">
+                            <p>
+                                <strong>Tipo:</strong> {property.tipo}
+                            </p>
+                            <p>
+                                <strong>Precio:</strong> ${property.precio}
+                            </p>
+                            <p>
+                                <strong>Expensas:</strong> ${property.expensas}
+                            </p>
+                            <p>
+                                <strong>Servicios:</strong> {property.servicios.join(" ")}
+                            </p>
+                            <p>
+                                <strong>Ambientes:</strong> {property.ambientes}
+                            </p>
+                            <p>
+                                <strong>Localidad:</strong> {property.localidad}
+                            </p>
+                            <p>
+                                <strong>Provincia:</strong> {property.provincia}
+                            </p>
+                            <p>
+                                <strong>Habitaciones:</strong> {property.hab}
+                            </p>
+                        </div>
+
+                        <Card 
+                            className="shadow-sm p-3 w-100"
+                            style={{
+                                borderRadius: "16px",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <h6 className="text-center mb-3">Descripción</h6>
+                            <p className="mb-0">{property.descripcion}</p>
+                        </Card>
                     </Col>
 
-                    <Col md={6} className="text-md-end">
+
+
+                    <Col md={4} className="text-md-end">
                         {/* Formulario de contacto visible */}
-                        <Card className="p-3 mb-3">
+                        <Card
+                            className="shadow-sm p-3 mb-3"
+                            style={{
+                                borderRadius: "16px",
+                                maxWidth: "360px",
+                                marginLeft: "auto",
+                                backgroundColor: "#fff",
+                            }}
+                        >
                             <h6 className="text-center mb-3">Contactar al propietario</h6>
                             <Form onSubmit={handleSubmit}>
                                 <Form.Group className="mb-2">
@@ -149,32 +186,33 @@ const PropertyDetail = () => {
                                     />
                                 </Form.Group>
                                 <div className="d-flex justify-content-end">
-                                    <Button
+                                    <button
+                                        className="btn ms-2 btn-outline-primary"
                                         type="submit"
                                         style={{
-                                            backgroundColor: "#f4978e",
-                                            border: "none",
+                                            fontWeight: "500",
                                         }}
                                     >
                                         Enviar
-                                    </Button>
+                                    </button>
                                 </div>
                             </Form>
                         </Card>
 
-                        <Card className="p-3">
-                            <h6>Información del Propietario</h6>
-                            <p className="mb-0">Nombre: Juan Pérez</p>
-                            <p className="mb-0">Tel: 341-555-1234</p>
+                        <Card 
+                            className="shadow p-3"
+                            style={{
+                                borderRadius: "16px",
+                                maxWidth: "360px",
+                                marginLeft: "auto",
+                                backgroundColor: "#fff",
+                            }}
+                        >
+                            <h6 className="text-center mb-3">Información del Propietario</h6>
+                            <p className="mb-1">Nombre: {property.owner?.nombre || "No disponible"}</p>
                         </Card>
                     </Col>
                 </Row>
-
-                {/* Descripción */}
-                <Card className="p-3 mb-3">
-                    <h6>Descripción</h6>
-                    <p>{property.descripcion}</p>
-                </Card>
 
                 {/* Rating */}
                 <div className="text-end">
