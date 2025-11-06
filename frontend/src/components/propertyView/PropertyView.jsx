@@ -32,6 +32,7 @@ const PropertyDetail = () => {
 
     const property = properties.find(p => p.id === parseInt(id)) || properties[0];
     const [isFavorite, setIsFavorite] = useState(false);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         nombre: "",
         email: "",
@@ -42,11 +43,58 @@ const PropertyDetail = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+
+        if (errors[name]) {
+            setErrors({
+                ...errors,
+                [name]: "",
+            });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.nombre.trim()) {
+            newErrors.nombre = "El nombre es obligatorio";
+        } else if (formData.nombre.length < 3) {
+            newErrors.nombre = "El nombre debe tener mínimo 3 caracteres";
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = "El email es obligatorio";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+            newErrors.email = "El email no tiene un formato válido";
+        }
+
+        if (!formData.telefono.trim()) {
+            newErrors.telefono = "El teléfono es obligatorio";
+        } else if (!/^\d{8,15}$/.test(formData.telefono)) {
+            newErrors.telefono = "Debe contener solo números (8 a 15 dígitos)";
+        }
+
+        if (!formData.mensaje.trim()) {
+            newErrors.mensaje = "El mensaje es obligatorio";
+        } else if (formData.mensaje.length < 10) {
+            newErrors.mensaje = "El mensaje debe tener al menos 10 caracteres";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert("Tu mensaje fue enviado al propietario.");
+        if (validateForm()) {
+            alert("Tu mensaje fue enviado al propietario.");
+            setFormData({
+                nombre: "",
+                email: "",
+                telefono: "",
+                mensaje: ""
+            });
+            setErrors({});
+        }
     };
 
     return (
@@ -117,7 +165,7 @@ const PropertyDetail = () => {
                             </p>
                         </div>
 
-                        <Card 
+                        <Card
                             className="shadow-sm p-3 w-100"
                             style={{
                                 borderRadius: "16px",
@@ -149,30 +197,40 @@ const PropertyDetail = () => {
                                     <Form.Control
                                         type="text"
                                         name="nombre"
+                                        placeholder="Ej: Juan García"
                                         value={formData.nombre}
                                         onChange={handleChange}
-                                        required
+                                        isInvalid={!!errors.nombre}
                                     />
+                                    <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-2">
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="email"
                                         name="email"
+                                        placeholder="tuemail@ejemplo.com"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        required
+                                        isInvalid={!!errors.email}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.email}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-2">
                                     <Form.Label>Teléfono</Form.Label>
                                     <Form.Control
                                         type="text"
                                         name="telefono"
+                                        placeholder="Ej: 3814567890"
                                         value={formData.telefono}
                                         onChange={handleChange}
-                                        required
+                                        isInvalid={!!errors.telefono}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.telefono}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-2">
                                     <Form.Label>Mensaje</Form.Label>
@@ -180,10 +238,14 @@ const PropertyDetail = () => {
                                         as="textarea"
                                         rows={2}
                                         name="mensaje"
+                                        placeholder="Escribe tu mensaje..."
                                         value={formData.mensaje}
                                         onChange={handleChange}
-                                        required
+                                        isInvalid={!!errors.mensaje}
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.mensaje}
+                                    </Form.Control.Feedback>
                                 </Form.Group>
                                 <div className="d-flex justify-content-end">
                                     <button
@@ -199,7 +261,7 @@ const PropertyDetail = () => {
                             </Form>
                         </Card>
 
-                        <Card 
+                        <Card
                             className="shadow p-3"
                             style={{
                                 borderRadius: "16px",
