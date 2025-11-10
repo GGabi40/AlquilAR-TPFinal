@@ -6,10 +6,13 @@ import {
 
 import { User } from "../models/User.js";
 
+import dotenv from 'dotenv'
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+dotenv.config();
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -49,20 +52,20 @@ export const getUserById = async (req, res) => {
   }
 };
 
-export const updateUser = async (req,res) => {
+export const updateUser = async (req, res) => {
   const { id } = req.params;
-  
+
   try {
     const { name, surname, avatarColor } = req.body;
 
     const user = await User.findByPk(id);
 
-    if(!user) return res.status(404).json({ message: 'Usuario no encontrado.' });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado." });
 
     if (req.body.email && req.body.email !== user.email) {
       return res.status(400).json({
-        message:
-          "El correo electrónico no puede modificarse desde el perfil.",
+        message: "El correo electrónico no puede modificarse desde el perfil.",
       });
     }
 
@@ -72,7 +75,7 @@ export const updateUser = async (req,res) => {
 
     await user.save();
 
-    res.status(200).json({ message: 'Perfil actualizado correctamente.' });
+    res.status(200).json({ message: "Perfil actualizado correctamente." });
   } catch (error) {
     console.error("Error al actualizar usuario: ", error);
     res.status(500).json({ message: "Error al actualizar usuario." });
@@ -84,7 +87,8 @@ export const registerUser = async (req, res) => {
 
   if (result.error) return res.status(400).json({ message: result.message });
 
-  const { name, surname, email, password, isBlocked, avatarColor, role } = req.body;
+  const { name, surname, email, password, isBlocked, avatarColor, role } =
+    req.body;
 
   try {
     const existingEmail = await User.findOne({ where: { email } });
@@ -130,9 +134,15 @@ export const loginUser = async (req, res) => {
         .json({ message: "Este email no esta registrado." });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Email o contraseña incorrectos." });
+    if (!isMatch)
+      return res
+        .status(401)
+        .json({ message: "Email o contraseña incorrectos." });
 
-    if (user.isBlocked) return res.status(403).json({ message: "Tu cuenta fue bloqueada. Contactá con soporte." });
+    if (user.isBlocked)
+      return res
+        .status(403)
+        .json({ message: "Tu cuenta fue bloqueada. Contactá con soporte." });
 
     // create token
     const token = jwt.sign(
@@ -190,20 +200,19 @@ export const forgotPassword = async (req, res) => {
 
     // nodemailer
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
+      }
     });
 
-    const resetLink = `http://localhost:5173/reset-password?token=${randomToken}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${randomToken}`;
 
     await transporter.sendMail({
-      from: '"AlquilAR" <no-reply@alquilar.com>',
+      from: `"AlquilAR" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Recuperación de contraseña",
       html: `<div style="text-align: center;">
@@ -227,16 +236,18 @@ export const forgotPassword = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    
-    const user = await User.findByPk(id);
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado." });
-    
-    const isOwner = parseInt(id) === user.id;
-    const isSuperadmin = req.user.role === 'superadmin';
 
-    if(!isOwner && !isSuperadmin)
-    {
-      return res.status(403).json({ message: 'No tenés autorización para eliminar este usuario.' });
+    const user = await User.findByPk(id);
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado." });
+
+    const isOwner = parseInt(id) === user.id;
+    const isSuperadmin = req.user.role === "superadmin";
+
+    if (!isOwner && !isSuperadmin) {
+      return res
+        .status(403)
+        .json({ message: "No tenés autorización para eliminar este usuario." });
     }
 
     if (isSuperadmin && isOwner) {
@@ -247,13 +258,12 @@ export const deleteUser = async (req, res) => {
 
     await user.destroy({ where: { id } });
 
-    res.json({ message: 'Cuenta eliminada correctamente.' });
+    res.json({ message: "Cuenta eliminada correctamente." });
   } catch (error) {
     console.error("Error al eliminar usuario:", error);
     res.status(500).json({ message: "Error del servidor." });
   }
 };
-
 
 // --- Validations ---
 const validateRegisterData = (reqData) => {
