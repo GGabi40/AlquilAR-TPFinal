@@ -81,7 +81,7 @@ const ResetPassword = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/api/users/reset-password`,
+        `${API_URL}/users/reset-password`,
         { token, newPassword: formData.password },
         { headers: { "Content-Type": "application/json" } }
       );
