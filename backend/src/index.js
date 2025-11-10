@@ -22,9 +22,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: true,
     credentials: true
 }));
 
