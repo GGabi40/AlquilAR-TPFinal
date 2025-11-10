@@ -251,7 +251,7 @@ export default function Home() {
         className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
         style={{
           backgroundImage:
-            "url('/public/illustrations/bg-protruding-squares-2.svg')",
+            "url('/illustrations/bg-protruding-squares-2.svg')",
           backgroundSize: "auto",
         }}
       >

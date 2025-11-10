@@ -55,7 +55,7 @@ const PublishSteps = () => {
       <section
         className="hero-section d-flex align-items-center justify-content-center text-center text-white"
         style={{
-          backgroundImage: "url('/public/photos/MoreInformation.webp')",
+          backgroundImage: "url('/photos/MoreInformation.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",
