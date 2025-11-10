@@ -48,8 +48,6 @@ export default function Home() {
 
         setRecent(sorted.slice(0, 5));
       } catch (err) {
-        console.error(err);
-        toastError("No se pudieron cargar las propiedades");
         setRecent([]);
       }
     };
