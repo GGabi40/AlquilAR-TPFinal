@@ -72,9 +72,11 @@ const ForgotPassword = () => {
     const validation = validations();
     if (!validation) return;
 
+    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/forgot-password",
+        `${API_URL}/users/forgot-password`,
         { email: formData.email },
         {
           headers: { "Content-Type": "application/json" },

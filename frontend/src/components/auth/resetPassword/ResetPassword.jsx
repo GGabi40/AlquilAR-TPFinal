@@ -77,9 +77,11 @@ const ResetPassword = () => {
     e.preventDefault();
     if (!validations()) return;
 
+    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/reset-password",
+        `${API_URL}/api/users/reset-password`,
         { token, newPassword: formData.password },
         { headers: { "Content-Type": "application/json" } }
       );
