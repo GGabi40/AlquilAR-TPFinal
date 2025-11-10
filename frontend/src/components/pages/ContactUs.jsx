@@ -8,6 +8,7 @@ const ContactUs = () => {
         mensaje: "",
     });
 
+    const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
@@ -17,11 +18,43 @@ const ContactUs = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+
+        setErrors({ ...errors, [name]: "" });
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!formData.nombre.trim()) {
+            newErrors.nombre = "El nombre es obligatorio.";
+        } else if (formData.nombre.trim().length < 3) {
+            newErrors.nombre = "El nombre debe tener al menos 3 caracteres.";
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = "El correo electrónico es obligatorio.";
+        } else if (!regexEmail.test(formData.email)) {
+            newErrors.email = "El formato del correo electrónico debe ser válido.";
+        }
+
+        if (!formData.mensaje.trim()) {
+            newErrors.mensaje = "El mensaje no puede estar vacío.";
+        } else if (formData.mensaje.length > 200) {
+            newErrors.mensaje = "El mensaje no puede superar los 200 caracteres.";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Aquí podrías integrar el envío a tu backend o servicio de email
+
+        if (!validateForm()) {
+            return;
+        }
+
         console.log("Formulario enviado:", formData);
         setSubmitted(true);
         setFormData({ nombre: "", email: "", mensaje: "" });
@@ -51,8 +84,9 @@ const ContactUs = () => {
                                 value={formData.nombre}
                                 onChange={handleChange}
                                 placeholder="Tu nombre"
-                                required
+                                isInvalid={!!errors.nombre}
                             />
+                            <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="email">
@@ -63,8 +97,9 @@ const ContactUs = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="tu@email.com"
-                                required
+                                isInvalid={!!errors.email}
                             />
+                            <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="mensaje">
@@ -76,7 +111,9 @@ const ContactUs = () => {
                                 onChange={handleChange}
                                 rows={4}
                                 placeholder="Escribí tu mensaje aquí..."
+                                isInvalid={!!errors.mensaje}
                             />
+                            <Form.Control.Feedback type="invalid">{errors.mensaje}</Form.Control.Feedback>
                             <div
                                 className="text-end"
                                 style={{
