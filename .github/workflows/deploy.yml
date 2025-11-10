@@ -1,0 +1,51 @@
+name: Deploy AlquilAR
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Checkout repo
+        uses: actions/checkout@v3
+
+      # Deploy Backend
+      - name: 🔁 Upload backend to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "backend/*"
+          target: "/home/msrainy/proyectos/AlquilAR-TPFinal/backend"
+
+      - name: 🔧 Install backend dependencies + restart API
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/msrainy/proyectos/AlquilAR-TPFinal/backend
+            npm install --production
+            pm2 restart alquilar-api
+
+      # Build Frontend
+      - name: 🎨 Install and build frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      # Deploy Frontend
+      - name: 🚚 Upload built frontend to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "frontend/build/*"
+          target: "/var/www/alquilar"
