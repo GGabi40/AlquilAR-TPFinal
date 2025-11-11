@@ -78,7 +78,8 @@ const PropertyPreview = () => {
     try {
       await requestNewProperty(sendToDatabase, token);
 
-      toastSuccess("Propiedad publicada con éxito.");
+      toastSuccess("Recibimos tu solicitud con éxito 😄");
+      toastInfo("La revisaremos pronto.");
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("Error al pubicar: ", error);

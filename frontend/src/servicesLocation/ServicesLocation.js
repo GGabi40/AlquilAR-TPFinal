@@ -15,7 +15,6 @@ export const getProvinces = async () => {
     const data = res.data;
 
     provinciasCache = data.provincias;
-    console.log("Provincias disponibles:", provinciasCache.length);
 
     return provinciasCache.map((p) => p.nombre);
   } catch (error) {
@@ -47,11 +46,6 @@ export const getLocalitiesByProvince = async (provinceName) => {
       console.warn(`No se encontró la provincia: ${provinceName}`);
       return [];
     }
-
-    console.log(
-      `Localidades encontradas para ${provinceName}:`,
-      provincia.localidades.length
-    );
 
     return provincia.localidades
       .filter((loc) => loc)

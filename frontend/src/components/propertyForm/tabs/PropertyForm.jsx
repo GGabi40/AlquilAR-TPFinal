@@ -38,7 +38,7 @@ const PropertyForm = () => {
         const provs = await getProvinces();
         setProvincias(provs);
       } catch (error) {
-        console.error("Error al cargar provincias:", error);
+        toast.error('Algo pasó, intente nuevamente.');
       }
     };
     fetchProvincias();
@@ -60,8 +60,8 @@ const PropertyForm = () => {
       const localidades = await getLocalitiesByProvince(provincia);
       setLocalidades(localidades);
     } catch (error) {
-      console.error("Error al cargar localidades:", error);
       setLocalidades([]);
+      toast.error('Algo pasó, intente nuevamente.');
     }
   };
 
