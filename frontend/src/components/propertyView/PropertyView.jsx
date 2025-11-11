@@ -1,36 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Card, Button, Container, Row, Col, Form, Carousel } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
-
-const properties = [
-    {
-        id: 1,
-        titulo: "San Lorenzo 1222",
-        tipo: "Departamento",
-        direccion: "San Lorenzo 1222",
-        precio: 60000,
-        expensas: 2000,
-        servicios: ["Luz", "Gas"],
-        hab: 3,
-        img: [
-            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D",
-            "https://via.placeholder.com/600x400?text=Imagen+2",
-            "https://plus.unsplash.com/premium_photo-1689609950112-d66095626efb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FzYXxlbnwwfHwwfHx8MA%3D%3D"
-        ],
-        localidad: "Rosario",
-        provincia: "Santa Fe",
-        descripcion: "Hermoso departamento con balcón. Viene de publicación."
-    },
-];
+import { getPropertyById } from "../../services/propertyServices";
 
 const PropertyDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    const property = properties.find(p => p.id === parseInt(id)) || properties[0];
+    const [property, setProperty] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
@@ -39,6 +18,23 @@ const PropertyDetail = () => {
         telefono: "",
         mensaje: ""
     });
+
+    /* useEffect(() => {
+        const fetchProperty = async (id) => {
+          try {
+            setLoading(true);
+
+            const results =  await getPropertyById(id);
+            setProperty(results);
+          } catch (error) {
+            console.error("Error al obtener propiedades:", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        fetchProperty(id);
+      }, []); */
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -110,7 +106,7 @@ const PropertyDetail = () => {
                     >
                         Volver
                     </button>
-                    <h4 className="m-0">{property.direccion}</h4>
+                    <h4 className="m-0">{property.address}</h4>
                     <button
                         style={{ background: "transparent", border: "none" }}
                         onClick={() => setIsFavorite(!isFavorite)}
@@ -125,7 +121,7 @@ const PropertyDetail = () => {
 
                 {/* Carousel de imágenes */}
                 <Carousel className="mb-4">
-                    {property.img.map((img, index) => (
+                    {property.image.map((img, index) => (
                         <Carousel.Item key={index}>
                             <img
                                 className="d-block w-100 rounded-4"
@@ -142,28 +138,25 @@ const PropertyDetail = () => {
                     <Col md={8}>
                         <div className="mb-3">
                             <p>
-                                <strong>Tipo:</strong> {property.tipo}
+                                <strong>Tipo:</strong> {property.type}
                             </p>
                             <p>
-                                <strong>Precio:</strong> ${property.precio}
+                                <strong>Precio:</strong> ${property.rentPrice}
                             </p>
                             <p>
-                                <strong>Expensas:</strong> ${property.expensas}
+                                <strong>Expensas:</strong> ${property.expensesPrice}
                             </p>
                             <p>
-                                <strong>Servicios:</strong> {property.servicios.join(" ")}
+                                <strong>Ambientes:</strong> {property.PropertyDetail.numRooms}
                             </p>
                             <p>
-                                <strong>Ambientes:</strong> {property.ambientes}
+                                <strong>Localidad:</strong> {property.PropertyLocality.name}
                             </p>
                             <p>
-                                <strong>Localidad:</strong> {property.localidad}
+                                <strong>Provincia:</strong> {property.PropertyProvince.name}
                             </p>
                             <p>
-                                <strong>Provincia:</strong> {property.provincia}
-                            </p>
-                            <p>
-                                <strong>Habitaciones:</strong> {property.hab}
+                                <strong>Habitaciones:</strong> {property.PropertyDetail.numBedrooms}
                             </p>
                         </div>
 

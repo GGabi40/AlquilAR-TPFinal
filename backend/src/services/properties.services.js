@@ -12,7 +12,6 @@ export const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.findAll({
       include: [
-        { model: User, as: "owner", attributes: ["id"] },
         { model: PropertyLocality, as: "locality" },
         { model: PropertyProvince, as: "province" },
         { model: PropertyDetails,
