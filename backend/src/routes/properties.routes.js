@@ -1,11 +1,8 @@
 import express from "express";
-import { Property } from "../models/Property.js";
-import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
-import { User } from "../models/User.js";
 import {
-    getPropertiesByOwner,
-    getPropertyById,
     getAllProperties,
+    getPropertyById,
+    getPropertiesByOwner,
     updateProperty,
     updateFeaturedProperty,
     deleteProperty,
@@ -13,6 +10,7 @@ import {
     requestNewProperty
 } from "../services/properties.services.js";
 
+import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
 import { approveProperty, rejectProperty } from "../services/superadmin.services.js";
 
 const router = express.Router();
@@ -30,10 +28,12 @@ router.patch("/:id/reject", verifyToken, roleMiddleware(["superadmin"]), rejectP
 
 /* Users */
 router.post("/request", verifyToken, roleMiddleware(["user", "owner"]), requestNewProperty);
+
+/*public*/
 router.get("/", getAllProperties);
-// router.get("/featured", getFeaturedProperties);
+router.get("/search", getSearchProperties);
 router.get("/:id", getPropertyById);
 
-router.get("/search", getSearchProperties);
+// router.get("/featured", getFeaturedProperties);
 
 export default router;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Container,
   Row,
@@ -10,15 +11,14 @@ import {
   Carousel,
   NavItem,
 } from "react-bootstrap";
-import { useNavigate } from "react-router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSearch,
   faUsers,
   faHome,
   faHandshake,
   faRoute,
 } from "@fortawesome/free-solid-svg-icons";
+import SearchBar from "../search/SearchBar";
 import { getAllProperties } from "../../services/propertyServices";
 
 export default function Home() {
@@ -39,11 +39,9 @@ export default function Home() {
       try {
         const data = await getAllProperties();
         const available = data.filter((p) => p.status === "available");
-
         const sorted = [...available].sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-
         setRecent(sorted.slice(0, 5));
       } catch (err) {
         setRecent([]);
@@ -65,6 +63,11 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleSearch = (filters) => {
+    const query = new URLSearchParams(filters).toString();
+    navigate(`/properties?${query}`);
+  };
+
   return (
     <>
       <div
@@ -80,21 +83,7 @@ export default function Home() {
           <h4 className="text-start text-white mb-3 fw-bold text-shadow fs-6">
             Encontrá tu próximo hogar
           </h4>
-          <Form className="d-flex flex-column flex-md-row justify-content-center gap-2">
-            <Form.Control
-              type="text"
-              placeholder="Ej: 2 ambientes en Buenos Aires"
-              className="w-100 me-2 rounded-pill shadow-sm search-input"
-              style={{ padding: "0.75rem 1.5rem" }}
-            />
-            <Button
-              className="d-flex align-items-center rounded-pill px-4 btn-primary"
-              onClick={() => handleClick("properties")}
-            >
-              <FontAwesomeIcon icon={faSearch} className="me-2" />
-              Buscar
-            </Button>
-          </Form>
+        <SearchBar onSearch={handleSearch} />
         </div>
       </div>
 
