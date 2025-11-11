@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Badge } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faCheck,
+  faXmark,
+  faEye,
+} from "@fortawesome/free-solid-svg-icons";
 import { toastSuccess, toastError } from "../../../ui/toaster/Notifications";
 import ConfirmModal from "../../../ui/modal/ConfirmModal.jsx";
 import {
@@ -10,17 +15,35 @@ import {
   rejectProperty,
   deleteProperty,
 } from "../../../../services/propertyServices.js";
+import { getUserById } from "../../../../services/userService.js";
+import DocsModal from "../../../ui/modal/DocsModal.jsx";
 
 const PropertyTable = ({ token }) => {
   const [properties, setProperties] = useState([]);
+  const [owners, setOwners] = useState({});
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState({ show: false, type: "", item: null });
+  const [docsModal, setDocsModal] = useState({ show: false, property: null });
 
   useEffect(() => {
     const fetchProperties = async () => {
       try {
         const res = await getAllProperties();
         setProperties(Array.isArray(res) ? res : []);
+
+        res.forEach(async (prop) => {
+          if (prop.ownerId) {
+            try {
+              const user = await getUserById(prop.ownerId, "users", token);
+              setOwners((prev) => ({
+                ...prev,
+                [prop.ownerId]: user.email,
+              }));
+            } catch (error) {
+              console.error("Error al obtener el propietario:", error);
+            }
+          }
+        });
       } catch (err) {
         toastError("No se pudieron cargar las propiedades");
       } finally {
@@ -115,7 +138,7 @@ const PropertyTable = ({ token }) => {
                   </span>
                 )}
               </td>
-              <td>{p.owner?.email || "N/A"}</td>
+              <td>{owners[p.ownerId] || "Cargando..."}</td>
               <td className="text-capitalize">{p.rentPreference}</td>
               <td>
                 {p.status === "available" ? (
@@ -153,6 +176,14 @@ const PropertyTable = ({ token }) => {
                 )}
                 <Button
                   size="sm"
+                  variant="info"
+                  className="me-2"
+                  onClick={() => setDocsModal({ show: true, item: p })}
+                >
+                  <FontAwesomeIcon icon={faEye} />
+                </Button>
+                <Button
+                  size="sm"
                   variant="danger"
                   onClick={() => openModal("delete", p)}
                 >
@@ -163,6 +194,14 @@ const PropertyTable = ({ token }) => {
           ))}
         </tbody>
       </Table>
+
+      {docsModal.show && (
+        <DocsModal
+          show={docsModal.show}
+          onClose={() => setDocsModal({ show: false, item: null })}
+          property={docsModal.item}
+        />
+      )}
 
       {modal.show && (
         <ConfirmModal
