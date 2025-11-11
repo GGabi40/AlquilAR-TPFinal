@@ -18,7 +18,7 @@ import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 import FAQ from "./components/pages/FAQ";
 import ContactUs from "./components/pages/ContactUs";
 import PublishSteps from "./components/publish/PublishSteps";
-import PropertyCards from "./components/propertyCards/PropertyCards";
+import PropertyCards from "./components/propertyCard/PropertyCard.jsx";
 import NotFound from "./components/error/notFound/NotFound.jsx";
 import PropertyView from "./components/propertyView/PropertyView";
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
@@ -30,6 +30,7 @@ import PropertyDashboard from "./components/propertyForm/PropertyDashboard.jsx";
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
 import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
 import PropertyPreview from "./components/propertyForm/tabs/PropertyPreview.jsx";
+import PropertyList from "./components/propertyList/PropertyList.jsx";
 
 function App() {
   return (
@@ -50,7 +51,7 @@ function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact-us" element={<ContactUs />} />
 
-          <Route path="/properties" element={<PropertyCards />} />{" "}
+          <Route path="/properties" element={<PropertyList />} />{" "}
           {/* Ruta de search */}
           <Route path="/property/:id" element={<PropertyView />} />
 

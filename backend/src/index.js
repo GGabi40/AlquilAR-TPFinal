@@ -13,6 +13,7 @@ import postsRoutes from './routes/posts.routes.js';
 import rentalsRoutes from './routes/rental.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import locationRoutes from './routes/locations.routes.js';
+import searchRoutes from './routes/search.routes.js';
 // import uploadRoutes from './routes/upload.routes.js';
 import { sequelize } from './config/db.js';
 
@@ -37,6 +38,7 @@ app.use("/api/rentals", rentalsRoutes);
 app.use("/api/contact", contactRoutes);
 app.use('/api/location', locationRoutes);
 // app.use('/api/upload', uploadRoutes);
+app.use("/search", searchRoutes);
 
 try {
     await sequelize.sync();

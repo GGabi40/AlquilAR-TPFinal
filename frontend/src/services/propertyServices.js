@@ -15,7 +15,7 @@ const PropertyServices = {
 
   getPropertyById: async (id) => {
     try {
-      const response = await axios.get(`${API_URL}/${id}`);
+      const response = await axios.get(`${API_URL}/properties/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error al traer propiedad:", error);
@@ -25,7 +25,7 @@ const PropertyServices = {
 
   getPropertiesByOwner: async (ownerId, token) => {
     try {
-      const response = await axios.get(`${API_URL}/owner/${ownerId}`, {
+      const response = await axios.get(`${API_URL}/properties/owner/${ownerId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -35,9 +35,11 @@ const PropertyServices = {
     }
   },
 
-  searchProperties: async (queryParams) => {
+  searchProperties: async (query) => {
     try {
-      const response = await axios.get(`${API_URL}/search`, { params: queryParams });
+      const response = await axios.get(`${API_URL}/search`, { 
+        params: { q: query },
+      });
       return response.data;
     } catch (error) {
       console.error("Error en búsqueda de propiedades:", error);
