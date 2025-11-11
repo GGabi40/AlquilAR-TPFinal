@@ -202,14 +202,6 @@ const Profile = () => {
                 placeholder="Correo electrónico"
                 value={formData.email}
               />
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => navigate("/change-email")}
-                variant='info'
-              >
-                Cambiar
-              </button>
             </div>
             {errors.email && (
               <div className="invalid-feedback d-block">{errors.email}</div>

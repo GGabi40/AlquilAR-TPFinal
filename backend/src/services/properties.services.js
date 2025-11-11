@@ -1,12 +1,17 @@
 import { Property } from "../models/Property.js";
 import { Op } from "sequelize";
+import { User } from '../models/User.js';
+import { PropertyLocality } from '../models/PropertyLocality.js';
+import { PropertyProvince } from '../models/PropertyProvince.js';
+import { PropertyDetails } from '../models/PropertyDetails.js';
+import { PropertyVideos } from '../models/PropertyVideos.js';
+import { PropertyImages } from '../models/PropertyImages.js';
+import { PropertyDocuments } from '../models/PropertyDocuments.js';
 
 export const getAllProperties = async (req, res) => {
   try {
     const properties = await Property.findAll({
       include: [
-        { model: User, as: "owner", attributes: ["id", "email"] },
-        { model: PropertyDetails },
         { model: PropertyLocality, as: "locality" },
         { model: PropertyProvince, as: "province" },
         { model: PropertyDetails,
