@@ -116,6 +116,25 @@ const PropertyServices = {
       throw error;
     }
   },
+
+  uploadFile: async (file, token) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await axios.post(`${API_URL}/upload`, formData,{
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}` 
+          }
+      });
+
+      return res.data.url;
+    } catch (error) {
+      console.error("Error al subir archivo", error);
+      throw error;
+    }
+  }
 };
 
 export default PropertyServices;
