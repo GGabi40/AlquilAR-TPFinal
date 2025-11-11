@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import fs from 'fs';
 
 import './models/associations.js';
 
@@ -14,7 +13,9 @@ import rentalsRoutes from './routes/rental.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import locationRoutes from './routes/locations.routes.js';
 import searchRoutes from './routes/search.routes.js';
-// import uploadRoutes from './routes/upload.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
+import { uploadPath } from './config/path.js';
+
 import { sequelize } from './config/db.js';
 
 dotenv.config();
@@ -29,6 +30,11 @@ app.use(cors({
 
 
 app.use(express.json());
+
+app.use("/uploads", express.static(uploadPath));
+
+app.use("/api/upload", uploadRoutes);
+
 app.use('/api/users', userRoutes);
 app.use("/api/properties", propertiesRoutes);
 app.use("/api/favorites", favoritesRoutes);
@@ -38,7 +44,6 @@ app.use("/api/rentals", rentalsRoutes);
 app.use("/api/contact", contactRoutes);
 app.use('/api/location', locationRoutes);
 // app.use('/api/upload', uploadRoutes);
-app.use("/search", searchRoutes);
 
 try {
     await sequelize.sync();

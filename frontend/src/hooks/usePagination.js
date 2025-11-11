@@ -9,10 +9,12 @@ const usePagination = (endpoint, limit = 10) => {
 
   const token = localStorage.getItem("token");
 
+  const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
   const fetchData = async (pageNumber) => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:3000/api${endpoint}`, {
+      const res = await axios.get(`${API_URL}${endpoint}`, {
         params: { page: pageNumber, limit },
         headers: { Authorization: `Bearer ${token}` },
       });

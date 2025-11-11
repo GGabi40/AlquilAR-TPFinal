@@ -15,12 +15,13 @@ import "slick-carousel/slick/slick-theme.css";
 import "../customStyles/PropertyImages.css";
 
 import { PropertyContext } from "../../../services/property.context";
-
-import ConfirmModal from "../../ui/modal/ConfirmModal";
+import PropertyServices from "../../../services/propertyServices.js";
+import { AuthenticationContext } from "../../../services/auth.context.jsx";
 
 const PropertyImages = () => {
   const navigate = useNavigate();
   const { updateSection, formData } = useContext(PropertyContext);
+  const { token } = useContext(AuthenticationContext);
 
   const [data, setData] = useState({
     videoUrl: "",
@@ -89,11 +90,29 @@ const PropertyImages = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handlePreview = () => {
+  const handlePreview = async () => {
     if (handleValidation()) {
-      toastSuccess("Datos guardados correctamente 🚀");
-      updateSection("images", data);
+      console.log("Datos: ", data);
 
+      // img
+      const uploadedImages = await Promise.all(
+        data.images.map((img) => PropertyServices.uploadFile(img, token))
+      );
+
+      // docs
+      const uploadedDocs = await Promise.all(
+        data.documents.map((doc) => PropertyServices.uploadFile(doc, token))
+      );
+
+      const updatedData = {
+        ...data,
+        images: uploadedImages,
+        documents: uploadedDocs,
+      };
+      
+      updateSection("images", updatedData);
+
+      toastSuccess("Datos guardados correctamente");
       navigate('/add-property/preview');
     } else {
       toastError("Por favor, revisá los campos con error.");

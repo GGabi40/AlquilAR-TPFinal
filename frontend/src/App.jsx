@@ -30,6 +30,7 @@ import PropertyDashboard from "./components/propertyForm/PropertyDashboard.jsx";
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
 import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
 import PropertyPreview from "./components/propertyForm/tabs/PropertyPreview.jsx";
+import Favorites from "./components/pages/Favorites.jsx";
 import PropertyList from "./components/propertyList/PropertyList.jsx";
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
+          {/* <Route path="/favorites" element={<Favorites />} /> */}
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />

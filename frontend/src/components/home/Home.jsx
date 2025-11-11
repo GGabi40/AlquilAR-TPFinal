@@ -47,12 +47,13 @@ export default function Home() {
         setRecent([]);
       }
     };
+    
     fetchRecent();
   }, []);
 
   const recentChunks = chunkArray(
     Array.isArray(recent)
-      ? recent.filter((p) => p.propertyType === tipo.slice(0, -1))
+      ? recent.filter((p) => p.propertyType.toLowerCase() === tipo.slice(0, -1).toLowerCase())
       : [],
     3
   );
