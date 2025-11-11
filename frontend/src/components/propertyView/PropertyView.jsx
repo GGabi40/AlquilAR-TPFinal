@@ -59,6 +59,8 @@ const PropertyDetail = () => {
             newErrors.nombre = "El nombre es obligatorio";
         } else if (formData.nombre.length < 3) {
             newErrors.nombre = "El nombre debe tener mínimo 3 caracteres";
+        } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.nombre)) {
+            newErrors.nombre = "El nombre solo debe contener letras y espacios.";
         }
 
         if (!formData.email.trim()) {
@@ -223,7 +225,7 @@ const PropertyDetail = () => {
                                     <Form.Control
                                         type="text"
                                         name="telefono"
-                                        placeholder="Ej: 3814567890"
+                                        placeholder="Ej: 341 2567890"
                                         value={formData.telefono}
                                         onChange={handleChange}
                                         isInvalid={!!errors.telefono}
