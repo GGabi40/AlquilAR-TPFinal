@@ -18,7 +18,6 @@ import PrivacyPolicy from "./components/pages/PrivacyPolicy";
 import FAQ from "./components/pages/FAQ";
 import ContactUs from "./components/pages/ContactUs";
 import PublishSteps from "./components/publish/PublishSteps";
-import PropertyCards from "./components/propertyCard/PropertyCard.jsx";
 import NotFound from "./components/error/notFound/NotFound.jsx";
 import PropertyView from "./components/propertyView/PropertyView";
 import ForgotPassword from "./components/auth/forgotPassword/ForgotPassword";
