@@ -3,9 +3,6 @@ import { Op } from "sequelize";
 
 export const getAllProperties = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const properties = await Property.findAll();
-=======
     const properties = await Property.findAll({
       include: [
         { model: User, as: "owner", attributes: ["id", "email"] },
@@ -13,16 +10,14 @@ export const getAllProperties = async (req, res) => {
         { model: PropertyLocality, as: "locality" },
         { model: PropertyProvince, as: "province" },
         { model: PropertyDetails,
-          include: [ { model: PropertyImages }, { model: PropertyVideos } ]
-         },
-        { model: PropertyDocuments }
+          include: [ { model: PropertyImages }, { model: PropertyVideos }, { model: PropertyDocuments } ]
+         }
       ],
       order: [["createdAt", "DESC"]],
     });
 
     if (!properties || properties.length === 0)
       return res.status(404).json({ message: "No hay propiedades disponibles." })
->>>>>>> 986a8705afddf6ffac52b314037bbd7696273cd4
     res.json(properties);
   } catch (error) {
     console.error("Error al obtener propiedadews:", error);
@@ -231,13 +226,7 @@ export const requestNewProperty = async (req, res) => {
     }));
     if (images?.length) await PropertyImages.bulkCreate(images, { transaction: t });
     */
-<<<<<<< HEAD
-=======
 
-    // Guarda Videos
-    // cons videos = req.body.
-
->>>>>>> 986a8705afddf6ffac52b314037bbd7696273cd4
     await t.commit();
     res.status(200).json({ property, details, province, locality });
   } catch (error) {
