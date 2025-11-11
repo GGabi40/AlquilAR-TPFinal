@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Container,
   Row,
@@ -39,7 +38,6 @@ export default function Home() {
     const fetchRecent = async () => {
       try {
         const data = await getAllProperties();
-
         const available = data.filter((p) => p.status === "available");
 
         const sorted = [...available].sort(
@@ -51,13 +49,13 @@ export default function Home() {
         setRecent([]);
       }
     };
-
+    
     fetchRecent();
   }, []);
 
   const recentChunks = chunkArray(
     Array.isArray(recent)
-      ? recent.filter((p) => p.propertyType === tipo.slice(0, -1))
+      ? recent.filter((p) => p.propertyType.toLowerCase() === tipo.slice(0, -1).toLowerCase())
       : [],
     3
   );

@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "../services/axiosConfig";
-import FavoritesList from "../../components/favorites/FavoritesList.jsx";
-import PropertyDetails from "../propertyDetail/PropertyDetail.jsx";
+import axios from "axios";
 
 const Favorites = () => {
     const [favorites, setFavorites] = useState([]);

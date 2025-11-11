@@ -2,3 +2,4 @@ node_modules
 database.db
 .env
 *.db
+uploads/
