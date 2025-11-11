@@ -1,5 +1,6 @@
 import { Property } from "../models/Property.js";
 import { Op } from "sequelize";
+import { sequelize } from "../config/db.js";
 import { User } from '../models/User.js';
 import { PropertyLocality } from '../models/PropertyLocality.js';
 import { PropertyProvince } from '../models/PropertyProvince.js';
