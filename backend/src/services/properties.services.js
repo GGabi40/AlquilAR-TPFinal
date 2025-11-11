@@ -18,8 +18,9 @@ export const getAllProperties = async (req, res) => {
         { model: PropertyLocality, as: "locality" },
         { model: PropertyProvince, as: "province" },
         { model: PropertyDetails,
-          include: [ { model: PropertyImages }, { model: PropertyVideos }, { model: PropertyDocuments } ]
-         }
+          include: [ { model: PropertyImages }, { model: PropertyVideos } ]
+         },
+        { model: PropertyDocuments }
       ],
       order: [["createdAt", "DESC"]],
     });
@@ -311,6 +312,9 @@ export const requestNewProperty = async (req, res) => {
     }));
     if (images?.length) await PropertyImages.bulkCreate(images, { transaction: t });
     */
+
+    // Guarda Videos
+    // cons videos = req.body.
 
     await t.commit();
 

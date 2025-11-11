@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Container,
   Row,
@@ -39,7 +38,6 @@ export default function Home() {
     const fetchRecent = async () => {
       try {
         const data = await getAllProperties();
-
         const available = data.filter((p) => p.status === "available");
 
         const sorted = [...available].sort(
@@ -48,18 +46,16 @@ export default function Home() {
 
         setRecent(sorted.slice(0, 5));
       } catch (err) {
-        console.error(err);
-        toastError("No se pudieron cargar las propiedades");
         setRecent([]);
       }
     };
-
+    
     fetchRecent();
   }, []);
 
   const recentChunks = chunkArray(
     Array.isArray(recent)
-      ? recent.filter((p) => p.propertyType === tipo.slice(0, -1))
+      ? recent.filter((p) => p.propertyType.toLowerCase() === tipo.slice(0, -1).toLowerCase())
       : [],
     3
   );
@@ -251,7 +247,7 @@ export default function Home() {
         className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
         style={{
           backgroundImage:
-            "url('/public/illustrations/bg-protruding-squares-2.svg')",
+            "url('/illustrations/bg-protruding-squares-2.svg')",
           backgroundSize: "auto",
         }}
       >

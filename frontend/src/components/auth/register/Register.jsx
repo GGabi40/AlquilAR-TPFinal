@@ -157,9 +157,11 @@ const Register = () => {
     const validation = validations();
     if (!validation) return;
 
+    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/register",
+        `${API_URL}/users/register`,
         formData,
         {
           headers: { "Content-Type": "application/json" },

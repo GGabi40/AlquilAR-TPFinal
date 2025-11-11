@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api";
+const API_URL = import.meta.env.VITE_BACKEND_ROUTE || "http://localhost:3000/api";
 
 const PropertyServices = {
   getAllProperties: async () => {
@@ -116,6 +116,25 @@ const PropertyServices = {
       throw error;
     }
   },
+
+  uploadFile: async (file, token) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await axios.post(`${API_URL}/upload`, formData,{
+        headers: { 
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}` 
+          }
+      });
+
+      return res.data.url;
+    } catch (error) {
+      console.error("Error al subir archivo", error);
+      throw error;
+    }
+  }
 };
 
 export default PropertyServices;

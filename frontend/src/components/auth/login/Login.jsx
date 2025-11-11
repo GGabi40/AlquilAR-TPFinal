@@ -87,9 +87,11 @@ const Login = () => {
     const validation = validations();
     if (!validation) return;
 
+    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/users/login",
+        `${API_URL}/users/login`,
         formData,
         {
           headers: { "Content-Type": "application/json" },
@@ -106,7 +108,6 @@ const Login = () => {
         navigate("/");
       }, 1000);
     } catch (error) {
-      console.error("Error al iniciar sesion: ", error.message);
       toastError(
         error.response?.data?.message ||
           "Error al iniciar sesión. Intenta de nuevo."

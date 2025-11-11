@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
 export const getAllUsers = async (endpoint, token) => {
   try {
-    const response = await axios.get(`${API_URL}/api/${endpoint}`, {
+    const response = await axios.get(`${API_URL}/${endpoint}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -19,7 +19,7 @@ export const getAllUsers = async (endpoint, token) => {
 
 export const getUserById = async (id, endpoint = "users", token) => {
   try {
-    const response = await axios.get(`${API_URL}/api/${endpoint}/${id}`, {
+    const response = await axios.get(`${API_URL}/${endpoint}/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -34,7 +34,7 @@ export const getUserById = async (id, endpoint = "users", token) => {
 export const updateUser = async (id, endpoint = "users", userData, token) => {
   try {
     const response = await axios.put(
-      `${API_URL}/api/${endpoint}/${id}`,
+      `${API_URL}/${endpoint}/${id}`,
       userData,
       {
         headers: {
@@ -52,7 +52,7 @@ export const updateUser = async (id, endpoint = "users", userData, token) => {
 
 export const delUser = async (id, token) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/users/${id}/delete`, {
+    const response = await axios.delete(`${API_URL}/users/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -66,7 +66,7 @@ export const delUser = async (id, token) => {
 export const blockUser = async (id, token) => {
   try {
     const res = await axios.patch(
-      `${API_URL}/api/users/${id}/block`,
+      `${API_URL}/users/${id}/block`,
       {},
       {
         headers: {
@@ -84,7 +84,7 @@ export const blockUser = async (id, token) => {
 export const updateRole = async (id, token, data) => {
   try {
     const res = await axios.patch(
-      `${API_URL}/api/users/${id}/updateRole`,
+      `${API_URL}/users/${id}/updateRole`,
       data,
       {
         headers: {
