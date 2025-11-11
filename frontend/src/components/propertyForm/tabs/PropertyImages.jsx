@@ -92,6 +92,8 @@ const PropertyImages = () => {
   const handlePreview = () => {
     if (handleValidation()) {
       toastSuccess("Datos guardados correctamente 🚀");
+      console.log("Datos: ", data);
+      
       updateSection("images", data);
 
       navigate('/add-property/preview');
