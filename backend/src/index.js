@@ -46,7 +46,7 @@ app.use('/api/location', locationRoutes);
 
 try {
     await initDatabase();
-    await sequelize.sync({ alter: false });
+    await sequelize.sync();
     app.listen(PORT, () => {
         console.log(`Corriendo el servidor.`);
     });
