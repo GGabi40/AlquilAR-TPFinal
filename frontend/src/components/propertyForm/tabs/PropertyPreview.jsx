@@ -28,6 +28,7 @@ import {
   toastSuccess,
   toastError,
   toastInfo,
+  toastLoading,
 } from "../../ui/toaster/Notifications";
 import Notifications from "../../ui/toaster/Notifications";
 
@@ -60,6 +61,8 @@ const PropertyPreview = () => {
       return;
     }
 
+    console.log(formData);
+
     const sendToDatabase = {
       propertyType: features.tipoPropiedad,
       rentPrice: features.precioAlquiler,
@@ -73,17 +76,21 @@ const PropertyPreview = () => {
       totalArea: features.superficie,
       nameP: location.provincia,
       nameL: location.localidad,
+      images: images.images,
+      video: images.videoUrl,
+      documents: images.documents,
     };
+
+    const toastId = toastLoading("Subiendo propiedad...");
 
     try {
       await requestNewProperty(sendToDatabase, token);
-
-      toastSuccess("Recibimos tu solicitud con éxito 😄");
+      toastSuccess("Propiedad publicada", { id: toastId });
       toastInfo("La revisaremos pronto.");
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("Error al pubicar: ", error);
-      toastError("Error al enviar la propiedad al servidor.");
+      toastError("Error al publicar 😢", { id: toastId });
     }
   };
 
