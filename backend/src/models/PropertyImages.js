@@ -14,5 +14,14 @@ export const PropertyImages = sequelize.define("PropertyImages", {
     alt: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    propertyDetailsId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "PropertyDetails",
+      key: "idPropertyDetails",
+    },
+    onDelete: "CASCADE",
+  },
 });

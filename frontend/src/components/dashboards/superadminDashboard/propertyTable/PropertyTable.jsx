@@ -16,14 +16,12 @@ import {
   deleteProperty,
 } from "../../../../services/propertyServices.js";
 import { getUserById } from "../../../../services/userService.js";
-import DocsModal from "../../../ui/modal/DocsModal.jsx";
 
 const PropertyTable = ({ token }) => {
   const [properties, setProperties] = useState([]);
   const [owners, setOwners] = useState({});
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState({ show: false, type: "", item: null });
-  const [docsModal, setDocsModal] = useState({ show: false, property: null });
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -176,14 +174,6 @@ const PropertyTable = ({ token }) => {
                 )}
                 <Button
                   size="sm"
-                  variant="info"
-                  className="me-2"
-                  onClick={() => setDocsModal({ show: true, item: p })}
-                >
-                  <FontAwesomeIcon icon={faEye} />
-                </Button>
-                <Button
-                  size="sm"
                   variant="danger"
                   onClick={() => openModal("delete", p)}
                 >
@@ -194,22 +184,6 @@ const PropertyTable = ({ token }) => {
           ))}
         </tbody>
       </Table>
-
-      {docsModal.show && (
-        <DocsModal
-          show={docsModal.show}
-          onClose={() => setDocsModal({ show: false, property: null })}
-          property={docsModal.property}
-          token={token}
-          onStatusChange={(id, newStatus) => {
-            setProperties((prev) =>
-              prev.map((p) =>
-                p.idProperty === id ? { ...p, status: newStatus } : p
-              )
-            );
-          }}
-        />
-      )}
 
       {modal.show && (
         <ConfirmModal

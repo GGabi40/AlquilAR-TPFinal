@@ -269,13 +269,13 @@ export const requestNewProperty = async (req, res) => {
     if(req.body.documents?.length){
       const docRecords = req.body.documents.map((url) => ({
         URLDocument: url,
-        propertyDetailsId: details.idPropertyDetails,        
+        propertyId: property.idProperty,        
       }));
       await PropertyDocuments.bulkCreate(docRecords, { transaction: t });
     }
 
     await t.commit();
-    res.status(200).json({ property, details, province, locality });
+    res.status(200).json({ property: { ...property.toJSON(), details } });
   } catch (error) {
     console.error("Error al solicitar nueva propiedad:", error);
     await t.rollback();
