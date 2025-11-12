@@ -75,9 +75,7 @@ export const getPropertyById = async (req, res) => {
             { model: PropertyImages },
             { model: PropertyVideos }
           ]
-        },
-        { model: PropertyDocuments },
-        { model: User, as: "owner" }
+        }
       ]
     });
 
