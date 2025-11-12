@@ -18,6 +18,28 @@ import {
 
 import Notifications from "../../ui/toaster/Notifications";
 
+const formatApproxAddress = (address) => {
+  if (!address) return "";
+
+  // Busca el número en la dirección
+  const match = address.match(/^(.*?)(\d+)$/);
+  if (!match) return address;
+
+  const street = match[1].trim();
+  const number = parseInt(match[2], 10);
+
+  let rounded;
+  if (number >= 100) {
+    rounded = Math.floor(number / 100) * 100; // redondea a la centena
+  } else if (number >= 10) {
+    rounded = Math.floor(number / 10) * 10; // redondea a la decena
+  } else {
+    rounded = 10; // si es menor a 10, deja 10
+  }
+
+  return `${street} ${rounded}`;
+};
+
 const PropertyForm = () => {
   const { updateSection } = useContext(PropertyContext);
   const navigate = useNavigate();
@@ -99,7 +121,14 @@ const PropertyForm = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      updateSection("location", data);
+      const direccionNormalizada = formatApproxAddress(data.direccion);
+
+      const updatedData = {
+        ...data,
+        direccion: direccionNormalizada,
+      };
+
+      updateSection("location", updatedData);
       toastSuccess("Datos guardados correctamente 🚀");
       navigate("/add-property/features");
     } else {
