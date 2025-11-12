@@ -5,6 +5,7 @@ import axios from "axios";
 import Notifications, {
   toastSuccess,
   toastError,
+  toastLoading,
 } from "../../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
@@ -89,6 +90,8 @@ const Login = () => {
 
     const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
+    const toastId = toastLoading("Conectando...");
+
     try {
       const response = await axios.post(
         `${API_URL}/users/login`,
@@ -102,15 +105,15 @@ const Login = () => {
         handleUserLogin(response.data.token);
       }
 
-      toastSuccess("Sesión iniciada correctamente.");
+      toastSuccess("Sesión iniciada correctamente.", { id: toastId });
 
       setTimeout(() => {
         navigate("/");
       }, 1000);
     } catch (error) {
       toastError(
-        error.response?.data?.message ||
-          "Error al iniciar sesión. Intenta de nuevo."
+        error.response?.data?.message || "Error al iniciar sesión. Intenta de nuevo.", 
+        { id: toastId }
       );
       emailRef.current.classList.add("is-invalid");
       passwordRef.current.classList.add("is-invalid");

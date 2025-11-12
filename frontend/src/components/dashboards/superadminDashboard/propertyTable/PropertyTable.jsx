@@ -198,8 +198,16 @@ const PropertyTable = ({ token }) => {
       {docsModal.show && (
         <DocsModal
           show={docsModal.show}
-          onClose={() => setDocsModal({ show: false, item: null })}
-          property={docsModal.item}
+          onClose={() => setDocsModal({ show: false, property: null })}
+          property={docsModal.property}
+          token={token}
+          onStatusChange={(id, newStatus) => {
+            setProperties((prev) =>
+              prev.map((p) =>
+                p.idProperty === id ? { ...p, status: newStatus } : p
+              )
+            );
+          }}
         />
       )}
 
