@@ -125,12 +125,12 @@ const Nav = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/">
+                    <Link className="dropdown-item" to="/favorites">
                       Favoritos
                     </Link>
                   </li>
                   <li>
-                    <li>
+                    <>
                       {user.role === "owner" && (
                         <Link className="dropdown-item" to="/owner/dashboard">
                           Mis propiedades
@@ -142,7 +142,7 @@ const Nav = () => {
                           Panel de Control
                         </Link>
                       )}
-                    </li>
+                    </>
                   </li>
                   <li>
                     <Link className="dropdown-item" to="/faq">

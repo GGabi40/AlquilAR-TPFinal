@@ -44,7 +44,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
-          {/* <Route path="/favorites" element={<Favorites />} /> */}
+          <Route path="/favorites" element={<Favorites />} />
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />
