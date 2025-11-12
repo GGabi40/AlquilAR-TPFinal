@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPencil, faShield } from "@fortawesome/free-solid-svg-icons";
@@ -10,8 +10,8 @@ import {
 import {
   getAllUsers,
   blockUser,
-  delUser,
-  updateRole,
+  deleteUser,
+  updateUserRole,
 } from "../../../../services/userService.js";
 
 const UserTable = ({ token, userId, role }) => {
@@ -41,20 +41,19 @@ const UserTable = ({ token, userId, role }) => {
   const handleConfirm = async () => {
     const { type, item } = modal;
     try {
-      if (type === "delete") await delUser(item.id, token);
+      if (type === "delete") await deleteUser(item.id, token);
       if (type === "block") await blockUser(item.id, token);
       if (type === "saveRole")
-        await updateRole(item.id, token, { role: editedRole });
-
+        await updateUserRole(item.id, token, { role: editedRole });
       setUsers((prev) =>
         prev
           .map((u) =>
             u.id === item.id
               ? {
-                  ...u,
-                  isBlocked: type === "block" ? !u.isBlocked : u.isBlocked,
-                  role: type === "saveRole" ? editedRole : u.role,
-                }
+                ...u,
+                isBlocked: type === "block" ? !u.isBlocked : u.isBlocked,
+                role: type === "saveRole" ? editedRole : u.role,
+              }
               : u
           )
           .filter((u) => (type === "delete" ? u.id !== item.id : true))
@@ -102,9 +101,8 @@ const UserTable = ({ token, userId, role }) => {
       case "delete":
         return `¿Seguro que deseas eliminar a ${item.name} ${item.surname}?`;
       case "block":
-        return `¿Deseas ${item.isBlocked ? "desbloquear" : "bloquear"} a ${
-          item.name
-        }?`;
+        return `¿Deseas ${item.isBlocked ? "desbloquear" : "bloquear"} a ${item.name
+          }?`;
       case "saveRole":
         return `¿Confirmar cambio de rol a "${editedRole}" para ${item.name}?`;
       default:
@@ -137,7 +135,6 @@ const UserTable = ({ token, userId, role }) => {
         return "primary";
     }
   };
-
   if (loading) return <p>Cargando usuarios...</p>;
 
   return (
@@ -161,9 +158,8 @@ const UserTable = ({ token, userId, role }) => {
               <td>{u.email}</td>
               <td>
                 <span
-                  className={`d-inline-block rounded-circle ${
-                    u.isBlocked ? "bg-danger" : "bg-success"
-                  }`}
+                  className={`d-inline-block rounded-circle ${u.isBlocked ? "bg-danger" : "bg-success"
+                    }`}
                   style={{ width: 12, height: 12 }}
                 ></span>
               </td>
@@ -224,7 +220,6 @@ const UserTable = ({ token, userId, role }) => {
                     Editar
                   </Button>
                 )}
-
                 <Button
                   size="sm"
                   variant="primary"
@@ -235,7 +230,6 @@ const UserTable = ({ token, userId, role }) => {
                   <FontAwesomeIcon icon={faShield} className="me-2" />
                   {u.isBlocked ? "Desbloquear" : "Bloquear"}
                 </Button>
-
                 <Button
                   size="sm"
                   variant="danger"
@@ -249,7 +243,6 @@ const UserTable = ({ token, userId, role }) => {
           ))}
         </tbody>
       </Table>
-
       {modal.show && (
         <ConfirmModal
           show={modal.show}

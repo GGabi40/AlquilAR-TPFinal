@@ -9,7 +9,6 @@ export const getAllUsers = async (endpoint, token) => {
         Authorization: `Bearer ${token}`
       }
     });
-
     return response.data;
   } catch (error) {
     console.error("Error al obtener datos: ", error);
@@ -50,7 +49,7 @@ export const updateUser = async (id, endpoint = "users", userData, token) => {
   }
 };
 
-export const delUser = async (id, token) => {
+export const deleteUser = async (id, token) => {
   try {
     const response = await axios.delete(`${API_URL}/users/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -81,7 +80,7 @@ export const blockUser = async (id, token) => {
   }
 };
 
-export const updateRole = async (id, token, data) => {
+export const updateUserRole = async (id, token, data) => {
   try {
     const res = await axios.patch(
       `${API_URL}/users/${id}/updateRole`,

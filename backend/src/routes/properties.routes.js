@@ -25,7 +25,6 @@ router.patch("/:id/featured", verifyToken, roleMiddleware(["owner", "superadmin"
 router.patch("/:id/approve", verifyToken, roleMiddleware(["superadmin"]), approveProperty);
 router.patch("/:id/reject", verifyToken, roleMiddleware(["superadmin"]), rejectProperty)
 
-
 /* Users */
 router.post("/request", verifyToken, roleMiddleware(["user", "owner"]), requestNewProperty);
 

@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function UserDashboard() {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem("user"));
-        setUser(savedUser);
+        const token = localStorage.getItem("token");
+
+        if (!savedUser || !token) return;
+
+        axios.get(`http://localhost:3000/api/users/${savedUser.id}`, {
+                headers: { Authorization: `Bearer ${token}`, },
+            })
+            .then((res) => setUser(res.data))
+            .catch((err) => console.error("Error al cargar usuario:", err));
     }, []);
 
     const property = {
@@ -22,7 +31,6 @@ export default function UserDashboard() {
 
     return (
         <div className="container py-4">
-
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary rounded mb-4">
                 <div className="container-fluid">
                     <span className="navbar-brand">AlquilAR</span>
@@ -31,7 +39,7 @@ export default function UserDashboard() {
                             className="rounded-circle bg-light me-2"
                             style={{ width: "30px", height: "30px" }}
                         ></div>
-                        <span className="text-white">{user}</span>
+                        <span className="text-white">{user.name}{user.surname}</span>
                     </div>
                 </div>
             </nav>

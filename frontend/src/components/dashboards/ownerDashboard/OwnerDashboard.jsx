@@ -1,20 +1,26 @@
-import React from "react";
 import { Navbar, Container, Table, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import usePagination from "../../../hooks/usePagination.js";
 import { PostService } from "../../../services/PostService.js";
+import Notifications, { toastError, toastSuccess} from "../../ui/toaster/Notifications.jsx";
+import ConfirmModal from "../../ui/modal/ConfirmModal.jsx";
+import { useState } from "react";
 
 export default function OwnerDashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  const { data: posts,
+  const { 
+    data: posts,
     loading,
     loadMore,
     hasMore,
     setData,
-  } = usePagination(`/posts/owner/${user.id}`);
+  } = usePagination(`/posts/owner/${user.id}`, token);
+
+  const [modalShow, setModalShow] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   const handlePauseResume = async (post) => {
     const newStatus = post.status === "active" ? "paused" : "active";
@@ -23,20 +29,31 @@ export default function OwnerDashboard() {
       setData((prev) =>
         prev.map((p) => (p.id === post.id ? { ...p, status: newStatus } : p))
       );
+      toastSuccess(
+        `Publicación ${newStatus === "paused" ? "pausada" : "reactivada"} correctamente`
+      );
     } catch (error) {
       console.error("Error al cambiar estado:", error);
-      alert("No se pudo cambiar el estado de la publicación.");
+      toastError("No se pudo cambiar el estado de la publicación.");
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("¿Seguro que querés eliminar esta publicación?")) return;
+  const handleDelete = (id) => {
+    setSelectedId(id);
+    setModalShow(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await PostService.deletePost(id, token);
-      setData((prev) => prev.filter((p) => p.id !== id));
+      await PostService.deletePost(selectedId, token);
+      setData((prev) => prev.filter((p) => p.id !== selectedId));
+      toastSuccess("Publicación eliminada correctamente");
     } catch (error) {
       console.error("Error al eliminar publicación:", error);
-      alert("No se pudo eliminar la publicación.");
+      toastError("No se pudo eliminar la publicación.");
+    } finally {
+      setModalShow(false);
+      setSelectedId(null);
     }
   };
 
@@ -46,6 +63,7 @@ export default function OwnerDashboard() {
 
   return (
     <div>
+      <Notifications />
       <Navbar bg="primary" variant="dark" expand="lg" className="px-3">
         <Container fluid>
           <Navbar.Brand>AlquilAR</Navbar.Brand>
@@ -59,9 +77,9 @@ export default function OwnerDashboard() {
         <h3>Bienvenido/a {user?.name},</h3>
         <p className="text-muted">Estas son tus publicaciones:</p>
 
-        {loading && propiedades.length === 0 ? (
+        {loading && posts.length === 0 ? (
           <p>Cargando propiedades...</p>
-        ) : propiedades.length === 0 ? (
+        ) : posts.length === 0 ? (
           <p>No tienes propiedades registradas todavía.</p>
         ) : (
           <Table striped bordered hover responsive>
@@ -74,7 +92,7 @@ export default function OwnerDashboard() {
               </tr>
             </thead>
             <tbody>
-              {propiedades.map((p) => (
+              {posts.map((p) => (
                 <tr key={p.id}>
                   <td>{p.title}</td>
                   <td>{p.price}</td>
@@ -138,6 +156,17 @@ export default function OwnerDashboard() {
           </Button>
         </div>
       </Container>
+
+      <ConfirmModal
+        show={modalShow}
+        title="Eliminar publicación"
+        message="¿Seguro que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        onConfirm={confirmDelete}
+        onClose={() => setModalShow(false)}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+        />
     </div>
   );
 }
