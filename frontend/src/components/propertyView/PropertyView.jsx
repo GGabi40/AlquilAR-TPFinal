@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
 import { getPropertyById } from "../../services/propertyServices";
+import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
+import L from "leaflet";
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -20,6 +22,29 @@ const PropertyDetail = () => {
         message: ""
     });
 
+    const getCoordinates = async (address, locality, province) => {
+        if (!address && !locality && !province) return null;
+
+        const query = `${address || ""}, ${locality || ""}, ${province || ""}, Argentina`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (data.length > 0) {
+                // Pequeña variación aleatoria para no mostrar el punto exacto (hasta 100 m aprox)
+                const lat = parseFloat(data[0].lat) + (Math.random() - 0.5) * 0.001;
+                const lon = parseFloat(data[0].lon) + (Math.random() - 0.5) * 0.001;
+                return { lat, lon };
+            }
+            return null;
+        } catch (error) {
+            console.error("Error al obtener coordenadas:", error);
+            return null;
+        }
+    };
+
     useEffect(() => {
         const fetchProperty = async () => {
             try {
@@ -28,6 +53,20 @@ const PropertyDetail = () => {
 
                 const propertyData = await getPropertyById(id);
                 console.log("datos recibidos: ", propertyData);
+
+                //esto agregue
+                const coords = await getCoordinates(
+                    propertyData.address,
+                    propertyData.locality?.name,
+                    propertyData.province?.name
+                );
+
+                if (coords) {
+                    propertyData.latitude = coords.lat;
+                    propertyData.longitude = coords.lon;
+                }
+                //hasta aca
+
                 setProperty(propertyData);
             } catch (error) {
                 console.error("Error al obtener propiedades:", error);
@@ -138,11 +177,11 @@ const PropertyDetail = () => {
                             />
                         </Carousel.Item>
                     ))
-                ) : (
-                    <Carousel.Item>
-                        <img className="d-block w-100 rounded-4" src="/placeholder.jpg" alt="sin imagenes disponibles" style={{maxHeight: "400px", objectFit: "cover"}} />
-                    </Carousel.Item>
-                )}
+                    ) : (
+                        <Carousel.Item>
+                            <img className="d-block w-100 rounded-4" src="/placeholder.jpg" alt="sin imagenes disponibles" style={{ maxHeight: "400px", objectFit: "cover" }} />
+                        </Carousel.Item>
+                    )}
                 </Carousel>
 
                 {/* Datos principales */}
@@ -157,7 +196,7 @@ const PropertyDetail = () => {
                             </p>
                             <p>
                                 <strong>Expensas:</strong> ${property.expensesPrice}
-                            </p> 
+                            </p>
                             <p>
                                 <strong>Localidad:</strong> {property.locality?.name || "No disponible"}
                             </p>
@@ -183,6 +222,38 @@ const PropertyDetail = () => {
                             <p className="mb-0">{property.PropertyDetail?.description}</p>
                         </Card>
                     </Col>
+
+                    {property.latitude && property.longitude && (
+                        <div className="mt-4">
+                            <h6>Ubicación aproximada</h6>
+                            <MapContainer
+                                center={[property.latitude, property.longitude]}
+                                zoom={15}
+                                style={{ height: "300px", width: "100%", borderRadius: "16px" }}
+                            >
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                />
+                                <Marker
+                                    position={[property.latitude, property.longitude]}
+                                    icon={L.icon({
+                                        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+                                        shadowUrl:
+                                            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+                                    })}
+                                />
+                                <Circle
+                                    center={[property.latitude, property.longitude]}
+                                    radius={100}
+                                    pathOptions={{ color: "blue", fillOpacity: 0.2 }}
+                                />
+                            </MapContainer>
+                            <p className="text-muted mt-2" style={{ fontSize: "0.9rem" }}>
+                                📍 Dirección aproximada
+                            </p>
+                        </div>
+                    )}
 
                     {/*<Col md={4} className="text-md-end">
                          Formulario de contacto visible 
