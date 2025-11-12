@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toastError } from "../components/ui/toaster/Notifications";
 
 const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
@@ -12,7 +13,7 @@ export const getAllUsers = async (endpoint, token) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error al obtener datos: ", error);
+    toastError("Error al obtener datos: ", error);
     throw error;
   }
 };
@@ -26,7 +27,7 @@ export const getUserById = async (id, endpoint = "users", token) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error al obtener: ", error);
+    toastError("Error al obtener: ", error);
     throw error;
   }
 };
@@ -45,12 +46,12 @@ export const updateUser = async (id, endpoint = "users", userData, token) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error al actualizar: ", error);
+    toastError("Error al actualizar: ", error);
     throw error;
   }
 };
 
-export const delUser = async (id, token) => {
+export const deleteUser = async (id, token) => {
   try {
     const response = await axios.delete(`${API_URL}/users/${id}/delete`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -58,7 +59,7 @@ export const delUser = async (id, token) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error al eliminar logicamente el: ", error);
+    ToastError("Error al eliminar logicamente el: ", error);
     throw error;
   }
 };
@@ -76,12 +77,12 @@ export const blockUser = async (id, token) => {
     );
     return res.data;
   } catch (error) {
-    console.error("Error al desactivar: ", error);
+    toastError("Error al desactivar: ", error);
     throw error;
   }
 };
 
-export const updateRole = async (id, token, data) => {
+export const updateUserRole = async (id, token, data) => {
   try {
     const res = await axios.patch(
       `${API_URL}/users/${id}/updateRole`,
