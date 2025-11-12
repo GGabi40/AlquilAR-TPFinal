@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { Card, Button, Container, Row, Col, Form, Carousel } from "react-bootstrap";
+import { Card, Container, Row, Col, Form, Carousel } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
@@ -12,29 +12,32 @@ const PropertyDetail = () => {
     const [property, setProperty] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
     const [errors, setErrors] = useState({});
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
-        nombre: "",
+        username: "",
         email: "",
-        telefono: "",
-        mensaje: ""
+        phone: "",
+        message: ""
     });
 
-    /* useEffect(() => {
-        const fetchProperty = async (id) => {
-          try {
-            setLoading(true);
+    useEffect(() => {
+        const fetchProperty = async () => {
+            try {
+                setLoading(true);
+                setErrors(null);
 
-            const results =  await getPropertyById(id);
-            setProperty(results);
-          } catch (error) {
-            console.error("Error al obtener propiedades:", error);
-          } finally {
-            setLoading(false);
-          }
+                const propertyData = await getPropertyById(id);
+                console.log("datos recibidos: ", propertyData);
+                setProperty(propertyData);
+            } catch (error) {
+                console.error("Error al obtener propiedades:", error);
+            } finally {
+                setLoading(false);
+            }
         };
-    
-        fetchProperty(id);
-      }, []); */
+
+        fetchProperty();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -51,12 +54,12 @@ const PropertyDetail = () => {
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.nombre.trim()) {
-            newErrors.nombre = "El nombre es obligatorio";
-        } else if (formData.nombre.length < 3) {
-            newErrors.nombre = "El nombre debe tener mínimo 3 caracteres";
-        } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.nombre)) {
-            newErrors.nombre = "El nombre solo debe contener letras y espacios.";
+        if (!formData.username.trim()) {
+            newErrors.username = "El nombre es obligatorio";
+        } else if (formData.username.length < 3) {
+            newErrors.username = "El nombre debe tener mínimo 3 caracteres";
+        } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.username)) {
+            newErrors.username = "El nombre solo debe contener letras y espacios.";
         }
 
         if (!formData.email.trim()) {
@@ -65,16 +68,16 @@ const PropertyDetail = () => {
             newErrors.email = "El email no tiene un formato válido";
         }
 
-        if (!formData.telefono.trim()) {
-            newErrors.telefono = "El teléfono es obligatorio";
-        } else if (!/^\d{8,15}$/.test(formData.telefono)) {
-            newErrors.telefono = "Debe contener solo números (8 a 15 dígitos)";
+        if (!formData.phone.trim()) {
+            newErrors.phone = "El teléfono es obligatorio";
+        } else if (!/^\d{8,15}$/.test(formData.phone)) {
+            newErrors.phone = "Debe contener solo números (8 a 15 dígitos)";
         }
 
-        if (!formData.mensaje.trim()) {
-            newErrors.mensaje = "El mensaje es obligatorio";
-        } else if (formData.mensaje.length < 10) {
-            newErrors.mensaje = "El mensaje debe tener al menos 10 caracteres";
+        if (!formData.message.trim()) {
+            newErrors.message = "El mensaje es obligatorio";
+        } else if (formData.message.length < 10) {
+            newErrors.message = "El mensaje debe tener al menos 10 caracteres";
         }
 
         setErrors(newErrors);
@@ -86,14 +89,18 @@ const PropertyDetail = () => {
         if (validateForm()) {
             alert("Tu mensaje fue enviado al propietario.");
             setFormData({
-                nombre: "",
+                username: "",
                 email: "",
-                telefono: "",
-                mensaje: ""
+                phone: "",
+                message: ""
             });
             setErrors({});
         }
     };
+
+    if (loading) return <p className="text-center mt-5">Cargando propiedad...</p>;
+    //if (errors) return <p className="text-center text-danger mt-5">{errors}</p>;
+    if (!property) return <p className="text-center mt-5">Propiedad no encontrada.</p>;
 
     return (
         <Container className="my-5">
@@ -121,7 +128,7 @@ const PropertyDetail = () => {
 
                 {/* Carousel de imágenes */}
                 <Carousel className="mb-4">
-                    {property.image.map((img, index) => (
+                    {property.PropertyDetail?.PropertyImages?.length > 0 ? (property.PropertyDetail?.PropertyImages?.map((img, index) => (
                         <Carousel.Item key={index}>
                             <img
                                 className="d-block w-100 rounded-4"
@@ -130,7 +137,12 @@ const PropertyDetail = () => {
                                 style={{ maxHeight: "400px", objectFit: "cover" }}
                             />
                         </Carousel.Item>
-                    ))}
+                    ))
+                ) : (
+                    <Carousel.Item>
+                        <img className="d-block w-100 rounded-4" src="/placeholder.jpg" alt="sin imagenes disponibles" style={{maxHeight: "400px", objectFit: "cover"}} />
+                    </Carousel.Item>
+                )}
                 </Carousel>
 
                 {/* Datos principales */}
@@ -138,25 +150,25 @@ const PropertyDetail = () => {
                     <Col md={8}>
                         <div className="mb-3">
                             <p>
-                                <strong>Tipo:</strong> {property.type}
+                                <strong>Tipo:</strong> {property.propertyType}
                             </p>
                             <p>
                                 <strong>Precio:</strong> ${property.rentPrice}
                             </p>
                             <p>
                                 <strong>Expensas:</strong> ${property.expensesPrice}
+                            </p> 
+                            <p>
+                                <strong>Localidad:</strong> {property.locality?.name || "No disponible"}
                             </p>
                             <p>
-                                <strong>Ambientes:</strong> {property.PropertyDetail.numRooms}
+                                <strong>Provincia:</strong> {property.province?.name || "No disponible"}
                             </p>
                             <p>
-                                <strong>Localidad:</strong> {property.PropertyLocality.name}
+                                <strong>Ambientes:</strong> {property.PropertyDetail?.numRooms || "No especificado"}
                             </p>
                             <p>
-                                <strong>Provincia:</strong> {property.PropertyProvince.name}
-                            </p>
-                            <p>
-                                <strong>Habitaciones:</strong> {property.PropertyDetail.numBedrooms}
+                                <strong>Habitaciones:</strong> {property.PropertyDetail?.numBedrooms || "No especificado"}
                             </p>
                         </div>
 
@@ -167,15 +179,13 @@ const PropertyDetail = () => {
                                 backgroundColor: "#fff",
                             }}
                         >
-                            <h6 className="text-center mb-3">Descripción</h6>
-                            <p className="mb-0">{property.descripcion}</p>
+                            <h6 className="text-center mb-3">Descripción</h6>{/* conectar como dijo gabi!! que se entienda que va desde el post */}
+                            <p className="mb-0">{property.PropertyDetail?.description}</p>
                         </Card>
                     </Col>
 
-
-
-                    <Col md={4} className="text-md-end">
-                        {/* Formulario de contacto visible */}
+                    {/*<Col md={4} className="text-md-end">
+                         Formulario de contacto visible 
                         <Card
                             className="shadow-sm p-3 mb-3"
                             style={{
@@ -191,13 +201,13 @@ const PropertyDetail = () => {
                                     <Form.Label>Nombre</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="nombre"
+                                        name="username"
                                         placeholder="Ej: Juan García"
-                                        value={formData.nombre}
+                                        value={formData.username}
                                         onChange={handleChange}
-                                        isInvalid={!!errors.nombre}
+                                        isInvalid={!!errors.username}
                                     />
-                                    <Form.Control.Feedback type="invalid">{errors.nombre}</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">{errors.username}</Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-2">
                                     <Form.Label>Email</Form.Label>
@@ -217,14 +227,14 @@ const PropertyDetail = () => {
                                     <Form.Label>Teléfono</Form.Label>
                                     <Form.Control
                                         type="text"
-                                        name="telefono"
+                                        name="phone"
                                         placeholder="Ej: 341 2567890"
-                                        value={formData.telefono}
+                                        value={formData.phone}
                                         onChange={handleChange}
-                                        isInvalid={!!errors.telefono}
+                                        isInvalid={!!errors.phone}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.telefono}
+                                        {errors.phone}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <Form.Group className="mb-2">
@@ -232,14 +242,14 @@ const PropertyDetail = () => {
                                     <Form.Control
                                         as="textarea"
                                         rows={2}
-                                        name="mensaje"
+                                        name="message"
                                         placeholder="Escribe tu mensaje..."
-                                        value={formData.mensaje}
+                                        value={formData.message}
                                         onChange={handleChange}
-                                        isInvalid={!!errors.mensaje}
+                                        isInvalid={!!errors.message}
                                     />
                                     <Form.Control.Feedback type="invalid">
-                                        {errors.mensaje}
+                                        {errors.message}
                                     </Form.Control.Feedback>
                                 </Form.Group>
                                 <div className="d-flex justify-content-end">
@@ -266,9 +276,9 @@ const PropertyDetail = () => {
                             }}
                         >
                             <h6 className="text-center mb-3">Información del Propietario</h6>
-                            <p className="mb-1">Nombre: {property.owner?.nombre || "No disponible"}</p>
+                            <p className="mb-1">Nombre: {property.owner?.name ? `${property.owner.name} ${property.owner.surname}` : "No disponible"}</p>
                         </Card>
-                    </Col>
+                    </Col> */}{/**/}
                 </Row>
 
                 {/* Rating */}

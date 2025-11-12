@@ -25,7 +25,6 @@ const PropertyFeatures = () => {
   const [data, setData] = useState({
     tipoPropiedad: "",
     alquileres: [],
-    cochera: "",
     habitaciones: 0,
     ambientes: 1,
     banios: 1,
@@ -71,8 +70,6 @@ const PropertyFeatures = () => {
       newErrors.tipoPropiedad = "Debe seleccionar un tipo de propiedad";
     if (data.alquileres.length === 0)
       newErrors.alquiler = "Debe seleccionar al menos un tipo de alquiler";
-    if (!data.cochera)
-      newErrors.cochera = "Debe indicar si tiene cochera";
     if (data.ambientes < 1)
       newErrors.ambientes = "Debe indicar al menos 1 ambiente";
     if (data.banios < 1)
@@ -181,40 +178,9 @@ const PropertyFeatures = () => {
         </div>
       </div>
 
-      {/* BLOQUE 2 - Cochera y contadores */}
+      {/* BLOQUE 2 - contadores */}
       <div className="form-section mt-3">
-        <div className="row">
-          <div className="col-md-3">
-            <label className="form-label">
-              Cochera<span className="required-star">*</span>
-            </label>
-            <div className="d-flex align-items-center gap-3">
-              <label>
-                <input
-                  type="radio"
-                  name="cochera"
-                  value="Sí"
-                  checked={data.cochera === "Sí"}
-                  onChange={(e) => handleChange("cochera", e.target.value)}
-                />{" "}
-                Sí
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="cochera"
-                  value="No"
-                  checked={data.cochera === "No"}
-                  onChange={(e) => handleChange("cochera", e.target.value)}
-                />{" "}
-                No
-              </label>
-            </div>
-            {errors.cochera && (
-              <div className="text-danger">{errors.cochera}</div>
-            )}
-          </div>
-
+        <div className="row justify-content-center">
           {/* Habitaciones */}
           <div className="col-md-3">
             <label>
@@ -385,7 +351,7 @@ const PropertyFeatures = () => {
 
       {/* BLOQUE 5 - Más información */}
       <div className="form-section mt-4">
-        <label>Más información</label>
+        <label>Comentanos más!!</label>
         <div className="input-group">
           <span className="input-group-text bg-light">
             <FontAwesomeIcon icon={faCircleInfo} />
@@ -394,7 +360,7 @@ const PropertyFeatures = () => {
             className="form-control"
             rows="5"
             maxLength={500}
-            placeholder="Agregue detalles relevantes: orientación, luminosidad, mascotas permitidas, etc."
+            placeholder="Agregue detalles relevantes: tiene cochera, orientación, luminosidad, mascotas permitidas, etc."
             value={data.masInformacion}
             onChange={(e) => handleChange("masInformacion", e.target.value)}
           />
