@@ -25,6 +25,8 @@ import ResetPassword from "./components/auth/resetPassword/ResetPassword";
 import Profile from "./components/profile/Profile";
 import Protected from "./ProtectedRoute";
 import PropertyDashboard from "./components/propertyForm/PropertyDashboard.jsx";
+import "leaflet/dist/leaflet.css";
+
 
 import { ScrollToTop } from "./hooks/useScrollToTop.js";
 import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
