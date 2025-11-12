@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import ConfirmModal from "../ui/modal/ConfirmModal.jsx";
+import { favoriteService } from "../../services/favoriteService.js";
+import { useContext } from "react";
+import { AuthenticationContext } from "../../services/auth.context.jsx";
+import { toastError, toastSuccess } from "../ui/toaster/Notifications";
 import {
   Container,
   Row,
@@ -10,13 +15,14 @@ import {
   Card,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faFilter, faHeart, faL } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
 import PropertyServices from "../../services/propertyServices";
 
-const PropertyList = () => {
+const PropertyList = ({ token }) => {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -30,26 +36,42 @@ const PropertyList = () => {
   const [localidad, setLocalidad] = useState("");
   const [search, setSearch] = useState("");
 
+  const [favorites, setFavorites] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
   const [gridView, setGridView] = useState(false);
 
-  useEffect(() => {
-    const fetchProperties = async (filters = {}) => {
+  const { user } = useContext(AuthenticationContext) || {};
+
+  const fetchProperties = async (filters = {}) => {
+    try {
+      setLoading(true);
+      const data = Object.keys(filters).length
+        ? await PropertyServices.searchProperties(filters)
+        : await PropertyServices.getAllProperties();
+      setProperties(data);
+      setFilteredProperties(data);
+    } catch (error) {
+      toastError("Error al obtener propiedades:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    const loadFavorites = async () => {
       try {
-        setLoading(true);
-        const data = Object.keys(filters).length
-          ? await PropertyServices.searchProperties(filters)
-          : await PropertyServices.getAllProperties();
-        setProperties(data);
-        setFilteredProperties(data);
+        const res = await favoriteService.getFavorites();
+        const favorites = Array.isArray(res.data) ? res.data : [];
+        setFavorites(favorites);
       } catch (error) {
-        console.error("Error al obtener propiedades:", error);
-      } finally {
-        setLoading(false);
+        toastError("Error cargando favoritos:", error);
       }
     };
 
+  useEffect(() => {
     fetchProperties();
-  }, []);
+    if (user) fetchFavorites();
+  }, [user]);
 
   const handleApplyFilters = () => {
     const results = properties.filter((p) => {
@@ -67,6 +89,41 @@ const PropertyList = () => {
       );
     });
     setFilteredProperties(results);
+  };
+
+  const handleFavoriteClick = async (propertyId) => {
+    try {
+      if (favorites.includes(propertyId)) {
+        await favoriteService.removeFavorite(propertyId, token);
+        setFavorites(prev => prev.filter(fav => fav !== propertyId));
+      } else {
+        await favoriteService.addFavorite(propertyId, token);
+        setFavorites(prev => [...prev, propertyId]);
+      }
+    } catch (err) {
+      console.error("Error al actualizar favorito:", err);
+    }
+  };
+
+  const handleRemoveClick = (propertyId) => {
+    setSelectedProperty(propertyId);
+    setShowConfirm(true);
+  };
+
+  const handleConfirmRemove = async () => {
+    try {
+      const res = await favoriteService.removeFavorite(selectedProperty, user.token);
+      if (res.success) {
+        setFavorites((prev) => prev.filter((id) => id !== selectedProperty));
+        toastSuccess("Propiedad eliminada de favoritos");
+      } else {
+        toastError(res.message);
+      }
+    } catch {
+      toastError("No se pudo eliminar de favoritos.");
+    } finally {
+      setShowConfirm(false);
+    }
   };
 
   return (
@@ -190,7 +247,7 @@ const PropertyList = () => {
             ? filteredProperties
             : properties
           ).map((p) => (
-            <Col key={p.idProperty} md={gridView ? 4 : 12}>
+            <Col key={p.propertyId || p.id || Math.random()} md={gridView ? 4 : 12}>
               {gridView ? (
                 <PropertyCard property={p} />
               ) : (
@@ -214,16 +271,31 @@ const PropertyList = () => {
                       md={8}
                       className="d-flex flex-column justify-content-between p-2"
                     >
-                      <Card.Body>
+                      <Card.Body className="position-relative">
                         <Card.Title>{p.titulo}</Card.Title>
                         <Card.Text>
                           <strong>Dirección:</strong> {p.address} <br />
                           <strong>Precio:</strong> ${p.rentPrice} <br />
-                          <strong>Habitaciones:</strong> {p.PropertyDetail.numBedrooms}
+                          <strong>Habitaciones:</strong> {""}
+                          {p.PropertyDetail.numBedrooms}
                         </Card.Text>
+                        <div className="position-relative">
+                          <button
+                            className="position-absolute top-0 end-0 m-2"
+                            style={{ background: "transparent", border: "none" }}
+                            onClick={() => handleFavoriteClick(p.propertyId)}
+                          >
+                            <FontAwesomeIcon
+                              icon={favorites.includes(p.propertyId) ? faHeart : faHeartRegular}
+                              style={{ color: "red" }}
+                              size="lg"
+                            />
+                          </button>
+                        </div>
+
                         <Button
                           as={Link}
-                          to={`/property/${p.idProperty}`}
+                          to={`/property/${p.propertyId}`}
                           variant="primary"
                         >
                           + Información
@@ -237,6 +309,17 @@ const PropertyList = () => {
           ))}
         </Row>
       )}
+
+      <ConfirmModal
+        show={showConfirm}
+        title="Eliminar de favoritos"
+        message="¿Estás segura/o de que querés quitar esta propiedad de tus favoritos?"
+        onConfirm={handleConfirmRemove}
+        onClose={() => setShowConfirm(false)}
+        confirmText="Sí, eliminar"
+        cancelText="Cancelar"
+        variant="danger"
+      />
     </Container>
   );
 };

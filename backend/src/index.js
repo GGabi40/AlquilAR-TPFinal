@@ -16,7 +16,7 @@ import searchRoutes from './routes/search.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import { uploadPath } from './config/path.js';
 
-import { sequelize } from './config/db.js';
+import { sequelize, initDatabase } from './config/db.js';
 
 dotenv.config();
 const app = express();
@@ -43,9 +43,9 @@ app.use("/api/posts", postsRoutes);
 app.use("/api/rentals", rentalsRoutes);
 app.use("/api/contact", contactRoutes);
 app.use('/api/location', locationRoutes);
-// app.use('/api/upload', uploadRoutes);
 
 try {
+    await initDatabase();
     await sequelize.sync();
     app.listen(PORT, () => {
         console.log(`Corriendo el servidor.`);

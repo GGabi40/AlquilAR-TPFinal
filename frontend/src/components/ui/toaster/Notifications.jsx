@@ -20,6 +20,9 @@ export const toastSuccess = (message) =>
 export const toastError = (message) =>
   toast.error(message, { ...defaultNotificationConfig });
 
+export const toastLoading = (message) => toast.loading(message, { ...defaultNotificationConfig });
+
+
 const Notifications = () => (
   <Toaster richColors position="bottom-right" />
 );

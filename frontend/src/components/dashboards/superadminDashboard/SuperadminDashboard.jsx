@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Container, Tabs, Tab } from "react-bootstrap";
-import Notifications from "../../ui/toaster/Notifications.jsx";
+import Notifications, { toastError, toastSuccess } from "../../ui/toaster/Notifications.jsx";
 import { AuthenticationContext } from "../../../services/auth.context";
 
 import UserTable from "./userTable/UserTable.jsx";
@@ -32,7 +32,7 @@ export default function SuperadminDashboard() {
           <PropertyTable token={token} />
         </Tab>
 
-        <Tab eventKey="pendientes" title="Pendientes">
+        <Tab eventKey="pendientes" title="Pendientes de aprobación">
           <RequestApprovalTable token={token} />
         </Tab>
       </Tabs>

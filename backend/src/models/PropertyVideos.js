@@ -14,5 +14,14 @@ export const PropertyVideos = sequelize.define("PropertyVideos", {
     alt: {
         type: DataTypes.STRING,
         allowNull: true
-    }
+    },
+    propertyDetailsId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: "PropertyDetails",
+      key: "idPropertyDetails",
+    },
+    onDelete: "CASCADE",
+  },
 });

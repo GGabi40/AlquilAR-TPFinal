@@ -178,7 +178,7 @@ export default function Home() {
 
                         <Card.Img
                           variant="top"
-                          src={p.imageUrl || "/photos/no-image.png"}
+                          src={p.URLImage || "/photos/no-image.png"}
                           alt={p.address}
                           style={{
                             height: "200px",

@@ -13,6 +13,7 @@ const PropertyCards = ({ property }) => {
   } = property;
 
   const mainImage = images.length > 0 ? images[0].url : "/placeholder.jpg";
+  const [isFavorite, setIsFavorite] = useState(false);
 
   return (
     <Card className="h-100 shadow-sm rounded-4 overflow-hidden">
@@ -26,7 +27,18 @@ const PropertyCards = ({ property }) => {
       </div>
       <Card.Body className="d-flex flex-column justify-content-between">
         <div>
-          <Card.Title className="fw-bold">{title || "Propiedad"}</Card.Title>
+          <Card.Title className="fw-bold">{title || "Propiedad"}
+            <button>
+              style={{ background: "transparent", border: "none" }}
+              onClick={() => setIsFavorite(!isFavorite)}
+              <FontAwesomeIcon
+                icon={isFavorite ? faHeart : faHeartRegular}
+                style={{ color: "red" }}
+                size="lg"
+              />
+            </button>
+          </Card.Title>
+
           <Card.Text className="text-muted mb-1">{`${city} - ${address}`}</Card.Text>
           <Card.Text className="mb-1">
             <strong>Tipo:</strong> {type}

@@ -1,9 +1,11 @@
 import express from 'express';
 import multer from 'multer';
+import dotenv from 'dotenv';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { uploadPath } from '../config/path.js';
 
+dotenv.config();
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +27,7 @@ router.post("/", upload.single("file"), async (req, res) => {
     return res.status(400).json({ message: "No se envió ningún archivo." });
   }
 
-  const fileUrl = `/uploads/${req.file.filename}`;
+  const fileUrl = `${process.env.BACKEND_URL}/uploads/${req.file.filename}`;;
   res.status(200).json({ url: fileUrl });
 });
 

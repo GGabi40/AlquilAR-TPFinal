@@ -1,13 +1,13 @@
 import { Property } from "../models/Property.js";
 import { Op } from "sequelize";
 import { sequelize } from "../config/db.js";
-import { User } from '../models/User.js';
-import { PropertyLocality } from '../models/PropertyLocality.js';
-import { PropertyProvince } from '../models/PropertyProvince.js';
-import { PropertyDetails } from '../models/PropertyDetails.js';
-import { PropertyVideos } from '../models/PropertyVideos.js';
-import { PropertyImages } from '../models/PropertyImages.js';
-import { PropertyDocuments } from '../models/PropertyDocuments.js';
+import { User } from "../models/User.js";
+import { PropertyLocality } from "../models/PropertyLocality.js";
+import { PropertyProvince } from "../models/PropertyProvince.js";
+import { PropertyDetails } from "../models/PropertyDetails.js";
+import { PropertyVideos } from "../models/PropertyVideos.js";
+import { PropertyImages } from "../models/PropertyImages.js";
+import { PropertyDocuments } from "../models/PropertyDocuments.js";
 
 export const getAllProperties = async (req, res) => {
   try {
@@ -15,16 +15,19 @@ export const getAllProperties = async (req, res) => {
       include: [
         { model: PropertyLocality, as: "locality" },
         { model: PropertyProvince, as: "province" },
-        { model: PropertyDetails,
-          include: [ { model: PropertyImages }, { model: PropertyVideos } ]
-         },
-        { model: PropertyDocuments }
+        {
+          model: PropertyDetails,
+          include: [{ model: PropertyImages }, { model: PropertyVideos }],
+        },
+        { model: PropertyDocuments },
       ],
       order: [["createdAt", "DESC"]],
     });
 
     if (!properties || properties.length === 0)
-      return res.status(404).json({ message: "No hay propiedades disponibles." })
+      return res
+        .status(404)
+        .json({ message: "No hay propiedades disponibles." });
     res.json(properties);
   } catch (error) {
     console.error("Error al obtener propiedadews:", error);
@@ -48,8 +51,10 @@ export const getSearchProperties = async (req, res) => {
 
     if (province) where.province = { [Op.like]: `%${province}%` };
     if (type) where.type = { [Op.like]: `%${type}%` };
-    if (minPrice) where.price = { ...(where.price || {}), [Op.gte]: parseFloat(minPrice) };
-    if (maxPrice) where.price = { ...(where.price || {}), [Op.lte]: parseFloat(maxPrice) };
+    if (minPrice)
+      where.price = { ...(where.price || {}), [Op.gte]: parseFloat(minPrice) };
+    if (maxPrice)
+      where.price = { ...(where.price || {}), [Op.lte]: parseFloat(maxPrice) };
 
     const results = await Property.findAll({ where });
     res.json(results);
@@ -94,7 +99,24 @@ export const updateProperty = async (req, res) => {
     return res.status(400).json({ message: result.message });
   }
 
-  const { propertyType, rentPrice, expensesPrice, status, rentPreference, address, numRooms, numBedrooms, numBathrooms, propertyAge, totalArea, URLImages, URLVideo, URLDocument, nameP, nameL } = req.body;
+  const {
+    propertyType,
+    rentPrice,
+    expensesPrice,
+    status,
+    rentPreference,
+    address,
+    numRooms,
+    numBedrooms,
+    numBathrooms,
+    propertyAge,
+    totalArea,
+    URLImages,
+    URLVideo,
+    URLDocument,
+    nameP,
+    nameL,
+  } = req.body;
 
   const { id } = req.params;
   const property = await Property.findByPk(id);
@@ -104,9 +126,22 @@ export const updateProperty = async (req, res) => {
   }
   try {
     await property.update({
-      propertyType, rentPrice, expensesPrice, status, rentPreference,
-      address, numRooms, numBedrooms, numBathrooms, propertyAge,
-      totalArea, URLImages, URLVideo, URLDocument, nameP, nameL,
+      propertyType,
+      rentPrice,
+      expensesPrice,
+      status,
+      rentPreference,
+      address,
+      numRooms,
+      numBedrooms,
+      numBathrooms,
+      propertyAge,
+      totalArea,
+      URLImages,
+      URLVideo,
+      URLDocument,
+      nameP,
+      nameL,
     });
     res.json(property);
   } catch (error) {
@@ -141,20 +176,6 @@ export const getPropertiesByOwner = async (ownerId) => {
     throw new Error("Error al obtener propiedades");
   }
 };
-
-// Traer propiedades destacadas
-/* export const getFeaturedProperties = async () => {
-  try {
-    return await Property.findAll({
-      where: { featured: true },
-      order: [["createdAt", "DESC"]],
-      limit: 9,
-    });
-  } catch (error) {
-    console.error("Error al obtener propiedades destacadas:", error);
-    throw new Error("Error al obtener propiedades destacadas");
-  }
-}; */
 
 // Actualizar propiedad destacada
 export const updateFeaturedProperty = async (id, featured) => {
@@ -235,26 +256,41 @@ export const requestNewProperty = async (req, res) => {
         numBathrooms: req.body.numBathrooms,
         propertyAge: req.body.propertyAge,
         totalArea: req.body.totalArea,
-        propertyId: property.idProperty
+        propertyId: property.idProperty,
       },
       { transaction: t }
     );
-    // Crear imágenes / videos / documentos
-    // cuando haya upload:
-    /*
-    const images = req.body.URLImages?.map((url) => ({
-      URLImages: url,
-      alt: "Imagen de la propiedad",
-      propertyDetailsId: details.idPropertyDetails,
-    }));
-    if (images?.length) await PropertyImages.bulkCreate(images, { transaction: t });
-    */
+
+    // Guarda imágenes
+    if (req.body.images?.length) {
+      const imageRecords = req.body.images.map((url) => ({
+        URLImages: url,
+        alt: "Imagen de la propiedad",
+        propertyDetailsId: details.idPropertyDetails,
+      }));
+      await PropertyImages.bulkCreate(imageRecords, { transaction: t });
+    }
 
     // Guarda Videos
-    // cons videos = req.body.
+    if (req.body.video) {
+      await PropertyVideos.create({
+        URLVideo: req.body.video,
+        propertyDetailsId: details.idPropertyDetails,
+      },
+      { transaction: t })
+    }    
+
+    // Guarda documentos
+    if(req.body.documents?.length){
+      const docRecords = req.body.documents.map((url) => ({
+        URLDocument: url,
+        propertyId: property.idProperty,        
+      }));
+      await PropertyDocuments.bulkCreate(docRecords, { transaction: t });
+    }
 
     await t.commit();
-    res.status(200).json({ property, details, province, locality });
+    res.status(200).json({ property: { ...property.toJSON(), details } });
   } catch (error) {
     console.error("Error al solicitar nueva propiedad:", error);
     await t.rollback();
@@ -263,9 +299,10 @@ export const requestNewProperty = async (req, res) => {
       .json({ message: "Error al crear la propiedad con sus relaciones." });
   }
 };
+
 const validatePropertyData = (req) => {
   const result = {
     error: false,
     message: "",
-  }
-}
+  };
+};

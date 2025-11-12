@@ -1,17 +1,14 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPencil, faShield } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "../../../ui/modal/ConfirmModal.jsx";
-import {
-  toastSuccess,
-  toastError,
-} from "../../../ui/toaster/Notifications.jsx";
+import { toastSuccess, toastError } from "../../../ui/toaster/Notifications.jsx";
 import {
   getAllUsers,
   blockUser,
-  delUser,
-  updateRole,
+  deleteUser,
+  updateUserRole,
 } from "../../../../services/userService.js";
 
 const UserTable = ({ token, userId, role }) => {
@@ -41,10 +38,10 @@ const UserTable = ({ token, userId, role }) => {
   const handleConfirm = async () => {
     const { type, item } = modal;
     try {
-      if (type === "delete") await delUser(item.id, token);
+      if (type === "delete") await deleteUser(item.id, token);
       if (type === "block") await blockUser(item.id, token);
       if (type === "saveRole")
-        await updateRole(item.id, token, { role: editedRole });
+        await updateUserRole(item.id, token, { role: editedRole });
 
       setUsers((prev) =>
         prev
