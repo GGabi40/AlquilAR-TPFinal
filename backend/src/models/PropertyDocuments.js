@@ -10,5 +10,14 @@ export const PropertyDocuments = sequelize.define("PropertyDocuments", {
     URLDocument: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    propertyId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "Properties",
+      key: "idProperty",
+    },
+    onDelete: "CASCADE",
+  },
 });
