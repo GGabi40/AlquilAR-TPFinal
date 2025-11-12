@@ -33,6 +33,7 @@ import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
 import PropertyPreview from "./components/propertyForm/tabs/PropertyPreview.jsx";
 import Favorites from "./components/pages/Favorites.jsx";
 import PropertyList from "./components/propertyList/PropertyList.jsx";
+import VerifyEmail from "./components/auth/verifyEmail/VerifyEmail.jsx";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />

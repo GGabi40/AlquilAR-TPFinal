@@ -13,6 +13,7 @@ import RegisterImage from "/illustrations/register/register-illustration.webp";
 import Notifications, {
   toastSuccess,
   toastError,
+  toastInfo,
 } from "../../ui/toaster/Notifications";
 
 import {
@@ -40,6 +41,7 @@ const Register = () => {
     termsAndConditions: false,
   });
   const [errors, setErrors] = useState({});
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
 
   const nameRef = useRef(null);
   const surnameRef = useRef(null);
@@ -160,25 +162,15 @@ const Register = () => {
     const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
     try {
-      const response = await axios.post(
-        `${API_URL}/users/register`,
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await axios.post(`${API_URL}/users/register`, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      toastSuccess("Cuenta creada con éxito");
+      setShowVerificationModal(true);
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+      toastSuccess("Te enviamos un correo para verificar tu cuenta.");
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        toastError(error.response.data.message);
-      } else {
-        toastError("Error al crear la cuenta. Intenta de nuevo.");
-      }
+      toastError("Error al crear la cuenta. Intenta de nuevo.");
     }
   };
 
@@ -338,6 +330,30 @@ const Register = () => {
       <p className="text-center mt-3">
         ¿Ya tienes cuenta? <Link to="/login">Iniciar Sesión</Link>
       </p>
+      <Modal show={showVerificationModal} centered>
+        <Modal.Header>
+          <Modal.Title>Verificá tu correo</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <p>
+            Te enviamos un correo a <strong>{formData.email}</strong> con un
+            enlace para activar tu cuenta.
+          </p>
+          <p>Si no lo ves, revisá tu carpeta de spam o correo no deseado.</p>
+          <p>Una vez verificado, podrás iniciar sesión en AlquilAR.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setShowVerificationModal(false);
+              navigate("/login");
+            }}
+          >
+            Ir al Login
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </AuthLayout>
   );
 };

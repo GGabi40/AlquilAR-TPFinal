@@ -6,7 +6,7 @@ import {
 
 import { User } from "../models/User.js";
 
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
@@ -100,6 +100,10 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // token de verificación
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationTokenExpiry = Date.now() + 60 * 60 * 1000;
+
     const newUser = await User.create({
       name,
       surname,
@@ -108,6 +112,35 @@ export const registerUser = async (req, res) => {
       isBlocked,
       avatarColor: avatarColor || "#ffc107",
       role: role || "user",
+      verified: false,
+      verificationToken,
+      verificationTokenExpiry,
+    });
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
+
+    await transporter.sendMail({
+      from: `"AlquilAR" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Verificá tu cuenta en AlquilAR",
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align:center;">
+          <h2>¡Bienvenido a <strong>AlquilAR</strong>!</h2>
+          <p>Para activar tu cuenta, hacé click en el siguiente botón:</p>
+          <a href="${verificationLink}" style="background:#2596be; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">Verificar mi cuenta</a>
+          <p style="margin-top:20px;">Este enlace expirará en 1 hora.</p>
+        </div>
+      `,
     });
 
     res
@@ -132,6 +165,13 @@ export const loginUser = async (req, res) => {
       return res
         .status(401)
         .json({ message: "Este email no esta registrado." });
+
+        
+    if (!user.verified) {
+      return res.status(403).json({
+        message: "Debes verificar tu correo antes de iniciar sesión.",
+      });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
@@ -206,7 +246,7 @@ export const forgotPassword = async (req, res) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-      }
+      },
     });
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${randomToken}`;
@@ -264,6 +304,43 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Error del servidor." });
   }
 };
+
+export const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.body;
+    console.log(token);
+
+    if (!token) return res.status(400).json({ message: "Token faltante." });
+
+    const user = await User.findOne({ where: { verificationToken: token } });
+
+    if (!user)
+      return res
+        .status(400)
+        .json({ message: "Token inválido o usuario no encontrado." });
+
+    if (user.verificationTokenExpiry < Date.now()) {
+      user.destroy();
+      
+      return res
+        .status(400)
+        .json({ message: "El token expiró. Registrate nuevamente." });
+    }
+
+    user.verified = true;
+    user.verificationToken = null;
+    user.verificationTokenExpiry = null;
+    await user.save();
+
+    res.json({ message: "Cuenta verificada exitosamente." });
+  } catch (error) {
+    console.error("Error al verificar email:", error);
+    res
+      .status(500)
+      .json({ message: "Error al verificar el correo electrónico." });
+  }
+};
+
 
 // --- Validations ---
 const validateRegisterData = (reqData) => {

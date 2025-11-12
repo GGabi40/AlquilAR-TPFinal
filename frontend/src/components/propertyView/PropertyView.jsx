@@ -9,6 +9,7 @@ import {
   Carousel,
   Button,
   Badge,
+  Modal,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -24,86 +25,145 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { getPropertyById } from "../../services/propertyServices";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
+import Notifications, { toastSuccess } from "../ui/toaster/Notifications";
 
 const PropertyDetail = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
-    const [property, setProperty] = useState(null);
-    const [isFavorite, setIsFavorite] = useState(false);
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({
-        username: "",
-        email: "",
-        phone: "",
-        message: ""
-    });
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [property, setProperty] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
-    const getCoordinates = async (address, locality, province) => {
-        if (!address && !locality && !province) return null;
+  // 📸 Lightbox
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
-        const query = `${address || ""}, ${locality || ""}, ${province || ""}, Argentina`;
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+  // 🌎 Geolocalización aproximada
+  const getCoordinates = async (address, locality, province) => {
+    if (!address && !locality && !province) return null;
 
-        try {
-            const res = await fetch(url);
-            const data = await res.json();
+    const query = `${address || ""}, ${locality || ""}, ${
+      province || ""
+    }, Argentina`;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      query
+    )}`;
 
-            if (data.length > 0) {
-                // Pequeña variación aleatoria para no mostrar el punto exacto (hasta 100 m aprox)
-                const lat = parseFloat(data[0].lat) + (Math.random() - 0.5) * 0.001;
-                const lon = parseFloat(data[0].lon) + (Math.random() - 0.5) * 0.001;
-                return { lat, lon };
-            }
-            return null;
-        } catch (error) {
-            console.error("Error al obtener coordenadas:", error);
-            return null;
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat) + (Math.random() - 0.5) * 0.001;
+        const lon = parseFloat(data[0].lon) + (Math.random() - 0.5) * 0.001;
+        return { lat, lon };
+      }
+      return null;
+    } catch (error) {
+      console.error("Error al obtener coordenadas:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        setLoading(true);
+        setErrors({});
+        const propertyData = await getPropertyById(id);
+
+        const coords = await getCoordinates(
+          propertyData.address,
+          propertyData.locality?.name,
+          propertyData.province?.name
+        );
+
+        if (coords) {
+          propertyData.latitude = coords.lat;
+          propertyData.longitude = coords.lon;
         }
+        setProperty(propertyData);
+      } catch (error) {
+        console.error("Error al obtener propiedad:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchProperty();
+  }, [id]);
 
-    useEffect(() => {
-        const fetchProperty = async () => {
-            try {
-                setLoading(true);
-                setErrors(null);
-
-                const propertyData = await getPropertyById(id);
-                console.log("datos recibidos: ", propertyData);
-
-                //esto agregue
-                const coords = await getCoordinates(
-                    propertyData.address,
-                    propertyData.locality?.name,
-                    propertyData.province?.name
-                );
-
-                if (coords) {
-                    propertyData.latitude = coords.lat;
-                    propertyData.longitude = coords.lon;
-                }
-                //hasta aca
-
-                setProperty(propertyData);
-            } catch (error) {
-                console.error("Error al obtener propiedades:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProperty();
-    }, [id]);
-
+  // Formulario
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: "" });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "El nombre es obligatorio";
+    } else if (formData.name.length < 3) {
+      newErrors.name = "El nombre debe tener mínimo 3 caracteres";
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.name)) {
+      newErrors.name = "El nombre solo debe contener letras y espacios.";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "El email es obligatorio";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "El email no tiene un formato válido";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "El teléfono es obligatorio";
+    } else if (!/^\d{8,15}$/.test(formData.phone)) {
+      newErrors.phone = "Debe contener solo números (8 a 15 dígitos)";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "El mensaje es obligatorio";
+    } else if (formData.message.length < 10) {
+      newErrors.message = "El mensaje debe tener al menos 10 caracteres";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Mensaje enviado al propietario ✅");
-    setFormData({ username: "", email: "", phone: "", message: "" });
+    if (validateForm()) {
+      toastSuccess("¡Enviamos tu mensaje con éxito!");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+      setErrors({});
+    }
+  };
+
+  // Lightbox handlers
+  const handleImageClick = (url) => {
+    setSelectedImage(url);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedImage(null);
   };
 
   if (loading) return <p className="text-center mt-5">Cargando propiedad...</p>;
@@ -112,6 +172,7 @@ const PropertyDetail = () => {
 
   return (
     <Container className="my-5">
+      <Notifications />
       {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Button variant="outline-secondary" onClick={() => navigate(-1)}>
@@ -125,7 +186,10 @@ const PropertyDetail = () => {
           onClick={() => setIsFavorite(!isFavorite)}
           style={{ color: isFavorite ? "red" : "#aaa" }}
         >
-          <FontAwesomeIcon icon={isFavorite ? faHeart : faHeartRegular} size="xl" />
+          <FontAwesomeIcon
+            icon={isFavorite ? faHeart : faHeartRegular}
+            size="xl"
+          />
         </Button>
       </div>
 
@@ -142,8 +206,10 @@ const PropertyDetail = () => {
                   style={{
                     height: "450px",
                     objectFit: "cover",
+                    cursor: "pointer",
                     filter: "brightness(90%)",
                   }}
+                  onClick={() => handleImageClick(img.URLImages)}
                 />
               </Carousel.Item>
             ))
@@ -159,6 +225,24 @@ const PropertyDetail = () => {
           )}
         </Carousel>
       </Card>
+
+      {/* Lightbox */}
+      <Modal show={showModal} onHide={handleCloseModal} centered size="xl">
+        <Modal.Body className="bg-dark text-center p-0">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Vista ampliada"
+              className="img-fluid"
+              style={{
+                maxHeight: "90vh",
+                width: "auto",
+                borderRadius: "12px",
+              }}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
 
       {/* INFO PRINCIPAL */}
       <Row className="g-4">
@@ -219,63 +303,79 @@ const PropertyDetail = () => {
                 />
               </div>
             )}
+
+            {/* MAPA */}
             {property.latitude && property.longitude && (
-                        <div className="mt-4">
-                            <h6>Ubicación aproximada</h6>
-                            <MapContainer
-                                center={[property.latitude, property.longitude]}
-                                zoom={15}
-                                style={{ height: "300px", width: "100%", borderRadius: "16px" }}
-                            >
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
-                                <Marker
-                                    position={[property.latitude, property.longitude]}
-                                    icon={L.icon({
-                                        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-                                        shadowUrl:
-                                            "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-                                    })}
-                                />
-                                <Circle
-                                    center={[property.latitude, property.longitude]}
-                                    radius={100}
-                                    pathOptions={{ color: "blue", fillOpacity: 0.2 }}
-                                />
-                            </MapContainer>
-                            <p className="text-muted mt-2" style={{ fontSize: "0.9rem" }}>
-                                📍 Dirección aproximada
-                            </p>
-                        </div>
-                    )}
+              <div className="mt-4">
+                <h6>Ubicación aproximada</h6>
+                <MapContainer
+                  center={[property.latitude, property.longitude]}
+                  zoom={15}
+                  style={{
+                    height: "300px",
+                    width: "100%",
+                    borderRadius: "16px",
+                  }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker
+                    position={[property.latitude, property.longitude]}
+                    icon={L.icon({
+                      iconUrl:
+                        "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+                      shadowUrl:
+                        "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+                    })}
+                  />
+                  <Circle
+                    center={[property.latitude, property.longitude]}
+                    radius={100}
+                    pathOptions={{ color: "blue", fillOpacity: 0.2 }}
+                  />
+                </MapContainer>
+                <p className="text-muted mt-2" style={{ fontSize: "0.9rem" }}>
+                  📍 Dirección aproximada
+                </p>
+              </div>
+            )}
           </Card>
         </Col>
 
         {/* CONTACTO */}
         <Col md={4}>
-          <Card className="shadow-sm border-0 p-4 rounded-4">
-            <h5 className="fw-bold text-center mb-3">Contactar al propietario</h5>
+          <Card
+            className="shadow-sm p-3 mb-3 border-0"
+            style={{
+              borderRadius: "16px",
+              backgroundColor: "#fff",
+            }}
+          >
+            <h6 className="text-center mb-3">Contactar al propietario</h6>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-2">
+                <Form.Label>Nombre</Form.Label>
                 <Form.Control
                   type="text"
-                  name="username"
-                  placeholder="Nombre completo"
-                  value={formData.username}
+                  name="name"
+                  placeholder="Ej: Juan García"
+                  value={formData.name}
                   onChange={handleChange}
-                  isInvalid={!!errors.username}
+                  isInvalid={!!errors.name}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.username}
+                  {errors.name}
                 </Form.Control.Feedback>
               </Form.Group>
+
               <Form.Group className="mb-2">
+                <Form.Label>Email</Form.Label>
                 <Form.Control
                   type="email"
                   name="email"
-                  placeholder="Correo electrónico"
+                  placeholder="tuemail@ejemplo.com"
                   value={formData.email}
                   onChange={handleChange}
                   isInvalid={!!errors.email}
@@ -284,11 +384,13 @@ const PropertyDetail = () => {
                   {errors.email}
                 </Form.Control.Feedback>
               </Form.Group>
+
               <Form.Group className="mb-2">
+                <Form.Label>Teléfono</Form.Label>
                 <Form.Control
                   type="text"
                   name="phone"
-                  placeholder="Teléfono"
+                  placeholder="Ej: 341 2567890"
                   value={formData.phone}
                   onChange={handleChange}
                   isInvalid={!!errors.phone}
@@ -297,12 +399,14 @@ const PropertyDetail = () => {
                   {errors.phone}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group className="mb-3">
+
+              <Form.Group className="mb-2">
+                <Form.Label>Mensaje</Form.Label>
                 <Form.Control
                   as="textarea"
-                  rows={3}
+                  rows={2}
                   name="message"
-                  placeholder="Tu mensaje..."
+                  placeholder="Escribe tu mensaje..."
                   value={formData.message}
                   onChange={handleChange}
                   isInvalid={!!errors.message}
@@ -311,9 +415,18 @@ const PropertyDetail = () => {
                   {errors.message}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Button variant="primary" className="w-100 rounded-3" type="submit">
-                Enviar mensaje
-              </Button>
+
+              <div className="d-flex justify-content-end">
+                <button
+                  className="btn ms-2 btn-outline-primary"
+                  type="submit"
+                  style={{
+                    fontWeight: "500",
+                  }}
+                >
+                  Enviar
+                </button>
+              </div>
             </Form>
           </Card>
         </Col>

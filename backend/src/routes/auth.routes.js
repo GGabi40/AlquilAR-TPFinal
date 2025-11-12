@@ -8,7 +8,8 @@ import {
   registerUser,
   resetPassword,
   updateUser,
-  deleteUser
+  deleteUser,
+  verifyEmail
 } from "../services/auth.services.js";
 
 import { blockUser, updateUserRole } from "../services/superadmin.services.js";
@@ -25,7 +26,8 @@ router.get("/:id", verifyToken, getUserById);
 router.put("/:id", verifyToken, updateUser);
 router.delete("/:id/delete", verifyToken, deleteUser);
 
-router.post("/reset-password", resetPassword);
+router.get("/reset-password", resetPassword);
+router.post("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/login", loginUser);
 router.post("/register", registerUser);
