@@ -174,9 +174,6 @@ const PropertyPreview = () => {
             {features.alquileres?.join(", ") || "No especificado"}
           </li>
           <li>
-            <strong>Cochera:</strong> {features.cochera || "No especificado"}
-          </li>
-          <li>
             <strong>Habitaciones:</strong> {features.habitaciones ?? "-"}
           </li>
           <li>

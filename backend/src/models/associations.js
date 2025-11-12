@@ -39,9 +39,9 @@ PropertyDocuments.belongsTo(Property, { foreignKey: "propertyId" });
 Property.belongsTo(PropertyLocality, { foreignKey: "localityId", as: "locality" });
 PropertyLocality.hasMany(Property, { foreignKey: "localityId", as: "properties"});;
 
-Property.belongsTo(PropertyProvince, { foreign: "provinceId", as: "province" });
+Property.belongsTo(PropertyProvince, { foreignKey: "provinceId", as: "province" });
 PropertyProvince.hasMany(Property, { foreignKey: "provinceId", as: "properties"});
-
+ 
 
 /* --- RENTAL --- */
 Post.hasOne(Rental, { as: "rental", foreignKey: "postId" });

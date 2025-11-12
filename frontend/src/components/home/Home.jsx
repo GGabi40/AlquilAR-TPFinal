@@ -199,7 +199,7 @@ export default function Home() {
                             size="sm"
                             className="rounded-pill"
                             onClick={() =>
-                              navigate(`/propiedad/${p.idProperty}`)
+                              navigate(`/properties/${p.idProperty}`)
                             }
                           >
                             Ver más

@@ -49,7 +49,7 @@ const PropertyServices = {
 
   createProperty: async (propertyData, token) => {
     try {
-      const response = await axios.post(API_URL, propertyData, {
+      const response = await axios.post(`${API_URL}/properties`, propertyData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;
@@ -61,7 +61,7 @@ const PropertyServices = {
 
   updateProperty: async (id, updatedData, token) => {
     try {
-      const response = await axios.put(`${API_URL}/${id}`, updatedData, {
+      const response = await axios.put(`${API_URL}/properties/${id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return response.data;

@@ -61,12 +61,28 @@ export const getSearchProperties = async (req, res) => {
 
 export const getPropertyById = async (req, res) => {
   try {
-    const property = await Property.findByPk(req.params.id);
-    if(!property) return res.status(404).json({ message: "Propiedad no encontrada" });
+    const property = await Property.findByPk(req.params.id, {
+      include: [
+        { model: PropertyLocality, as: "locality" },
+        { model: PropertyProvince, as: "province" },
+        { model: PropertyDetails,
+          include: [
+            { model: PropertyImages },
+            { model: PropertyVideos }
+          ]
+        },
+        { model: PropertyDocuments },
+        { model: User, as: "owner" }
+      ]
+    });
+
+    if (!property)
+      return res.status(404).json({ message: "Propiedad no encontrada" });
+
     res.json(property);
   } catch (error) {
     console.error("Error al obtener propiedad:", error);
-    res.status(500).json({ message: "Error al obtener la propiedad" })
+    res.status(500).json({ message: "Error al obtener la propiedad" });
   }
 };
 

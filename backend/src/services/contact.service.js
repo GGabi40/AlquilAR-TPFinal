@@ -6,7 +6,7 @@ import nodemailer from "nodemailer";
 
 dotenv.config();
 export const sendEmail = async (req, res) => {
-  const { name, email, cellphone, message } = req.body;
+  const { username, email, phone, message } = req.body;
   const { id } = req.params; // id de propiedad
 
   const validations = validateContactData(req.body);
@@ -35,8 +35,8 @@ export const sendEmail = async (req, res) => {
             "El usuario no está registrado. Solo usuarios verificados pueden contactar propietarios.",
         });
 
-    if (!existingUser.cellphone && cellphone) {
-      existingUser.cellphone = cellphone;
+    if (!existingUser.phone && phone) {
+      existingUser.phone = phone;
       await existingUser.save();
     }
 
@@ -55,12 +55,12 @@ export const sendEmail = async (req, res) => {
     const mailOptions = {
       from: `"AlquilAR - Nuevo contacto" <${process.env.EMAIL_USER}>`,
       to: ownerEmail,
-      subject: `Nuevo mensaje de ${name}`,
+      subject: `Nuevo mensaje de ${username}`,
       html: `
                 <h2>Nuevo interesado en tu propiedad</h2>
-                <p><strong>Nombre:</strong> ${name}</p>
+                <p><strong>Nombre:</strong> ${username}</p>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Teléfono:</strong> ${cellphone}</p>
+                <p><strong>Teléfono:</strong> ${phone}</p>
                 <hr>
                 <p><strong>Mensaje:</strong> \n${message}</p>
             `,
@@ -78,9 +78,9 @@ export const sendEmail = async (req, res) => {
 const validateContactData = (data) => {
   const result = { error: false, message: "" };
 
-  const { name, email, cellphone, message } = data;
+  const { username, email, phone, message } = data;
 
-  if (!name || !validateString(name, 2, 50)) {
+  if (!username || !validateString(username, 2, 50)) {
     return { error: true, message: "Nombre inválido o demasiado corto." };
   }
 
@@ -88,7 +88,7 @@ const validateContactData = (data) => {
     return { error: true, message: "Correo electrónico inválido." };
   }
 
-  if (!cellphone || !validateString(cellphone, 6, 20)) {
+  if (!phone || !validateString(phone, 6, 20)) {
     return { error: true, message: "Número de teléfono inválido." };
   }
 
