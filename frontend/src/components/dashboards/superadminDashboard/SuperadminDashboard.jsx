@@ -32,7 +32,7 @@ export default function SuperadminDashboard() {
           <PropertyTable token={token} />
         </Tab>
 
-        <Tab eventKey="pendientes" title="Pendientes">
+        <Tab eventKey="pendientes" title="Pendientes de aprobación">
           <RequestApprovalTable token={token} />
         </Tab>
       </Tabs>

@@ -175,11 +175,7 @@ const RequestApprovalTable = ({ token }) => {
           property={docsModal.property}
           token={token}
           onStatusChange={(id, newStatus) => {
-            setProperties((prev) =>
-              prev.map((p) =>
-                p.idProperty === id ? { ...p, status: newStatus } : p
-              )
-            );
+            setProperties((prev) => prev.filter((p) => p.idProperty !== id));
           }}
         />
       )}
