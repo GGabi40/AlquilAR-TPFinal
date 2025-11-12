@@ -78,7 +78,6 @@ const DocsModal = ({ show, onClose, property, token, onStatusChange }) => {
                   borderRadius: "8px",
                 }}
               >
-                {/* Mostrar miniatura si es imagen */}
                 {doc.URLDocument.match(/\.(jpg|jpeg|png|gif)$/i) ? (
                   <Card.Img
                     variant="top"

@@ -48,7 +48,7 @@ const PropertyPreview = () => {
     arrows: true,
   };
 
-  const { location = {}, features = {}, images = [] } = formData;
+  const { location = {}, features = {}, images = {} } = formData;
 
   const handlePublish = async (e) => {
     e.preventDefault();
@@ -60,8 +60,6 @@ const PropertyPreview = () => {
       toastError("Debe iniciar sesión para publicar una propiedad.");
       return;
     }
-
-    console.log(formData);
 
     const sendToDatabase = {
       propertyType: features.tipoPropiedad,
@@ -76,10 +74,12 @@ const PropertyPreview = () => {
       totalArea: features.superficie,
       nameP: location.provincia,
       nameL: location.localidad,
-      images: images.images,
-      video: images.videoUrl,
-      documents: images.documents,
+      images: images.images || [],
+      video: images.videoUrl || "",
+      documents: images.documents || [],
     };
+
+    console.log("Datos enviados: ", sendToDatabase);
 
     const toastId = toastLoading("Subiendo propiedad...");
 
