@@ -30,7 +30,6 @@ export const getAllProperties = async (req, res) => {
         .json({ message: "No hay propiedades disponibles." });
     res.json(properties);
   } catch (error) {
-    console.error("Error al obtener propiedadews:", error);
     res.status(500).json({ message: "Error al obtener propiedades" });
   }
 };
