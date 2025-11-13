@@ -1,4 +1,8 @@
 import { Card, Button } from "react-bootstrap";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 
 const PropertyCards = ({ property }) => {
   const {
@@ -27,10 +31,12 @@ const PropertyCards = ({ property }) => {
       </div>
       <Card.Body className="d-flex flex-column justify-content-between">
         <div>
-          <Card.Title className="fw-bold">{title || "Propiedad"}
-            <button>
+          <Card.Title className="fw-bold">
+            {title || "Propiedad"}
+            <button
               style={{ background: "transparent", border: "none" }}
               onClick={() => setIsFavorite(!isFavorite)}
+            >
               <FontAwesomeIcon
                 icon={isFavorite ? faHeart : faHeartRegular}
                 style={{ color: "red" }}
