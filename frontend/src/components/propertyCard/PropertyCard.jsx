@@ -1,63 +1,72 @@
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
+import { useNavigate } from "react-router";
 
-const PropertyCards = ({ property }) => {
-  const {
-    idProperty,
-    title,
-    city,
-    address,
-    price,
-    rooms,
-    type,
-    images = [],
-  } = property;
+const PropertyCard = ({ post, view = "grid" }) => {
+  const navigate = useNavigate();
 
-  const mainImage = images.length > 0 ? images[0].url : "/placeholder.jpg";
-  const [isFavorite, setIsFavorite] = useState(false);
+  const prop = post.property || {};
+  const detail = prop.PropertyDetail || {};
 
+  const mainImage =
+    detail.PropertyImages?.[0]?.URLImages || "/photos/no-image.png";
+
+  if (view === "list") {
+    return (
+      <Card className="shadow-sm mx-auto mb-3" style={{ maxWidth: "850px" }}>
+        <Row className="g-0">
+          <Col md={4}>
+            <Card.Img
+              src={mainImage}
+              style={{ height: "100%", objectFit: "cover" }}
+            />
+          </Col>
+
+          <Col md={8} className="p-3 d-flex flex-column justify-content-between">
+            <div>
+              <h5 className="fw-bold">{post.title}</h5>
+
+              <p className="mb-1"><strong>Dirección:</strong> {prop.address}</p>
+              <p className="mb-1"><strong>Ambientes:</strong> {detail.numRooms || "-"}</p>
+              <p className="mb-1"><strong>Ciudad:</strong> {prop.locality?.name}</p>
+              <p className="mb-1 text-primary fw-bold">Precio: ${prop.rentPrice}</p>
+            </div>
+
+            <Button
+              variant="primary"
+              className="rounded-pill mt-2"
+              onClick={() => navigate(`/properties/${prop.idProperty}`)}
+            >
+              Ver detalles
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+    );
+  }
+
+  // MODO GRID
   return (
     <Card className="h-100 shadow-sm rounded-4 overflow-hidden">
       <div className="ratio ratio-4x3">
         <Card.Img
-          variant="top"
           src={mainImage}
-          alt={title}
           style={{ objectFit: "cover" }}
         />
       </div>
-      <Card.Body className="d-flex flex-column justify-content-between">
-        <div>
-          <Card.Title className="fw-bold">
-            {title || "Propiedad"}
-            <button
-              style={{ background: "transparent", border: "none" }}
-              onClick={() => setIsFavorite(!isFavorite)}
-            >
-              <FontAwesomeIcon
-                icon={isFavorite ? faHeart : faHeartRegular}
-                style={{ color: "red" }}
-                size="lg"
-              />
-            </button>
-          </Card.Title>
 
-          <Card.Text className="text-muted mb-1">{`${city} - ${address}`}</Card.Text>
-          <Card.Text className="mb-1">
-            <strong>Tipo:</strong> {type}
-          </Card.Text>
-          <Card.Text className="mb-1">
-            <strong>Ambientes:</strong> {rooms}
-          </Card.Text>
-          <Card.Text className="text-primary fw-bold fs-5">${price}</Card.Text>
-        </div>
+      <Card.Body>
+        <h5 className="fw-bold">{post.title}</h5>
+        <p className="text-muted">{prop.address}</p>
+        <p className="fw-bold text-primary">${prop.rentPrice}</p>
+
         <Button
           variant="outline-primary"
-          className="mt-3 rounded-pill"
-          onClick={() => (window.location.href = `/property/${idProperty}`)}
+          className="rounded-pill"
+          onClick={() => navigate(`/properties/${prop.idProperty}`)}
         >
           Ver detalles
         </Button>
@@ -66,4 +75,4 @@ const PropertyCards = ({ property }) => {
   );
 };
 
-export default PropertyCards;
+export default PropertyCard;

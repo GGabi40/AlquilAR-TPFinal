@@ -59,7 +59,6 @@ function App() {
           <Route path="/contact-us" element={<ContactUs />} />
 
           <Route path="/properties" element={<PropertyList />} />{" "}
-          {/* Ruta de search */}
           <Route path="/properties/:id" element={<PropertyView />} />
 
           <Route path="/add-property" element={<PropertyDashboard />}>
