@@ -4,7 +4,6 @@ import {
     getPropertyById,
     getPropertiesByOwner,
     updateProperty,
-    updateFeaturedProperty,
     deleteProperty,
     getSearchProperties,
     requestNewProperty
@@ -19,7 +18,6 @@ const router = express.Router();
 router.put("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), updateProperty);
 router.delete("/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), deleteProperty);
 router.get("/owner/:id", verifyToken, roleMiddleware(["owner", "superadmin"]), getPropertiesByOwner);
-router.patch("/:id/featured", verifyToken, roleMiddleware(["owner", "superadmin"]), updateFeaturedProperty);
 
 /* Superadmin */
 router.patch("/:id/approve", verifyToken, roleMiddleware(["superadmin"]), approveProperty);

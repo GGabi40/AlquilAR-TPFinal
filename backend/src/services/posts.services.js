@@ -2,6 +2,18 @@ import { Post } from "../models/Post.js";
 import { Property } from "../models/Property.js";
 import { User } from "../models/User.js";
 
+export const assertPostOwner = (post, user) => {
+  const isOwner = post.Property.ownerId === user.id;
+  const isSuperadmin = user.role === "superadmin";
+
+  if (!isOwner && !isSuperadmin) {
+    const error = new Error("No tenés autorización para modificar este post.");
+    error.status = 403;
+    throw error;
+  }
+};
+
+
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.findAll({
@@ -9,14 +21,15 @@ export const getAllPosts = async (req, res) => {
         {
           model: Property,
           include: [
-            { model: User, attributes: ["id", "name", "surname", "email"] },
-          ],
-        },
+            { model: User, attributes: ["id"] }
+          ]
+        }
       ],
+      order: [["createdAt", "DESC"]]
     });
 
-    if (!posts)
-      return res.status(404).json({ message: "No hay publicaciones." });
+    if (!posts.length)
+      return res.status(200).json([]);
 
     res.status(200).json(posts);
   } catch (error) {
@@ -42,137 +55,96 @@ export const getPostById = async (req, res) => {
   }
 };
 
-/* Owner */
-export const createPost = async (req, res) => {
-  try {
-    const userRole = req.user.role;
-
-    if (userRole !== "owner" && userRole !== "superadmin")
-      return res
-        .status(403)
-        .json({
-          message:
-            "Solamente propietarios o administradores pueden crear publicaciones.",
-        });
-
-    const { propertyId, title, description, price, status } = req.body;
-
-    const newPost = await Post.create({
-      propertyId,
-      title,
-      description,
-      price,
-      status: status || "active",
-    });
-
-    res.status(201).json(newPost);
-  } catch (error) {
-    console.error("Error al crear publicación:", error);
-    res.status(500).json({ message: "Error al crear publicación" });
-  }
-};
-
 export const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await Post.findByPk(id, { include: Property });
+
+    const post = await Post.findByPk(id, {
+      include: Property
+    });
 
     if (!post)
-      return res
-        .status(404)
-        .json({ message: "No se encontró esta publicación." });
+      return res.status(404).json({ message: "Publicación no encontrada." });
 
-    const userId = req.user.id;
-    const isOwner = post.Property.ownerId === userId;
-    if (!isOwner)
-      return res
-        .status(403)
-        .json({ message: "No tenés autorización para modificar este post." });
+    assertPostOwner(post, req.user);
 
-    const { title, description, price, status } = req.body;
+    const { title, description, status } = req.body;
 
     post.title = title ?? post.title;
     post.description = description ?? post.description;
-    post.price = price ?? post.price;
     post.status = status ?? post.status;
 
     await post.save();
 
-    res.status(200).json({ message: "Post actualizado con éxito." });
+    res.status(200).json({ message: "Post actualizado con éxito.", post });
   } catch (error) {
     console.error("Error al actualizar publicación:", error);
-    res.status(500).json({ message: "Error al actualizar publicación" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Error al actualizar publicación" });
   }
 };
 
 export const updatePostStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const { status } = req.body;
+
+    const validStatus = ["active", "paused", "rented"];
+    if (!validStatus.includes(status))
+      return res.status(400).json({ message: "Status inválido." });
 
     const post = await Post.findByPk(id, { include: Property });
     if (!post)
       return res.status(404).json({ message: "Publicación no encontrada." });
 
-    const userId = req.user.id;
-    const userRole = req.user.role;
-
-    const isOwner = post.Property.ownerId === userId;
-    const isSuperadmin = userRole === "superadmin";
-
-    if (!isOwner && !isSuperadmin)
-      return res.status(403).json({ message: "No tenés autorización para modificar este post." });
-
-    
-    const { status } = req.body;
-    const validStatus = ["active", "paused", "rented"];
-
-    if (!validStatus.includes(status))
-      return res.status(400).json({ message: "Status inválido." });
+    assertPostOwner(post, req.user);
 
     post.status = status;
     await post.save();
 
-    res.status(200).json({ message: "Se cambió el Status con éxito." });
+    res.status(200).json({ message: "Status actualizado correctamente." });
   } catch (error) {
     console.error("Error al actualizar status:", error);
-    res.status(500).json({ message: "Error al actualizar status" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Error al actualizar status" });
   }
 };
+
 
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const userId = req.user.id;
-    const userRole = req.user.role;
-
-    const post = await Post.findByPk(id, {
-      include: { model: Property },
-    });
+    const post = await Post.findByPk(id, { include: Property });
 
     if (!post)
       return res.status(404).json({ message: "Publicación no encontrada." });
 
-    const isOwner = post.Property.ownerId === userId;
-    const isSuperadmin = userRole === "superadmin";
+    assertPostOwner(post, req.user);
 
-    if (!isOwner && !isSuperadmin)
-      return res
-        .status(403)
-        .json({ message: "No tenés autorización para eliminar este post." });
-
-    await Post.destroy({ where: { id } });
+    await post.destroy();
 
     res.status(200).json({ message: "Publicación eliminada con éxito." });
   } catch (error) {
     console.error("Error al eliminar publicación:", error);
-    res.status(500).json({ message: "Error al eliminar publicación" });
+    res
+      .status(error.status || 500)
+      .json({ message: error.message || "Error al eliminar publicación" });
   }
 };
+
 
 export const getPostsByOwner = async (req, res) => {
   try {
     const { ownerId } = req.params;
+
+    if (req.user.id != ownerId && req.user.role !== "superadmin") {
+      return res.status(403).json({
+        message: "No tenés autorización para ver estos posts."
+      });
+    }
 
     const posts = await Post.findAll({
       include: [
@@ -182,6 +154,7 @@ export const getPostsByOwner = async (req, res) => {
           include: [
             {
               model: User,
+              as: "owner",
               attributes: ["id", "name", "surname", "email"],
             },
           ],
@@ -190,12 +163,12 @@ export const getPostsByOwner = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    if (posts.length === 0)
-      return res.status(404).json({ message: "Este propietario todavía no tiene publicaciones." });
-
     res.status(200).json(posts);
   } catch (error) {
     console.error("Error al buscar publicaciones de propietario:", error);
-    res.status(500).json({ message: "Error al buscar publicaciones de propietario" });
+    res
+      .status(500)
+      .json({ message: "Error al buscar publicaciones de propietario" });
   }
 };
+

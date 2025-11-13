@@ -30,7 +30,6 @@ export const getAllProperties = async (req, res) => {
         .json({ message: "No hay propiedades disponibles." });
     res.json(properties);
   } catch (error) {
-    console.error("Error al obtener propiedadews:", error);
     res.status(500).json({ message: "Error al obtener propiedades" });
   }
 };
@@ -59,7 +58,6 @@ export const getSearchProperties = async (req, res) => {
     const results = await Property.findAll({ where });
     res.json(results);
   } catch (error) {
-    console.error("Error al buscar propiedades:", error);
     res.status(500).json({ message: "Error al buscar propiedades" });
   }
 };
@@ -84,7 +82,6 @@ export const getPropertyById = async (req, res) => {
 
     res.json(property);
   } catch (error) {
-    console.error("Error al obtener propiedad:", error);
     res.status(500).json({ message: "Error al obtener la propiedad" });
   }
 };
@@ -143,7 +140,6 @@ export const updateProperty = async (req, res) => {
     });
     res.json(property);
   } catch (error) {
-    console.error("Error: ", error);
     return res.status(500).send({ message: "Algo fallo!" });
   }
 };
@@ -160,7 +156,6 @@ export const deleteProperty = async (req, res) => {
     await property.destroy();
     res.send("La propiedad fue eliminado!!");
   } catch (error) {
-    console.error("Error: ", error);
     return res.status(500).send({ message: "Algo fallo!" });
   }
 };
@@ -170,25 +165,10 @@ export const getPropertiesByOwner = async (ownerId) => {
   try {
     return await Property.findAll({ where: { ownerId } });
   } catch (error) {
-    console.error("Error al obtener propiedades del owner:", error);
     throw new Error("Error al obtener propiedades");
   }
 };
 
-// Actualizar propiedad destacada
-export const updateFeaturedProperty = async (id, featured) => {
-  try {
-    const property = await Property.findByPk(id);
-    if (!property) throw new Error("Propiedad no encontrada");
-
-    property.featured = featured;
-    await property.save();
-    return property;
-  } catch (error) {
-    console.error("Error al actualizar propiedad destacada:", error);
-    throw new Error("Error al actualizar propiedad destacada");
-  }
-};
 
 /* REQUEST */
 export const requestNewProperty = async (req, res) => {
@@ -290,7 +270,6 @@ export const requestNewProperty = async (req, res) => {
     await t.commit();
     res.status(200).json({ property: { ...property.toJSON(), details } });
   } catch (error) {
-    console.error("Error al solicitar nueva propiedad:", error);
     await t.rollback();
     res
       .status(500)
