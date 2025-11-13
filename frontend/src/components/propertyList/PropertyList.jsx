@@ -11,7 +11,7 @@ import { Link } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
 import { PostService } from "../../services/PostService";
-import Filters from "../filters/filters.jsx";
+import Filters from "../filters/Filters.jsx";
 
 const PropertyList = ({ token }) => {
   const [posts, setPosts] = useState([]);
