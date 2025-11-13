@@ -87,7 +87,7 @@ export const registerUser = async (req, res) => {
 
   if (result.error) return res.status(400).json({ message: result.message });
 
-  const { name, surname, email, password, isBlocked, avatarColor, role } =
+  const { name, surname, email, password, isBlocked, avatarColor, role, verified } =
     req.body;
 
   try {
@@ -112,7 +112,7 @@ export const registerUser = async (req, res) => {
       isBlocked,
       avatarColor: avatarColor || "#ffc107",
       role: role || "user",
-      verified: false,
+      verified: verified || false,
       verificationToken,
       verificationTokenExpiry,
     });
