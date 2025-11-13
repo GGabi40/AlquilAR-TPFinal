@@ -17,7 +17,10 @@ const SearchBar = ({ onSearch }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSearch(filters);
+        const cleanFilters = Object.fromEntries(
+            Object.entries(filters).filter(([_, v]) => v.trim() !== "")
+        );
+        onSearch(cleanFilters);
     };
 
     return (
