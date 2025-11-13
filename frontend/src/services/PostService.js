@@ -10,9 +10,7 @@ export const PostService = {
   },
 
   getPostById: async (id, token) => {
-    const response = await axios.get(`${API_URL}/posts/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.get(`${API_URL}/posts/${id}`);
     return response.data;
   },
 
