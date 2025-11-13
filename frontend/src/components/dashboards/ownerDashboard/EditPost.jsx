@@ -18,6 +18,7 @@ import Notifications, {
 } from "../../ui/toaster/Notifications.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import PropertyMiniEditor from "./PropertyMiniEditor.jsx";
 
 export default function EditPost() {
   const { id } = useParams();
@@ -70,7 +71,7 @@ export default function EditPost() {
         navigate("/owner/dashboard");
       }, 1500);
     } catch (error) {
-        console.error('Error:', error);
+      console.error("Error:", error);
       toastError("Error al guardar los cambios");
     }
   };
@@ -95,10 +96,7 @@ export default function EditPost() {
             background: "#ffffff",
           }}
         >
-          <FontAwesomeIcon
-              icon={faPencilAlt}
-              className="dashboard-fa-icon"
-            />
+          <FontAwesomeIcon icon={faPencilAlt} className="dashboard-fa-icon" />
         </div>
         <h2 className="fw-bold mt-3">Editar Publicación</h2>
         <p className="text-muted">Modificá los datos de tu anuncio.</p>
@@ -174,6 +172,12 @@ export default function EditPost() {
           </div>
         </Form>
       </Card>
+
+      <hr className="my-5" style={{ opacity: 0.15 }} />
+
+      <h4 className="fw-bold mb-3 text-center">Datos de la Propiedad</h4>
+
+      <PropertyMiniEditor propertyId={post?.Property?.idProperty} />
     </Container>
   );
 }

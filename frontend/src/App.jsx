@@ -34,6 +34,7 @@ import Favorites from "./components/pages/Favorites.jsx";
 import PropertyList from "./components/propertyList/PropertyList.jsx";
 import VerifyEmail from "./components/auth/verifyEmail/VerifyEmail.jsx";
 import EditPost from "./components/dashboards/ownerDashboard/EditPost.jsx";
+import PropertyEditor from "./components/dashboards/ownerDashboard/PropertyEditor.jsx";
 
 function App() {
   return (
@@ -71,6 +72,7 @@ function App() {
           <Route element={<Protected allowedRoles={["owner", "superadmin"]} />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
             <Route path="/posts/edit/:id" element={<EditPost />} />
+            <Route path="/property/edit/:id" element={<PropertyEditor />} />
           </Route>
 
           {/* Superadmin */}
