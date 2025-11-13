@@ -95,6 +95,7 @@ const PropertyList = ({ token }) => {
     if (newFilters.bedrooms) {
       const isPlus = newFilters.bedrooms.includes("+");
       const min = Number(newFilters.bedrooms.replace("+", ""));
+
       filtered = filtered.filter((p) => {
         const val = getDetail(p).numBedrooms || 0;
         return isPlus ? val >= min : val === min;
@@ -103,6 +104,7 @@ const PropertyList = ({ token }) => {
 
     if (newFilters.bathrooms) {
       const value = newFilters.bathrooms;
+
       filtered = filtered.filter((p) => {
         const baths = getDetail(p).numBathrooms || 0;
 
@@ -128,6 +130,26 @@ const PropertyList = ({ token }) => {
 
         if (value.endsWith("+")) {
           return area >= Number(value.replace("+", ""));
+        }
+
+        return true;
+      });
+    }
+
+    if (newFilters.age) {
+      const value = newFilters.age;
+
+      filtered = filtered.filter((p) => {
+        const age = getDetail(p).propertyAge || 0;
+
+        if (value.includes("-")) {
+          const [min, max] = value.split("-").map(Number);
+          return age >= min && age <= max;
+        }
+
+        if (value.endsWith("+")) {
+          const min = Number(value.replace("+", ""));
+          return age >= min;
         }
 
         return true;
