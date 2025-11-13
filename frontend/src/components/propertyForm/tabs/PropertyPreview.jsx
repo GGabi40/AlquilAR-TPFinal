@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import Slider from "react-slick";
@@ -38,6 +38,21 @@ const PropertyPreview = () => {
   const { formData } = useContext(PropertyContext);
   const { token } = useContext(AuthenticationContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const locationData = JSON.parse(localStorage.getItem("propertyLocationData"));
+    const featuresData = JSON.parse(localStorage.getItem("propertyFeaturesData"));
+    const imagesData = JSON.parse(localStorage.getItem("propertyImagesData"));
+
+
+    if (!locationData) {
+      navigate("/add-property/location");
+    } else if (!featuresData) {
+      navigate("/add-property/features");
+    } else if (!imagesData) {
+      navigate("/add-property/images");
+    }
+  }, [navigate]);
 
   const sliderSettings = {
     dots: true,
@@ -87,6 +102,11 @@ const PropertyPreview = () => {
       await requestNewProperty(sendToDatabase, token);
       toastSuccess("Propiedad publicada", { id: toastId });
       toastInfo("La revisaremos pronto.");
+
+      localStorage.removeItem("propertyLocationData");
+      localStorage.removeItem("propertyFeaturesData");
+      localStorage.removeItem("propertyImagesData");
+
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("Error al pubicar: ", error);

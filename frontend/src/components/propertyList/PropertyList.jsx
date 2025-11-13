@@ -293,7 +293,7 @@ const PropertyList = ({ token }) => {
 
                         <Button
                           as={Link}
-                          to={`/property/${p.propertyId}`}
+                          to={`/properties/${p.idProperty}`}
                           variant="primary"
                         >
                           + Información
