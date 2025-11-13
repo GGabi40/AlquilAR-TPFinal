@@ -26,7 +26,7 @@ router.get("/:id", verifyToken, getUserById);
 router.put("/:id", verifyToken, updateUser);
 router.delete("/:id/delete", verifyToken, deleteUser);
 
-router.get("/reset-password", resetPassword);
+router.post("/reset-password", resetPassword);
 router.post("/verify-email", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/login", loginUser);
