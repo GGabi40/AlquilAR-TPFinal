@@ -17,12 +17,12 @@ import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
-import PropertyServices from "../../services/propertyServices";
 import Filters from "../filters/filters.jsx";
+import { PostService } from "../../services/PostService.js";
 
 const PropertyList = ({ token }) => {
-  const [properties, setProperties] = useState([]);
-  const [filteredProperties, setFilteredProperties] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
   const [filtersA, setFiltersA] = useState({
     rooms: "",
     bedrooms: "",
@@ -38,134 +38,136 @@ const PropertyList = ({ token }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [gridView, setGridView] = useState(false);
-
   const { user } = useContext(AuthenticationContext) || {};
 
   // 🔹 Carga inicial (sin filtros)
-  const loadAllProperties = async () => {
+  const loadAllPosts = async () => {
     setLoading(true);
     try {
-      const data = await PropertyServices.getAllProperties();
+      const data = await PostServices.getAllPosts(token);
       const safeData = Array.isArray(data) ? data : [];
-      setProperties(safeData);
-      setFilteredProperties(safeData);
+      setPosts(safeData);
+      setFilteredPosts(safeData);
     } catch (error) {
-      console.error("Error al obtener propiedades:", error);
-      toastError("Error al obtener propiedades.");
+      console.error("Error al obtener publicaciones:", error);
+      toastError("Error al obtener publicaciones.");
     } finally {
       setLoading(false);
     }
   };
 
   // 🔹 Búsqueda desde SearchBar (con filtros)
-  const handleSearch = async (filters) => {
+  const handleSearch = async (searchQuery) => {
     setLoading(true);
     try {
-      const data = await PropertyServices.searchProperties(filters);
-      const safeData = Array.isArray(data) ? data : [];
-      setProperties(safeData);
-      setFilteredProperties(safeData);
+      const allPosts = await PostService.getAllPosts(token);
+      let filtered = [...allPosts];
+
+      if (searchQuery.query) {
+        const query = searchQuery.query.toLowerCase();
+        filtered = filtered.filter(
+          (post) =>
+            post.title.toLowerCase().includes(query) ||
+            post.description?.toLowerCase().includes(query) ||
+            post.Property?.address?.toLowerCase().includes(query)
+        );
+      }
+      setPosts(filtered);
+      applyPropertyFilters(filtersA, filtered);
     } catch (error) {
-      console.error("Error al buscar propiedades:", error);
-      toastError("Error al buscar propiedades.");
+      console.error("Error al buscar publicaciones:", error);
+      toastError("Error al buscar publicaciones.");
     } finally {
       setLoading(false);
     }
   };
 
-  //filtro para la searchbar desde el front
-  const handleFilterChange = (newFilters) => {
-    setFiltersA(newFilters);
+  const applyPropertyFilters = (filters, postsToFilter) => {
+    let filtered = [...postsToFilter];
 
-    let filtered = [...properties];
-
-    if (newFilters.rooms) {
-      const isPlus = newFilters.rooms.includes("+");
-      const min = Number(newFilters.rooms.replace("+", ""));
-      filtered = filtered.filter((p) => {
-        const val = p.PropertyDetail?.numRooms || 0;
+    if (filters.rooms) {
+      const isPlus = filters.rooms.includes("+");
+      const min = Number(filters.rooms.replace("+", ""));
+      filtered = filtered.filter((post) => {
+        const val = post.Property?.PropertyDetail?.numRooms || 0;
         return isPlus ? val >= min : val === min;
       });
     }
 
-    if (newFilters.bedrooms) {
-      const isPlus = newFilters.bedrooms.includes("+");
-      const min = Number(newFilters.bedrooms.replace("+", ""));
-      filtered = filtered.filter((p) => {
-        const val = p.PropertyDetail?.numBedrooms || 0;
+    if (filters.bedrooms) {
+      const isPlus = filters.bedrooms.includes("+");
+      const min = Number(filters.bedrooms.replace("+", ""));
+      filtered = filtered.filter((post) => {
+        const val = post.Property?.PropertyDetail?.numBedrooms || 0;
         return isPlus ? val >= min : val === min;
       });
     }
 
-    if (newFilters.bathrooms) {
-      const value = newFilters.bathrooms;
-      filtered = filtered.filter((p) => {
-        const baths = p.PropertyDetail?.numBathrooms || 0;
-
+    if (filters.bathrooms) {
+      const value = filters.bathrooms;
+      filtered = filtered.filter((post) => {
+        const baths = post.Property?.PropertyDetail?.numBathrooms || 0;
         if (value.endsWith("+")) {
           const min = Number(value.replace("+", ""));
           return baths >= min;
         }
-
         return baths === Number(value);
       });
     }
 
-    if (newFilters.totalArea) {
-      const value = newFilters.totalArea;
-
-      filtered = filtered.filter((p) => {
-        const area = p.PropertyDetail?.totalArea || 0;
-
+    if (filters.totalArea) {
+      const value = filters.totalArea;
+      filtered = filtered.filter((post) => {
+        const area = post.Property?.PropertyDetail?.totalArea || 0;
         if (value.includes("-")) {
           const [min, max] = value.split("-").map(Number);
           return area >= min && area <= max;
         }
-
         if (value.endsWith("+")) {
           const min = Number(value.replace("+", ""));
           return area >= min;
         }
-
         return true;
       });
     }
 
-
-    if (newFilters.age) {
-      const value = newFilters.age;
-
-      filtered = filtered.filter((p) => {
-        const age = p.PropertyDetail?.propertyAge || 0;
-
+    if (filters.age) {
+      const value = filters.age;
+      filtered = filtered.filter((post) => {
+        const age = post.Property?.PropertyDetail?.propertyAge || 0;
         if (value.includes("-")) {
           const [min, max] = value.split("-").map(Number);
           return age >= min && age <= max;
         }
-
         if (value.endsWith("+")) {
           const min = Number(value.replace("+", ""));
           return age >= min;
         }
-
         return true;
       });
     }
 
-    if (newFilters.minPrice) {
+    if (filters.minPrice) {
       filtered = filtered.filter(
-        (p) => p.rentPrice >= Number(newFilters.minPrice)
+        (post) => post.Property?.rentPrice >= Number(filters.minPrice)
       );
     }
 
-    if (newFilters.maxPrice) {
+    if (filters.maxPrice) {
       filtered = filtered.filter(
-        (p) => p.rentPrice <= Number(newFilters.maxPrice)
+        (post) => post.Property?.rentPrice <= Number(filters.maxPrice)
       );
     }
 
-    setFilteredProperties(filtered);
-  }
+    setFilteredPosts(filtered);
+  };
+
+
+  //filtro para la searchbar desde el front
+  const handleFilterChange = (newFilters) => {
+    setFiltersA(newFilters);
+    applyPropertyFilters(newFilters, posts);
+  };
 
   // 🔹 Favoritos
   const loadFavorites = async () => {
@@ -180,9 +182,9 @@ const PropertyList = ({ token }) => {
 
   // 🔹 Carga inicial al montar el componente
   useEffect(() => {
-    loadAllProperties(); // ✅ solo al montar
+    loadAllPosts(); // ✅ solo al montar
     if (user) loadFavorites();
-  }, [user]);
+  }, [user, token]);
 
   // 🔹 Manejo de favoritos
   const handleFavoriteClick = async (propertyId) => {
@@ -218,7 +220,7 @@ const PropertyList = ({ token }) => {
   // 🔹 Render principal
   return (
     <Container className="py-4">
-      <h2 className="fw-bold mb-4 text-center">Propiedades disponibles</h2>
+      <h2 className="fw-bold mb-4 text-center">Publicaciones disponibles</h2>
 
       {/* 🔍 SearchBar con la búsqueda por backend */}
       <SearchBar onSearch={handleSearch} />
@@ -242,19 +244,19 @@ const PropertyList = ({ token }) => {
         <div className="text-center py-5">
           <Spinner animation="border" />
         </div>
-      ) : Array.isArray(filteredProperties) && filteredProperties.length > 0 ? (
+      ) : Array.isArray(filteredPosts) && filteredPosts.length > 0 ? (
         <Row className={gridView ? "g-4" : "justify-content-center g-3 px-3"}>
-          {filteredProperties.map((p) => (
-            <Col key={p.propertyId || p.id || Math.random()} md={gridView ? 4 : 12}>
+          {filteredPosts.map((post) => (
+            <Col key={post.id} md={gridView ? 4 : 12}>
               {gridView ? (
-                <PropertyCard property={p} />
+                <PropertyCard property={post.Property} post={post} />
               ) : (
                 <Card className="shadow-sm mx-auto" style={{ maxWidth: "800px" }}>
                   <Row className="g-0">
                     <Col md={4}>
                       <Card.Img
-                        src={p.image}
-                        alt={p.titulo}
+                        src={post.Property?.image}
+                        alt={post.titulo}
                         style={{
                           width: "100%",
                           height: "100%",
@@ -267,22 +269,22 @@ const PropertyList = ({ token }) => {
                       className="d-flex flex-column justify-content-between p-2"
                     >
                       <Card.Body className="position-relative">
-                        <Card.Title>{p.titulo}</Card.Title>
+                        <Card.Title>{post.titulo}</Card.Title>
                         <Card.Text>
-                          <strong>Dirección:</strong> {p.address} <br />
-                          <strong>Precio:</strong> ${p.rentPrice} <br />
-                          <strong>Habitaciones:</strong>{" "}
-                          {p.PropertyDetail?.numBedrooms || "-"}
+                          <strong>Dirección:</strong> {post.Property?.address} <br />
+                          <strong>Precio:</strong> ${post.Property?.rentPrice} <br />
+                          <strong>Habitaciones:</strong>{post.PropertyDetail?.numBedrooms || "-"} <br />
+                          <strong>Estado:</strong> {post.status}
                         </Card.Text>
 
                         <button
                           className="position-absolute top-0 end-0 m-2"
                           style={{ background: "transparent", border: "none" }}
-                          onClick={() => handleFavoriteClick(p.propertyId)}
+                          onClick={() => handleFavoriteClick(post.Property?.idProperty)}
                         >
                           <FontAwesomeIcon
                             icon={
-                              favorites.includes(p.propertyId)
+                              favorites.includes(post.Property?.idProperty)
                                 ? faHeart
                                 : faHeartRegular
                             }
@@ -293,7 +295,7 @@ const PropertyList = ({ token }) => {
 
                         <Button
                           as={Link}
-                          to={`/properties/${p.idProperty}`}
+                          to={`/posts/${post.id}`}
                           variant="primary"
                         >
                           + Información

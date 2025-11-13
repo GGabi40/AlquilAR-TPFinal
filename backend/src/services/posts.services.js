@@ -13,7 +13,6 @@ export const assertPostOwner = (post, user) => {
   }
 };
 
-
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.findAll({
@@ -170,5 +169,17 @@ export const getPostsByOwner = async (req, res) => {
       .status(500)
       .json({ message: "Error al buscar publicaciones de propietario" });
   }
+};
+
+export const searchPosts = async (query) => {
+  return await Post.findAll({
+    where: {
+      [Op.or]: [
+        { title: { [Op.iLike]: `%${query}%` } },
+        { description: { [Op.iLike]: `%${query}%` } },
+      ],
+    },
+    include: [{ model: Property }],
+  });
 };
 
