@@ -28,12 +28,17 @@ export const getAllPosts = async (req, res) => {
           as: "property",
           include: [
             {
-              model: User,
-              as: "owner",
-              attributes: ["id", "name", "surname"],
+              model: PropertyDetails,
+              include: [
+                { model: PropertyImages },
+                { model: PropertyVideos }
+              ]
             },
-          ],
-        },
+            { model: PropertyLocality, as: "locality" },
+            { model: PropertyProvince, as: "province" },
+            { model: User, as: "owner" }
+          ]
+        }
       ],
       order: [["createdAt", "DESC"]],
     });

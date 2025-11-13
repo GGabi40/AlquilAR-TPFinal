@@ -95,8 +95,6 @@ const PropertyDetail = () => {
 
         const postData = await PostService.getPostById(id);
 
-        console.log("POST RECIBIDO:", postData);
-
         // Geolocalización
         const coords = await getCoordinates(
           postData.property.address,
