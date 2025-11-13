@@ -167,29 +167,42 @@ export default function Home() {
         </Nav>
 
         {recentChunks.length > 0 ? (
-          <Carousel variant="dark" indicators={false} className="mt-3 recent-carousel">
+          <Carousel
+            variant="dark"
+            indicators={false}
+            className="mt-3 recent-carousel"
+          >
             {recentChunks.map((chunk, i) => (
               <Carousel.Item key={i}>
                 <Row className="justify-content-center g-4 px-4">
                   {chunk.map((post) => (
                     <Col key={post.idPost} xs={10} sm={6} md={4} lg={3}>
                       <Card className="shadow-sm h-100 position-relative">
-
                         <span
                           className={`status-badge ${
-                            post.status === "available"
+                            post.status === "active"
                               ? "bg-success"
-                              : "bg-danger"
+                              : post.status === "rented"
+                              ? "bg-danger"
+                              : "bg-secondary"
                           }`}
                         >
-                          {post.status === "available"
+                          {post.status === "active"
                             ? "Disponible"
-                            : "Alquilado"}
+                            : post.status === "rented"
+                            ? "Alquilado"
+                            : "Pausado"}
                         </span>
 
                         <Card.Img
                           variant="top"
-                          src={post.property.URLImage || "/photos/no-image.png"}
+                          src={
+                            post.property?.PropertyDetail?.PropertyImages
+                              ?.length > 0
+                              ? post.property.PropertyDetail.PropertyImages[0]
+                                  .URLImages
+                              : "/photos/no-image.png"
+                          }
                           alt={post.property.address}
                           style={{ height: "200px", objectFit: "cover" }}
                         />
@@ -207,9 +220,14 @@ export default function Home() {
                           <Button
                             variant="primary"
                             size="sm"
+                            disabled={
+                              post.status == "paused" || post.status == "rented"
+                            }
                             className="rounded-pill"
                             onClick={() =>
-                              navigate(`/properties/${post.property.idProperty}`)
+                              navigate(
+                                `/properties/${post.property.idProperty}`
+                              )
                             }
                           >
                             Ver más

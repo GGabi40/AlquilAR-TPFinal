@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   Card,
@@ -19,21 +19,36 @@ import {
   faBed,
   faBath,
   faMapMarkerAlt,
+  faCircleCheck,
   faVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import { getPropertyById } from "../../services/propertyServices";
+
+import { PostService } from "../../services/PostService";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
+
 import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notifications";
+import { AuthenticationContext } from "../../services/auth.context";
+import axios from "axios";
 
 const PropertyDetail = () => {
   const { id } = useParams();
+  const { token } = useContext(AuthenticationContext);
   const navigate = useNavigate();
+
+  // Estados
+  const [post, setPost] = useState(null);
   const [property, setProperty] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
+
+  // Lightbox
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  // Formulario de contacto
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,16 +56,14 @@ const PropertyDetail = () => {
     message: "",
   });
 
-  // 📸 Lightbox
-  const [showModal, setShowModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // 🌎 Geolocalización aproximada
+  // -------------------------
+  // GEOLOCALIZACIÓN
+  // -------------------------
   const getCoordinates = async (address, locality, province) => {
     if (!address && !locality && !province) return null;
 
-    const query = `${address || ""}, ${locality || ""}, ${province || ""
-      }, Argentina`;
+    const query = `${address || ""}, ${locality || ""}, ${province || ""}, Argentina`;
+
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
       query
     )}`;
@@ -58,6 +71,7 @@ const PropertyDetail = () => {
     try {
       const res = await fetch(url);
       const data = await res.json();
+
       if (data.length > 0) {
         const lat = parseFloat(data[0].lat) + (Math.random() - 0.5) * 0.001;
         const lon = parseFloat(data[0].lon) + (Math.random() - 0.5) * 0.001;
@@ -70,71 +84,68 @@ const PropertyDetail = () => {
     }
   };
 
+  // -------------------------
+  // USE EFFECT → TRAER EL POST
+  // -------------------------
   useEffect(() => {
-    const fetchProperty = async () => {
+    const fetchPost = async () => {
       try {
         setLoading(true);
         setErrors({});
-        const propertyData = await getPropertyById(id);
 
+        const postData = await PostService.getPostById(id);
+
+        // Geolocalización
         const coords = await getCoordinates(
-          propertyData.address,
-          propertyData.locality?.name,
-          propertyData.province?.name
+          postData.property.address,
+          postData.property.locality?.name,
+          postData.property.province?.name
         );
 
         if (coords) {
-          propertyData.latitude = coords.lat;
-          propertyData.longitude = coords.lon;
+          postData.property.latitude = coords.lat;
+          postData.property.longitude = coords.lon;
         }
-        setProperty(propertyData);
+
+        setPost(postData);
+        setProperty(postData.property);
       } catch (error) {
-        console.error("Error al obtener propiedad:", error);
+        console.error("Error al obtener post:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchProperty();
+
+    fetchPost();
   }, [id]);
 
-  // Formulario
+  // -------------------------
+  // FORM CONTACTO
+  // -------------------------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    if (errors[name]) {
-      setErrors({ ...errors, [name]: "" });
-    }
+    if (errors[name]) setErrors({ ...errors, [name]: "" });
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name.trim()) {
-      newErrors.name = "El nombre es obligatorio";
-    } else if (formData.name.length < 3) {
-      newErrors.name = "El nombre debe tener mínimo 3 caracteres";
-    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(formData.name)) {
-      newErrors.name = "El nombre solo debe contener letras y espacios.";
-    }
+    if (!formData.name.trim()) newErrors.name = "El nombre es obligatorio";
+    else if (formData.name.length < 3) newErrors.name = "Debe tener mínimo 3 caracteres";
 
-    if (!formData.email.trim()) {
-      newErrors.email = "El email es obligatorio";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "El email no tiene un formato válido";
-    }
+    if (!formData.email.trim()) newErrors.email = "El email es obligatorio";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = "Formato inválido";
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "El teléfono es obligatorio";
-    } else if (!/^\d{8,15}$/.test(formData.phone)) {
-      newErrors.phone = "Debe contener solo números (8 a 15 dígitos)";
-    }
+    if (!formData.phone.trim()) newErrors.phone = "El teléfono es obligatorio";
+    else if (!/^\d{8,15}$/.test(formData.phone))
+      newErrors.phone = "Solo números (8 a 15 dígitos)";
 
-    if (!formData.message.trim()) {
-      newErrors.message = "El mensaje es obligatorio";
-    } else if (formData.message.length < 10) {
-      newErrors.message = "El mensaje debe tener al menos 10 caracteres";
-    }
+    if (!formData.message.trim()) newErrors.message = "El mensaje es obligatorio";
+    else if (formData.message.length < 10)
+      newErrors.message = "Debe tener al menos 10 caracteres";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -143,39 +154,27 @@ const PropertyDetail = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    console.log(formData);
+
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`/api/contact/${property.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
+      if (!token) return toastError("Debes iniciar sesión para enviar un mensaje.");
+
+      const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
+
+      await axios.post(`${API_URL}/contact/${property.ownerId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error enviando mensaje");
-
-      toastSuccess("¡Enviamos tu mensaje con éxito!");
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-      setErrors({});
-
+      toastSuccess("¡Mensaje enviado con éxito!");
+      setFormData({ name: "", email: "", phone: "", message: "" });
     } catch (error) {
       console.error(error);
-      toastError(
-        error.response?.data?.message || "Error al enviar el email."
-      );
+      toastError("Error al enviar el email.");
     }
   };
 
-  // Lightbox handlers
+  // -------------------------
+  // LIGHTBOX
+  // -------------------------
   const handleImageClick = (url) => {
     setSelectedImage(url);
     setShowModal(true);
@@ -186,34 +185,57 @@ const PropertyDetail = () => {
     setSelectedImage(null);
   };
 
+  // -------------------------
+  // LOADING / ERROR
+  // -------------------------
   if (loading) return <p className="text-center mt-5">Cargando propiedad...</p>;
-  if (!property)
+  if (!property || !post)
     return <p className="text-center mt-5">Propiedad no encontrada.</p>;
 
+  // -------------------------
+  // RENDER
+  // -------------------------
   return (
     <Container className="my-5">
       <Notifications />
+
       {/* HEADER */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <Button variant="outline-secondary" onClick={() => navigate(-1)}>
           ← Volver
         </Button>
-        <h3 className="fw-bold mb-0 text-primary">
-          {property.address || "Dirección no disponible"}
-        </h3>
+
+        <h3 className="fw-bold mb-0 text-primary">{property.address}</h3>
+
         <Button
           variant="link"
           onClick={() => setIsFavorite(!isFavorite)}
           style={{ color: isFavorite ? "red" : "#aaa" }}
         >
-          <FontAwesomeIcon
-            icon={isFavorite ? faHeart : faHeartRegular}
-            size="xl"
-          />
+          <FontAwesomeIcon icon={isFavorite ? faHeart : faHeartRegular} size="xl" />
         </Button>
       </div>
 
-      {/* IMÁGENES */}
+      {/* BADGE ESTADO */}
+      <Badge
+        bg={
+          post.status === "active"
+            ? "success"
+            : post.status === "rented"
+            ? "danger"
+            : "secondary"
+        }
+        className="px-3 py-2 mb-3"
+      >
+        <FontAwesomeIcon icon={faCircleCheck} />{" "}
+        {post.status === "active"
+          ? "Disponible"
+          : post.status === "rented"
+          ? "Alquilado"
+          : "Pausado"}
+      </Badge>
+
+      {/* CARRUSEL IMÁGENES */}
       <Card className="shadow-lg border-0 rounded-4 overflow-hidden mb-4">
         <Carousel>
           {property.PropertyDetail?.PropertyImages?.length > 0 ? (
@@ -227,7 +249,6 @@ const PropertyDetail = () => {
                     height: "450px",
                     objectFit: "cover",
                     cursor: "pointer",
-                    filter: "brightness(90%)",
                   }}
                   onClick={() => handleImageClick(img.URLImages)}
                 />
@@ -246,7 +267,7 @@ const PropertyDetail = () => {
         </Carousel>
       </Card>
 
-      {/* Lightbox */}
+      {/* LIGHTBOX */}
       <Modal show={showModal} onHide={handleCloseModal} centered size="xl">
         <Modal.Body className="bg-dark text-center p-0">
           {selectedImage && (
@@ -264,44 +285,36 @@ const PropertyDetail = () => {
         </Modal.Body>
       </Modal>
 
-      {/* INFO PRINCIPAL */}
       <Row className="g-4">
+        {/* INFORMACIÓN PRINCIPAL */}
         <Col md={8}>
           <Card className="shadow-sm border-0 p-4 rounded-4 mb-4">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <h4 className="fw-bold text-dark">
-                {property.propertyType || "Propiedad"}
-              </h4>
-              <Badge bg="success" className="fs-6">
-                ${property.rentPrice}
-              </Badge>
-            </div>
+            <h4 className="fw-bold">{post.title}</h4>
 
-            <p className="text-muted mb-3">
-              <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
-              {property.locality?.name}, {property.province?.name}
+            <p className="text-secondary">{post.description}</p>
+
+            <h5 className="fw-bold text-primary mb-3">Información de la propiedad</h5>
+
+            <p className="text-muted">
+              <FontAwesomeIcon icon={faMapMarkerAlt} /> {property.locality?.name},{" "}
+              {property.province?.name}
             </p>
 
+            {/* DETALLES */}
             <div className="d-flex flex-wrap gap-3 mb-3">
               <span>
-                <FontAwesomeIcon icon={faHome} />{" "}
-                {property.PropertyDetail?.numRooms || "N/A"} ambientes
+                <FontAwesomeIcon icon={faHome} /> {property.PropertyDetail?.numRooms}{" "}
+                ambientes
               </span>
               <span>
-                <FontAwesomeIcon icon={faBed} />{" "}
-                {property.PropertyDetail?.numBedrooms || "N/A"} habitaciones
+                <FontAwesomeIcon icon={faBed} /> {property.PropertyDetail?.numBedrooms}{" "}
+                habitaciones
               </span>
               <span>
-                <FontAwesomeIcon icon={faBath} />{" "}
-                {property.PropertyDetail?.numBathrooms || "N/A"} baños
+                <FontAwesomeIcon icon={faBath} /> {property.PropertyDetail?.numBathrooms}{" "}
+                baños
               </span>
             </div>
-
-            <h6 className="fw-bold">Descripción</h6>
-            <p className="text-secondary">
-              {property.PropertyDetail?.description ||
-                "Sin descripción disponible."}
-            </p>
 
             {/* VIDEO */}
             {property.PropertyDetail?.PropertyVideos?.length > 0 && (
@@ -309,6 +322,7 @@ const PropertyDetail = () => {
                 <h6 className="fw-bold mb-3">
                   <FontAwesomeIcon icon={faVideo} /> Video de la Propiedad
                 </h6>
+
                 <iframe
                   width="100%"
                   height="400"
@@ -316,10 +330,8 @@ const PropertyDetail = () => {
                     "watch?v=",
                     "embed/"
                   )?.replace("youtu.be/", "www.youtube.com/embed/")}
-                  title="Video de la propiedad"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
                   className="rounded-4 shadow-sm"
+                  allowFullScreen
                 />
               </div>
             )}
@@ -328,6 +340,7 @@ const PropertyDetail = () => {
             {property.latitude && property.longitude && (
               <div className="mt-4">
                 <h6>Ubicación aproximada</h6>
+
                 <MapContainer
                   center={[property.latitude, property.longitude]}
                   zoom={15}
@@ -337,10 +350,7 @@ const PropertyDetail = () => {
                     borderRadius: "16px",
                   }}
                 >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   <Marker
                     position={[property.latitude, property.longitude]}
                     icon={L.icon({
@@ -356,6 +366,7 @@ const PropertyDetail = () => {
                     pathOptions={{ color: "blue", fillOpacity: 0.2 }}
                   />
                 </MapContainer>
+
                 <p className="text-muted mt-2" style={{ fontSize: "0.9rem" }}>
                   📍 Dirección aproximada
                 </p>
@@ -364,16 +375,11 @@ const PropertyDetail = () => {
           </Card>
         </Col>
 
-        {/* CONTACTO */}
+        {/* CONTACTAR AL PROPIETARIO */}
         <Col md={4}>
-          <Card
-            className="shadow-sm p-3 mb-3 border-0"
-            style={{
-              borderRadius: "16px",
-              backgroundColor: "#fff",
-            }}
-          >
+          <Card className="shadow-sm p-3 border-0" style={{ borderRadius: "16px" }}>
             <h6 className="text-center mb-3">Contactar al propietario</h6>
+
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-2">
                 <Form.Label>Nombre</Form.Label>
@@ -437,13 +443,7 @@ const PropertyDetail = () => {
               </Form.Group>
 
               <div className="d-flex justify-content-end">
-                <button
-                  className="btn ms-2 btn-outline-primary"
-                  type="submit"
-                  style={{
-                    fontWeight: "500",
-                  }}
-                >
+                <button className="btn btn-outline-primary" type="submit">
                   Enviar
                 </button>
               </div>
@@ -452,7 +452,6 @@ const PropertyDetail = () => {
         </Col>
       </Row>
 
-      {/* FOOTER */}
       <div className="text-end mt-4">
         <FontAwesomeIcon icon={faStar} style={{ color: "gold" }} />{" "}
         <small>4.8 / 5 basado en reseñas</small>

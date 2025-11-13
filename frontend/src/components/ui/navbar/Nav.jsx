@@ -124,11 +124,11 @@ const Nav = () => {
                       Mi perfil
                     </Link>
                   </li>
-                  <li>
+                  {/* <li>
                     <Link className="dropdown-item" to="/favorites">
                       Favoritos
                     </Link>
-                  </li>
+                  </li> */}
                   <li>
                     <>
                       {user.role === "owner" && (

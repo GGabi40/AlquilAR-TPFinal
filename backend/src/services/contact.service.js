@@ -11,17 +11,12 @@ export const sendEmail = async (req, res) => {
     const error = validateContactData(req.body);
     if (error) return res.status(400).json({ message: error });
     
-    const propertyId = req.params.id;
+    const ownerId = req.params.id;
+    const owner = await User.findByPk(ownerId);
+    
+    if (!owner) throw new Error("Propietario no encontrado");
+    
     const { name, email, phone, message } = req.body;
-
-    const property = await Property.findByPk(propertyId, {
-      include: [{ model: User, as: "owner" }],
-    });
-
-    if (!property) throw new Error("Propiedad no encontrada");
-    if (!property.owner) throw new Error("Propietario no encontrado");
-
-    const ownerEmail = property.owner.email;
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -29,14 +24,14 @@ export const sendEmail = async (req, res) => {
       secure: false,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, // App Password recomendado
+        pass: process.env.EMAIL_PASS,
       },
       tls: { rejectUnauthorized: false },
     });
 
     const mailOptions = {
       from: `"AlquilAR - Nuevo contacto" <${process.env.EMAIL_USER}>`,
-      to: ownerEmail,
+      to: owner.email,
       subject: `Nuevo mensaje de ${name}`,
       html: `
         <h2>Nuevo interesado en tu propiedad</h2>
@@ -50,10 +45,10 @@ export const sendEmail = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json({ message: "Correo enviado correctamente al propietario." });
+    return res.status(200).json({ message: "Correo enviado correctamente al propietario." });
   } catch (error) {
     console.error("Error al enviar el correo:", error);
-    res.status(500).json({ message: "Error al enviar el correo." });
+    return res.status(500).json({ message: "Error al enviar el correo." });
   }
 };
 
