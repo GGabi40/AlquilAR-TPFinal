@@ -5,42 +5,23 @@ import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 
 dotenv.config();
+
 export const sendEmail = async (req, res) => {
-  const { username, email, phone, message } = req.body;
-  const { id } = req.params; // id de propiedad
-
-  const validations = validateContactData(req.body);
-
-  if (validations.error)
-    return res.status(400).json({ message: validations.message });
-
   try {
-    const property = await Property.findByPk(id, {
+    const error = validateContactData(req.body);
+    if (error) return res.status(400).json({ message: error });
+    
+    const propertyId = req.params.id;
+    const { name, email, phone, message } = req.body;
+
+    const property = await Property.findByPk(propertyId, {
       include: [{ model: User, as: "owner" }],
     });
 
-    if (!property)
-      return res.status(404).json({ message: "Propiedad no encontrada" });
+    if (!property) throw new Error("Propiedad no encontrada");
+    if (!property.owner) throw new Error("Propietario no encontrado");
 
-    const owner = property.owner;
-    if (!owner)
-      return res.status(404).json({ message: "El propietario no existe." });
-
-    const existingUser = await User.findOne({ where: email });
-    if (!existingUser)
-      return res
-        .status(403)
-        .json({
-          message:
-            "El usuario no está registrado. Solo usuarios verificados pueden contactar propietarios.",
-        });
-
-    if (!existingUser.phone && phone) {
-      existingUser.phone = phone;
-      await existingUser.save();
-    }
-
-    const ownerEmail = owner.email;
+    const ownerEmail = property.owner.email;
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -48,25 +29,27 @@ export const sendEmail = async (req, res) => {
       secure: false,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: process.env.EMAIL_PASS, // App Password recomendado
       },
+      tls: { rejectUnauthorized: false },
     });
 
     const mailOptions = {
       from: `"AlquilAR - Nuevo contacto" <${process.env.EMAIL_USER}>`,
       to: ownerEmail,
-      subject: `Nuevo mensaje de ${username}`,
+      subject: `Nuevo mensaje de ${name}`,
       html: `
-                <h2>Nuevo interesado en tu propiedad</h2>
-                <p><strong>Nombre:</strong> ${username}</p>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Teléfono:</strong> ${phone}</p>
-                <hr>
-                <p><strong>Mensaje:</strong> \n${message}</p>
-            `,
+        <h2>Nuevo interesado en tu propiedad</h2>
+        <p><strong>Nombre:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Teléfono:</strong> ${phone}</p>
+        <hr>
+        <p><strong>Mensaje:</strong> ${message}</p>
+      `,
     };
 
     await transporter.sendMail(mailOptions);
+
     res.json({ message: "Correo enviado correctamente al propietario." });
   } catch (error) {
     console.error("Error al enviar el correo:", error);
@@ -75,26 +58,10 @@ export const sendEmail = async (req, res) => {
 };
 
 /* Validations */
-const validateContactData = (data) => {
-  const result = { error: false, message: "" };
-
-  const { username, email, phone, message } = data;
-
-  if (!username || !validateString(username, 2, 50)) {
-    return { error: true, message: "Nombre inválido o demasiado corto." };
-  }
-
-  if (!email || !validateEmail(email)) {
-    return { error: true, message: "Correo electrónico inválido." };
-  }
-
-  if (!phone || !validateString(phone, 6, 20)) {
-    return { error: true, message: "Número de teléfono inválido." };
-  }
-
-  if (!message || !validateString(message, 5, 1000)) {
-    return { error: true, message: "Mensaje demasiado corto o inválido." };
-  }
-
-  return result;
+const validateContactData = ({ name, email, phone, message }) => {
+  if (!name || !validateString(name, 2, 50)) return "Nombre inválido";
+  if (!email || !validateEmail(email)) return "Email inválido";
+  if (!phone || !validateString(phone, 6, 20)) return "Teléfono inválido";
+  if (!message || !validateString(message, 5, 1000)) return "Mensaje inválido";
+  return null;
 };
