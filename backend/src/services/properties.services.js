@@ -88,61 +88,46 @@ export const getPropertyById = async (req, res) => {
 
 //PUT-UPDATE
 export const updateProperty = async (req, res) => {
-  const result = validatePropertyData(req.body);
-
-  if (result.error) {
-    return res.status(400).json({ message: result.message });
-  }
-
-  const {
-    propertyType,
-    rentPrice,
-    expensesPrice,
-    status,
-    rentPreference,
-    address,
-    numRooms,
-    numBedrooms,
-    numBathrooms,
-    propertyAge,
-    totalArea,
-    URLImages,
-    URLVideo,
-    URLDocument,
-    nameP,
-    nameL,
-  } = req.body;
-
-  const { id } = req.params;
-  const property = await Property.findByPk(id);
-
-  if (!property) {
-    return res.status(404).send({ message: "No se encontro una propiedad!" });
-  }
   try {
-    await property.update({
-      propertyType,
-      rentPrice,
-      expensesPrice,
-      status,
-      rentPreference,
-      address,
-      numRooms,
-      numBedrooms,
-      numBathrooms,
-      propertyAge,
-      totalArea,
-      URLImages,
-      URLVideo,
-      URLDocument,
-      nameP,
-      nameL,
+    const { id } = req.params;
+
+    const property = await Property.findByPk(id, {
+      include: [{ model: PropertyDetails }]
     });
-    res.json(property);
+
+    if (!property) {
+      return res.status(404).json({ message: "Propiedad no encontrada" });
+    }
+
+    await property.update({
+      propertyType: req.body.propertyType,
+      rentPrice: req.body.rentPrice,
+      expensesPrice: req.body.expensesPrice,
+      status: req.body.status || property.status,
+      rentPreference: req.body.rentPreference,
+      address: req.body.address,
+      provinceId: req.body.provinciaId || property.provinceId,
+      localityId: req.body.localidadId || property.localityId,
+    });
+
+    if (property.PropertyDetail) {
+      await property.PropertyDetail.update({
+        numRooms: req.body.numRooms,
+        numBedrooms: req.body.numBedrooms,
+        numBathrooms: req.body.numBathrooms,
+        propertyAge: req.body.propertyAge,
+        totalArea: req.body.totalArea,
+      });
+    }
+
+    return res.json({ message: "Propiedad actualizada", property });
+
   } catch (error) {
-    return res.status(500).send({ message: "Algo fallo!" });
+    console.error("ERROR UPDATE PROPERTY:", error);
+    return res.status(500).json({ message: "Error al actualizar propiedad" });
   }
 };
+
 
 //DELETE
 export const deleteProperty = async (req, res) => {

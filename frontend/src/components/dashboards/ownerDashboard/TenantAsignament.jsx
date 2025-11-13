@@ -7,7 +7,7 @@ import { AuthenticationContext } from "../../../services/auth.context";
 import { useParams } from "react-router";
 
 const TenantAssignment = () => {
-  const { id: postId } = useParams(); // ID del post desde la URL
+  const { id: postId } = useParams();
   const { token } = useContext(AuthenticationContext);
 
   // búsqueda de usuarios
@@ -106,7 +106,7 @@ const TenantAssignment = () => {
                     style={{ cursor: "pointer" }}
                     onClick={() => selectTenant(u)}
                   >
-                    {u.name} {u.surname} – {u.email}
+                    {u.name} {u.surname} - {u.email}
                   </div>
                 ))}
               </div>

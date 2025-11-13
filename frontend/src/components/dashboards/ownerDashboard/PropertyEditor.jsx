@@ -4,10 +4,15 @@ import { Container, Form, Button, Card, Row, Col, Spinner } from "react-bootstra
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
-  faMapMarkerAlt,
+  faMapPin,
   faMoneyBillWave,
+  faReceipt,
   faRulerCombined,
-  faDoorOpen,
+  faBath,
+  faCouch,
+  faBed,
+  faClockRotateLeft,
+  faDoorOpen
 } from "@fortawesome/free-solid-svg-icons";
 
 import PropertyServices from "../../../services/propertyServices";
@@ -26,8 +31,8 @@ export default function PropertyEditor() {
     propertyType: "",
     rentPrice: "",
     expensesPrice: "",
-    address: "",
     rentPreference: "",
+    address: "",
     numRooms: "",
     numBedrooms: "",
     numBathrooms: "",
@@ -47,8 +52,8 @@ export default function PropertyEditor() {
           propertyType: data.propertyType,
           rentPrice: data.rentPrice,
           expensesPrice: data.expensesPrice ?? "",
+          rentPreference: data.rentPreference ?? "complete",
           address: data.address,
-          rentPreference: data.rentPreference,
           numRooms: details.numRooms ?? "",
           numBedrooms: details.numBedrooms ?? "",
           numBathrooms: details.numBathrooms ?? "",
@@ -65,27 +70,18 @@ export default function PropertyEditor() {
     fetchProperty();
   }, [id]);
 
-  const handleChange = (e) => {
-    setForm({ 
-      ...form, 
-      [e.target.name]: e.target.value 
-    });
-  };
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       await PropertyServices.updateProperty(id, form, token);
       toastSuccess("Propiedad actualizada correctamente");
-
-      setTimeout(() => {
-        navigate("/owner/dashboard");
-      }, 1500);
-
+      setTimeout(() => navigate("/owner/dashboard"), 1500);
     } catch (error) {
-      toastError("Error al actualizar la propiedad");
       console.error(error);
+      toastError("Error al actualizar la propiedad");
     }
   };
 
@@ -97,8 +93,6 @@ export default function PropertyEditor() {
       </div>
     );
 
-  const details = property?.PropertyDetail;
-
   return (
     <Container className="mt-5" style={{ maxWidth: "900px" }}>
       <Notifications />
@@ -107,11 +101,7 @@ export default function PropertyEditor() {
       <div className="text-center mb-4">
         <div
           className="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm"
-          style={{
-            width: "90px",
-            height: "90px",
-            background: "#ffffff",
-          }}
+          style={{ width: "90px", height: "90px", background: "#ffffff" }}
         >
           <FontAwesomeIcon icon={faHome} className="dashboard-fa-icon" />
         </div>
@@ -122,112 +112,193 @@ export default function PropertyEditor() {
       <Card className="shadow-sm p-4 border-0 rounded-4">
         <Form onSubmit={handleSubmit}>
           <h5 className="fw-semibold mb-3">Datos generales</h5>
-
           <Row>
+
+            {/* COLUMNA IZQUIERDA */}
             <Col md={6}>
+
+              {/* Tipo */}
               <Form.Group className="mb-4">
                 <Form.Label>Tipo de Propiedad</Form.Label>
-                <Form.Select
-                  name="propertyType"
-                  value={form.propertyType}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                >
-                  <option value="departamento">Departamento</option>
-                  <option value="casa">Casa</option>
-                </Form.Select>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faDoorOpen} />
+                  </span>
+                  <Form.Select
+                    name="propertyType"
+                    value={form.propertyType}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  >
+                    <option value="departamento">Departamento</option>
+                    <option value="casa">Casa</option>
+                  </Form.Select>
+                </div>
               </Form.Group>
 
+              {/* Preferencia */}
+              <Form.Group className="mb-4">
+                <Form.Label>Preferencia de alquiler</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faHome} />
+                  </span>
+                  <Form.Select
+                    name="rentPreference"
+                    value={form.rentPreference}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  >
+                    <option value="complete">Completo</option>
+                    <option value="temporal">Temporal</option>
+                  </Form.Select>
+                </div>
+              </Form.Group>
+
+              {/* Dirección */}
               <Form.Group className="mb-4">
                 <Form.Label>Dirección</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address"
-                  value={form.address}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faMapPin} />
+                  </span>
+                  <Form.Control
+                    type="text"
+                    name="address"
+                    value={form.address}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                </div>
               </Form.Group>
 
+              {/* Precio */}
               <Form.Group className="mb-4">
                 <Form.Label>Precio Alquiler</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="rentPrice"
-                  value={form.rentPrice}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faMoneyBillWave} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="rentPrice"
+                    value={form.rentPrice}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                  <span className="input-group-text">AR$</span>
+                </div>
               </Form.Group>
 
+              {/* Expensas */}
               <Form.Group className="mb-4">
                 <Form.Label>Expensas</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="expensesPrice"
-                  value={form.expensesPrice}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faReceipt} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="expensesPrice"
+                    value={form.expensesPrice}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                  <span className="input-group-text">AR$</span>
+                </div>
               </Form.Group>
+
             </Col>
 
-            {/* CARACTERÍSTICAS */}
+            {/* COLUMNA DERECHA */}
             <Col md={6}>
+
+              {/* Ambientes */}
               <Form.Group className="mb-4">
                 <Form.Label>Ambientes</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="numRooms"
-                  value={form.numRooms}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faCouch} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="numRooms"
+                    value={form.numRooms}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                </div>
               </Form.Group>
 
+              {/* Dormitorios */}
               <Form.Group className="mb-4">
                 <Form.Label>Dormitorios</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="numBedrooms"
-                  value={form.numBedrooms}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faBed} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="numBedrooms"
+                    value={form.numBedrooms}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                </div>
               </Form.Group>
 
+              {/* Baños */}
               <Form.Group className="mb-4">
                 <Form.Label>Baños</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="numBathrooms"
-                  value={form.numBathrooms}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faBath} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="numBathrooms"
+                    value={form.numBathrooms}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                </div>
               </Form.Group>
 
+              {/* Superficie */}
               <Form.Group className="mb-4">
-                <Form.Label>Superficie Total (m²)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="totalArea"
-                  value={form.totalArea}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <Form.Label>Superficie total (m²)</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faRulerCombined} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="totalArea"
+                    value={form.totalArea}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                  <span className="input-group-text">m²</span>
+                </div>
               </Form.Group>
 
+              {/* Antigüedad */}
               <Form.Group className="mb-4">
                 <Form.Label>Antigüedad (años)</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="propertyAge"
-                  value={form.propertyAge}
-                  onChange={handleChange}
-                  className="rounded-3 shadow-sm"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <FontAwesomeIcon icon={faClockRotateLeft} />
+                  </span>
+                  <Form.Control
+                    type="number"
+                    name="propertyAge"
+                    value={form.propertyAge}
+                    onChange={handleChange}
+                    className="rounded-end-3 shadow-sm"
+                  />
+                </div>
               </Form.Group>
+
             </Col>
           </Row>
 
