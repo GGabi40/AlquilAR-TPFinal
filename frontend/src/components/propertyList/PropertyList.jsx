@@ -18,10 +18,21 @@ import { Link } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
 import PropertyServices from "../../services/propertyServices";
+import Filters from "../filters/filters.jsx";
 
 const PropertyList = ({ token }) => {
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
+  const [filtersA, setFiltersA] = useState({
+    rooms: "",
+    bedrooms: "",
+    bathrooms: "",
+    totalArea: "",
+    age: "",
+    minPrice: "",
+    maxPrice: "",
+    rentType: ""
+  });
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -61,6 +72,100 @@ const PropertyList = ({ token }) => {
       setLoading(false);
     }
   };
+
+  //filtro para la searchbar desde el front
+  const handleFilterChange = (newFilters) => {
+    setFiltersA(newFilters);
+
+    let filtered = [...properties];
+
+    if (newFilters.rooms) {
+      const isPlus = newFilters.rooms.includes("+");
+      const min = Number(newFilters.rooms.replace("+", ""));
+      filtered = filtered.filter((p) => {
+        const val = p.PropertyDetail?.numRooms || 0;
+        return isPlus ? val >= min : val === min;
+      });
+    }
+
+    if (newFilters.bedrooms) {
+      const isPlus = newFilters.bedrooms.includes("+");
+      const min = Number(newFilters.bedrooms.replace("+", ""));
+      filtered = filtered.filter((p) => {
+        const val = p.PropertyDetail?.numBedrooms || 0;
+        return isPlus ? val >= min : val === min;
+      });
+    }
+
+    if (newFilters.bathrooms) {
+      const value = newFilters.bathrooms;
+      filtered = filtered.filter((p) => {
+        const baths = p.PropertyDetail?.numBathrooms || 0;
+
+        if (value.endsWith("+")) {
+          const min = Number(value.replace("+", ""));
+          return baths >= min;
+        }
+
+        return baths === Number(value);
+      });
+    }
+
+    if (newFilters.totalArea) {
+      const value = newFilters.totalArea;
+
+      filtered = filtered.filter((p) => {
+        const area = p.PropertyDetail?.totalArea || 0;
+
+        if (value.includes("-")) {
+          const [min, max] = value.split("-").map(Number);
+          return area >= min && area <= max;
+        }
+
+        if (value.endsWith("+")) {
+          const min = Number(value.replace("+", ""));
+          return area >= min;
+        }
+
+        return true;
+      });
+    }
+
+
+    if (newFilters.age) {
+      const value = newFilters.age;
+
+      filtered = filtered.filter((p) => {
+        const age = p.PropertyDetail?.propertyAge || 0;
+
+        if (value.includes("-")) {
+          const [min, max] = value.split("-").map(Number);
+          return age >= min && age <= max;
+        }
+
+        if (value.endsWith("+")) {
+          const min = Number(value.replace("+", ""));
+          return age >= min;
+        }
+
+        return true;
+      });
+    }
+
+    if (newFilters.minPrice) {
+      filtered = filtered.filter(
+        (p) => p.rentPrice >= Number(newFilters.minPrice)
+      );
+    }
+
+    if (newFilters.maxPrice) {
+      filtered = filtered.filter(
+        (p) => p.rentPrice <= Number(newFilters.maxPrice)
+      );
+    }
+
+    setFilteredProperties(filtered);
+  }
 
   // 🔹 Favoritos
   const loadFavorites = async () => {
@@ -117,6 +222,11 @@ const PropertyList = ({ token }) => {
 
       {/* 🔍 SearchBar con la búsqueda por backend */}
       <SearchBar onSearch={handleSearch} />
+
+      {/* 🎛️ Botón de filtros (independiente del search) */}
+      <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+        <Filters onFilterChange={handleFilterChange} />
+      </div>
 
       <div className="d-flex justify-content-center align-items-center mb-4 flex-wrap">
         <Button
