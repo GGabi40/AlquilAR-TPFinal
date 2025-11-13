@@ -25,7 +25,7 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { getPropertyById } from "../../services/propertyServices";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
-import Notifications, { toastSuccess } from "../ui/toaster/Notifications";
+import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notifications";
 
 const PropertyDetail = () => {
   const { id } = useParams();
@@ -49,9 +49,8 @@ const PropertyDetail = () => {
   const getCoordinates = async (address, locality, province) => {
     if (!address && !locality && !province) return null;
 
-    const query = `${address || ""}, ${locality || ""}, ${
-      province || ""
-    }, Argentina`;
+    const query = `${address || ""}, ${locality || ""}, ${province || ""
+      }, Argentina`;
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
       query
     )}`;
@@ -141,9 +140,24 @@ const PropertyDetail = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) return;
+    console.log(formData);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/contact/${property.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Error enviando mensaje");
+
       toastSuccess("¡Enviamos tu mensaje con éxito!");
       setFormData({
         name: "",
@@ -152,6 +166,12 @@ const PropertyDetail = () => {
         message: "",
       });
       setErrors({});
+
+    } catch (error) {
+      console.error(error);
+      toastError(
+        error.response?.data?.message || "Error al enviar el email."
+      );
     }
   };
 
