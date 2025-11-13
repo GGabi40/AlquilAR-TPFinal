@@ -19,10 +19,12 @@ import {
   faBed,
   faBath,
   faMapMarkerAlt,
+  faCircleCheck,
   faVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { getPropertyById } from "../../services/propertyServices";
+import { PostService } from "../../services/PostService";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
 import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notifications";
@@ -30,6 +32,7 @@ import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notificat
 const PropertyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [post, setPost] = useState(null);
   const [property, setProperty] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [errors, setErrors] = useState({});
@@ -41,11 +44,11 @@ const PropertyDetail = () => {
     message: "",
   });
 
-  // 📸 Lightbox
+  // Lightbox
   const [showModal, setShowModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // 🌎 Geolocalización aproximada
+  // Geolocalización aproximada
   const getCoordinates = async (address, locality, province) => {
     if (!address && !locality && !province) return null;
 
@@ -75,19 +78,22 @@ const PropertyDetail = () => {
       try {
         setLoading(true);
         setErrors({});
-        const propertyData = await getPropertyById(id);
+        const postData = await PostService.getPostById(id);
+
+        console.log(postData);
 
         const coords = await getCoordinates(
-          propertyData.address,
-          propertyData.locality?.name,
-          propertyData.province?.name
+          postData.property.address,
+          postData.property.locality?.name,
+          postData.property.province?.name
         );
 
         if (coords) {
-          propertyData.latitude = coords.lat;
-          propertyData.longitude = coords.lon;
+          postData.property.latitude = coords.lat;
+          postData.property.longitude = coords.lon;
         }
-        setProperty(propertyData);
+        setPost(postData);
+        setProperty(postData.property);
       } catch (error) {
         console.error("Error al obtener propiedad:", error);
       } finally {
@@ -187,7 +193,7 @@ const PropertyDetail = () => {
   };
 
   if (loading) return <p className="text-center mt-5">Cargando propiedad...</p>;
-  if (!property)
+  if (!property || !post)
     return <p className="text-center mt-5">Propiedad no encontrada.</p>;
 
   return (
@@ -199,7 +205,7 @@ const PropertyDetail = () => {
           ← Volver
         </Button>
         <h3 className="fw-bold mb-0 text-primary">
-          {property.address || "Dirección no disponible"}
+          {postData.property.address || "Dirección no disponible"}
         </h3>
         <Button
           variant="link"
@@ -213,11 +219,32 @@ const PropertyDetail = () => {
         </Button>
       </div>
 
+      {/* BADGE ESTADO DEL POST */}
+      <div className="mb-3">
+        <Badge
+          bg={
+            post.status === "active"
+              ? "success"
+              : post.status === "rented"
+              ? "danger"
+              : "secondary"
+          }
+          className="px-3 py-2"
+        >
+          <FontAwesomeIcon icon={faCircleCheck} />{" "}
+          {post.status === "active"
+            ? "Disponible"
+            : post.status === "rented"
+            ? "Alquilado"
+            : "Pausado"}
+        </Badge>
+      </div>
+
       {/* IMÁGENES */}
       <Card className="shadow-lg border-0 rounded-4 overflow-hidden mb-4">
         <Carousel>
-          {property.PropertyDetail?.PropertyImages?.length > 0 ? (
-            property.PropertyDetail.PropertyImages.map((img, index) => (
+          {postData.property.PropertyDetail?.PropertyImages?.length > 0 ? (
+            postData.property.PropertyDetail.PropertyImages.map((img, index) => (
               <Carousel.Item key={index}>
                 <img
                   src={img.URLImages}
@@ -268,14 +295,19 @@ const PropertyDetail = () => {
       <Row className="g-4">
         <Col md={8}>
           <Card className="shadow-sm border-0 p-4 rounded-4 mb-4">
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <h4 className="fw-bold text-dark">
-                {property.propertyType || "Propiedad"}
-              </h4>
-              <Badge bg="success" className="fs-6">
-                ${property.rentPrice}
-              </Badge>
-            </div>
+            {/* TÍTULO DEL POST */}
+            <h4 className="fw-bold text-dark">
+              {post.title || "Publicación sin título"}
+            </h4>
+
+            {/* DESCRIPCIÓN DEL POST */}
+            <p className="text-secondary mb-4">
+              {post.description || "Sin descripción de la publicación."}
+            </p>
+
+            <h5 className="fw-bold text-primary mb-3">
+              Información de la propiedad
+            </h5>
 
             <p className="text-muted mb-3">
               <FontAwesomeIcon icon={faMapMarkerAlt} />{" "}
@@ -285,23 +317,17 @@ const PropertyDetail = () => {
             <div className="d-flex flex-wrap gap-3 mb-3">
               <span>
                 <FontAwesomeIcon icon={faHome} />{" "}
-                {property.PropertyDetail?.numRooms || "N/A"} ambientes
+                {property.PropertyDetail?.numRooms} ambientes
               </span>
               <span>
                 <FontAwesomeIcon icon={faBed} />{" "}
-                {property.PropertyDetail?.numBedrooms || "N/A"} habitaciones
+                {property.PropertyDetail?.numBedrooms} habitaciones
               </span>
               <span>
                 <FontAwesomeIcon icon={faBath} />{" "}
-                {property.PropertyDetail?.numBathrooms || "N/A"} baños
+                {property.PropertyDetail?.numBathrooms} baños
               </span>
             </div>
-
-            <h6 className="fw-bold">Descripción</h6>
-            <p className="text-secondary">
-              {property.PropertyDetail?.description ||
-                "Sin descripción disponible."}
-            </p>
 
             {/* VIDEO */}
             {property.PropertyDetail?.PropertyVideos?.length > 0 && (
