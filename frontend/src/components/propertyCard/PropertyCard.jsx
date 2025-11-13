@@ -1,4 +1,16 @@
 import { Card, Button } from "react-bootstrap";
+import { useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faHeart as faHeartRegular,
+  faStar,
+  faHome,
+  faBed,
+  faBath,
+  faMapMarkerAlt,
+  faVideo,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 
 const PropertyCards = ({ property }) => {
   const {
@@ -28,9 +40,8 @@ const PropertyCards = ({ property }) => {
       <Card.Body className="d-flex flex-column justify-content-between">
         <div>
           <Card.Title className="fw-bold">{title || "Propiedad"}
-            <button>
-              style={{ background: "transparent", border: "none" }}
-              onClick={() => setIsFavorite(!isFavorite)}
+            <button style={{ background: "transparent", border: "none" }}
+              onClick={() => setIsFavorite(!isFavorite)}>              {/**/}
               <FontAwesomeIcon
                 icon={isFavorite ? faHeart : faHeartRegular}
                 style={{ color: "red" }}
@@ -51,7 +62,7 @@ const PropertyCards = ({ property }) => {
         <Button
           variant="outline-primary"
           className="mt-3 rounded-pill"
-          onClick={() => (window.location.href = `/property/${idProperty}`)}
+          onClick={() => (window.location.href = `/properties/${idProperty}`)}
         >
           Ver detalles
         </Button>

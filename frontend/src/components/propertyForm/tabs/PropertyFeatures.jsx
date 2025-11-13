@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toastSuccess, toastError } from "../../ui/toaster/Notifications";
 import { isEmpty } from "../../../utils/validations";
@@ -20,7 +20,7 @@ import Notifications from "../../ui/toaster/Notifications";
 const PropertyFeatures = () => {
   const navigate = useNavigate();
   const { updateSection } = useContext(PropertyContext);
-  
+
 
   const [data, setData] = useState({
     tipoPropiedad: "",
@@ -36,6 +36,26 @@ const PropertyFeatures = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const locationData = localStorage.getItem("propertyLocationData");
+    if (!locationData) {
+      toastError("Completa primero la ubicación 🏠");
+      navigate("/add-property/location");
+      return;
+    }
+
+    const savedFeatures = localStorage.getItem("propertyFeaturesData");
+    if (savedFeatures){
+      try {
+        const parsed = JSON.parse(savedFeatures);
+        setData((prev) => ({...prev, ...parsed}));
+        toastSuccess("Datos de caracteristicas recuperados!");
+      } catch (error){
+        console.error("Error al cargar las caracteristicas de las propiedades", error);
+      }
+    }
+  }, [navigate]);
 
   const handleChange = (field, value) => {
     setData((prev) => ({ ...prev, [field]: value }));
@@ -98,10 +118,14 @@ const PropertyFeatures = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     if (validateForm()) {
-      toastSuccess("Datos guardados correctamente 🚀");
       updateSection("features", data);
+      localStorage.setItem("propertyFeaturesData", JSON.stringify(data));
+
+      toastSuccess("Datos guardados correctamente 🚀");
       navigate("/add-property/images");
     } else {
       toastError("Por favor, complete correctamente los campos requeridos");

@@ -33,6 +33,7 @@ import Unauthorized from "./components/error/unauthorized/Unauthorized.jsx";
 import PropertyPreview from "./components/propertyForm/tabs/PropertyPreview.jsx";
 import Favorites from "./components/pages/Favorites.jsx";
 import PropertyList from "./components/propertyList/PropertyList.jsx";
+import ProtectedStep from "./components/protectedStep/ProtectedStep.jsx";
 
 function App() {
   return (
@@ -59,10 +60,21 @@ function App() {
           <Route path="/properties/:id" element={<PropertyView />} />
 
           <Route path="/add-property" element={<PropertyDashboard />}>
-            <Route path="location" element={<PropertyForm />} />
-            <Route path="features" element={<PropertyFeatures />} />
-            <Route path="images" element={<PropertyImages />} />
-            <Route path="preview" element={<PropertyPreview />} />
+            <Route element={<ProtectedStep currentStep="location" />}>
+              <Route path="location" element={<PropertyForm />} />
+            </Route>
+
+            <Route element={<ProtectedStep currentStep="features" />}>
+              <Route path="features" element={<PropertyFeatures />} />
+            </Route>
+
+            <Route element={<ProtectedStep currentStep="images" />}>
+              <Route path="images" element={<PropertyImages />} />
+            </Route>
+
+            <Route element={<ProtectedStep currentStep="preview" />}>
+              <Route path="preview" element={<PropertyPreview />} />
+            </Route>
           </Route>
 
           {/* Owner */}

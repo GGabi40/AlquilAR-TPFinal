@@ -21,8 +21,12 @@ import { Link } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
 import PropertyServices from "../../services/propertyServices";
+//import usePagination from "../../hooks/usePagination.js";
+import { useScrollToTop } from "../../hooks/useScrollToTop.js";
 
 const PropertyList = ({ token }) => {
+  useScrollToTop();
+
   const [properties, setProperties] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -58,15 +62,15 @@ const PropertyList = ({ token }) => {
     }
   };
 
-    const loadFavorites = async () => {
-      try {
-        const res = await favoriteService.getFavorites();
-        const favorites = Array.isArray(res.data) ? res.data : [];
-        setFavorites(favorites);
-      } catch (error) {
-        toastError("Error cargando favoritos:", error);
-      }
-    };
+  const loadFavorites = async () => {
+    try {
+      const res = await favoriteService.getFavorites();
+      const favorites = Array.isArray(res.data) ? res.data : [];
+      setFavorites(favorites);
+    } catch (error) {
+      toastError("Error cargando favoritos:", error);
+    }
+  };
 
   useEffect(() => {
     fetchProperties();
@@ -125,6 +129,14 @@ const PropertyList = ({ token }) => {
       setShowConfirm(false);
     }
   };
+
+  //const {
+  //  currentPage,
+  //  totalPages,
+  //  nextPage,
+  //  prevPage,
+  //  paginatedData,
+  //} = usePagination(filteredProperties, 10);
 
   return (
     <Container className="py-4">
@@ -295,7 +307,7 @@ const PropertyList = ({ token }) => {
 
                         <Button
                           as={Link}
-                          to={`/property/${p.propertyId}`}
+                          to={`/properties/${p.idProperty}`}
                           variant="primary"
                         >
                           + Información
@@ -309,6 +321,27 @@ const PropertyList = ({ token }) => {
           ))}
         </Row>
       )}
+
+      {/* Botones de paginación 
+      <div className="d-flex justify-content-center align-items-center mt-4">
+        <Button
+          variant="outline-primary"
+          disabled={currentPage === 1}
+          onClick={prevPage}
+        >
+          Anterior
+        </Button>
+        <span className="mx-3">
+          Página {currentPage} de {totalPages}
+        </span>
+        <Button
+          variant="outline-primary"
+          disabled={currentPage === totalPages}
+          onClick={nextPage}
+        >
+          Siguiente
+        </Button>
+      </div>*/}
 
       <ConfirmModal
         show={showConfirm}

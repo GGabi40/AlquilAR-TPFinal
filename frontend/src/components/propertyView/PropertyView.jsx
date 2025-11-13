@@ -2,8 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Card, Container, Row, Col, Form, Carousel } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import { faHeart, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faHeart as faHeartRegular,
+  faStar,
+  faHome,
+  faBed,
+  faBath,
+  faMapMarkerAlt,
+  faVideo,
+} from "@fortawesome/free-solid-svg-icons";
 import { getPropertyById } from "../../services/propertyServices";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
