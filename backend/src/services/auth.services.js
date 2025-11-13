@@ -11,6 +11,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { Op } from "sequelize";
 
 dotenv.config();
 
@@ -87,8 +88,16 @@ export const registerUser = async (req, res) => {
 
   if (result.error) return res.status(400).json({ message: result.message });
 
-  const { name, surname, email, password, isBlocked, avatarColor, role, verified } =
-    req.body;
+  const {
+    name,
+    surname,
+    email,
+    password,
+    isBlocked,
+    avatarColor,
+    role,
+    verified,
+  } = req.body;
 
   try {
     const existingEmail = await User.findOne({ where: { email } });
@@ -166,7 +175,6 @@ export const loginUser = async (req, res) => {
         .status(401)
         .json({ message: "Este email no esta registrado." });
 
-        
     if (!user.verified) {
       return res.status(403).json({
         message: "Debes verificar tu correo antes de iniciar sesión.",
@@ -321,7 +329,7 @@ export const verifyEmail = async (req, res) => {
 
     if (user.verificationTokenExpiry < Date.now()) {
       user.destroy();
-      
+
       return res
         .status(400)
         .json({ message: "El token expiró. Registrate nuevamente." });
@@ -341,6 +349,23 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
+export const searchUser = async (req, res) => {
+  const { query } = req.query;
+
+  const users = await User.findAll({
+    where: {
+      [Op.or]: [
+        { name: { [Op.like]: `%${query}%` } },
+        { surname: { [Op.like]: `%${query}%` } },
+        { email: { [Op.like]: `%${query}%` } },
+      ],
+    },
+    limit: 10,
+    attributes: ["id", "name", "surname", "email"],
+  });
+
+  res.json(users);
+};
 
 // --- Validations ---
 const validateRegisterData = (reqData) => {

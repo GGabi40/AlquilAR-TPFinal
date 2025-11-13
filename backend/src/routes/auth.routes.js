@@ -9,7 +9,8 @@ import {
   resetPassword,
   updateUser,
   deleteUser,
-  verifyEmail
+  verifyEmail,
+  searchUser
 } from "../services/auth.services.js";
 
 import { blockUser, updateUserRole } from "../services/superadmin.services.js";
@@ -20,6 +21,7 @@ const router = Router();
 router.get("/all-users", verifyToken, roleMiddleware("superadmin"), getAllUsers);
 router.patch("/:id/block", verifyToken, roleMiddleware("superadmin"), blockUser);
 router.patch("/:id/updateRole", verifyToken, roleMiddleware("superadmin"), updateUserRole);
+router.get("/search", verifyToken, roleMiddleware(['superadmin', 'owner']), searchUser);
 
 /* User Routes */
 router.get("/:id", verifyToken, getUserById);

@@ -3,27 +3,6 @@ import { Post } from "../models/Post.js";
 import { User } from '../models/User.js';
 import { Property } from '../models/Property.js';
 
-/* Superadmin */
-export const getAllRentals = async (req, res) => {
-    try {
-        const rentals = await Rental.findAll({
-            include: [
-                { model: Post, as: "post" },
-                { model: Property },
-                { model: User, as: "tenant", attributes: ["id", "name", "surname", "email"] }
-            ]
-        });
-
-        if (!rentals.length) return res.status(404).json({ message: "No hay alguileres registrados." });
-
-        res.status(200).json(rentals);
-    } catch (error) {
-        console.error("Error al obtener alquileres:", error);
-        res.status(500).json({ message: "Error al obtener alquileres." });
-    }
-};
-
-
 export const getRentalById = async (req,res) => {
     try {
         const { id } = req.params;
@@ -63,42 +42,45 @@ export const getRentalsByTenant = async (req,res) => {
 
 /* Owner */
 export const createRental = async (req, res) => {
-    try {
-        const { postId, tenantId, startDate, endDate, totalPrice } = req.body;
-        const ownerId = req.user.id;
+  try {
+    const { postId, tenantId, startDate, endDate, totalPrice } = req.body;
+    const ownerId = req.user.id;
 
-        const post = await Post.findByPk(postId, { include: Property });
+    const post = await Post.findByPk(postId, { include: Property });
 
-        if(!post) return res.status(404).json({ message: "No se encontró la publicación." });
+    if (!post)
+      return res.status(404).json({ message: "No se encontró la publicación." });
 
-        if(post.Property.ownerId !== ownerId)
-            return res.status(403).json({ message: "Esta propiedad no te pertenece." });
+    if (post.Property.ownerId !== ownerId)
+      return res.status(403).json({ message: "Esta propiedad no te pertenece." });
 
-        const existingRental = await Rental.findOne({
-            where: { postId, status: ["pending", "active"]}
-        });
+    const existingRental = await Rental.findOne({
+      where: { postId, status: ["pending", "active"] }
+    });
 
-        if(existingRental) return res.status(400).json({ message: 'Esta propiedad ya está alquilada.' });
+    if (existingRental)
+      return res.status(400).json({ message: "Esta propiedad ya está alquilada." });
 
-        const newRental = await Rental.create({
-            postId,
-            propertyId: post.Property.id,
-            tenantId,
-            startDate,
-            endDate,
-            totalPrice,
-            status: "active"
-        });
+    const newRental = await Rental.create({
+      postId,
+      propertyId: post.Property.idProperty, // ← FIX AQUÍ !!!
+      tenantId,
+      startDate,
+      endDate,
+      totalPrice,
+      status: "active"
+    });
 
-        post.status = "rented";
-        await post.save();
+    post.status = "rented";
+    await post.save();
 
-        res.status(201).json({ message: "Alquiler creado correctamente.", rental: newRental });
-    } catch (error) {
-        console.error("Error al crear alquiler: ", error);
-        res.status(500).json({ message: "Error al crear alquiler." });
-    }
+    res.status(201).json({ message: "Alquiler creado correctamente.", rental: newRental });
+  } catch (error) {
+    console.error("Error al crear alquiler:", error);
+    res.status(500).json({ message: "Error al crear alquiler." });
+  }
 };
+
 
 
 export const updateRentalStatus = async (req, res) => {

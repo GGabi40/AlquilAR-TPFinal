@@ -7,8 +7,8 @@ export const getAllUsers = async (endpoint, token) => {
   try {
     const response = await axios.get(`${API_URL}/${endpoint}`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return response.data;
@@ -34,15 +34,11 @@ export const getUserById = async (id, endpoint = "users", token) => {
 
 export const updateUser = async (id, endpoint = "users", userData, token) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/${endpoint}/${id}`,
-      userData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.put(`${API_URL}/${endpoint}/${id}`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     return response.data;
   } catch (error) {
@@ -84,18 +80,22 @@ export const blockUser = async (id, token) => {
 
 export const updateUserRole = async (id, token, data) => {
   try {
-    const res = await axios.patch(
-      `${API_URL}/users/${id}/updateRole`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await axios.patch(`${API_URL}/users/${id}/updateRole`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return res.data;
   } catch (error) {
     console.error("Error al actualizar rol: ", error);
     throw error;
   }
+};
+
+export const searchUsers = async (query, token) => {
+  const res = await axios.get(`${API_URL}/users/search`, {
+    params: { query },
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
 };

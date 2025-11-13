@@ -14,7 +14,8 @@ import Notifications, {
 import ConfirmModal from "../../ui/modal/ConfirmModal.jsx";
 import { useContext, useState, useEffect } from "react";
 import { AuthenticationContext } from "../../../services/auth.context.jsx";
-import { getUserById } from "../../../services/UserService.js";
+import { getUserById } from "../../../services/userService.js";
+import OwnerStats from "./OwnerStats.jsx";
 
 export default function OwnerDashboard() {
   const { token, userId, role } = useContext(AuthenticationContext);
@@ -22,6 +23,7 @@ export default function OwnerDashboard() {
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [show, setShow] = useState(false);
 
   const [modalShow, setModalShow] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
@@ -98,8 +100,12 @@ export default function OwnerDashboard() {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: '900px', margin:'auto' }}>
       <Notifications />
+
+      <Button variant="secondary" className="m-2 rounded-3" onClick={() => setShow(!show)}>{show ? 'X' : ''} 📊</Button>
+
+      {!loading && posts.length > 0 && show && <OwnerStats posts={posts} show={show} />}
 
       <Container className="mt-4">
         <h3>Bienvenido/a {user.name},</h3>
@@ -167,7 +173,7 @@ export default function OwnerDashboard() {
         <div className="mt-3">
           <Button
             variant="primary"
-            onClick={() => navigate("/propiedad/create")}
+            onClick={() => navigate("/add-property/")}
           >
             + Agregar nueva propiedad
           </Button>

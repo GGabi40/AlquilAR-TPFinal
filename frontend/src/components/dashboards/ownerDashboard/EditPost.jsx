@@ -5,8 +5,6 @@ import {
   Button,
   Container,
   Card,
-  Row,
-  Col,
   Spinner,
 } from "react-bootstrap";
 
@@ -19,6 +17,7 @@ import Notifications, {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import PropertyMiniEditor from "./PropertyMiniEditor.jsx";
+import TenantAsignament from "./TenantAsignament.jsx";
 
 export default function EditPost() {
   const { id } = useParams();
@@ -27,7 +26,6 @@ export default function EditPost() {
 
   const [loading, setLoading] = useState(true);
   const [post, setPost] = useState(null);
-  const [images, setImages] = useState([]);
 
   const [form, setForm] = useState({
     title: "",
@@ -174,9 +172,12 @@ export default function EditPost() {
       </Card>
 
       <hr className="my-5" style={{ opacity: 0.15 }} />
+      <h4 className="fw-bold mb-3">Asignar inquilino</h4>
+      <TenantAsignament />
+
+      <hr className="my-5" style={{ opacity: 0.15 }} />
 
       <h4 className="fw-bold mb-3 text-center">Datos de la Propiedad</h4>
-
       <PropertyMiniEditor propertyId={post?.Property?.idProperty} />
     </Container>
   );
