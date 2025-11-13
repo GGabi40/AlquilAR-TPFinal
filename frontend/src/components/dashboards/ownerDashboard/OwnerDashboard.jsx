@@ -1,48 +1,72 @@
-import { Navbar, Container, Table, Button, Spinner } from "react-bootstrap";
+import {
+  Navbar,
+  Container,
+  Table,
+  Button,
+  Spinner
+} from "react-bootstrap";
 import { useNavigate } from "react-router";
-import usePagination from "../../../hooks/usePagination.js";
 import { PostService } from "../../../services/PostService.js";
-import Notifications, { toastError, toastSuccess} from "../../ui/toaster/Notifications.jsx";
+import Notifications, {
+  toastError,
+  toastSuccess,
+} from "../../ui/toaster/Notifications.jsx";
 import ConfirmModal from "../../ui/modal/ConfirmModal.jsx";
 import { useContext, useState, useEffect } from "react";
-import { AuthenticationContext } from "../../../services/auth.context.jsx"
+import { AuthenticationContext } from "../../../services/auth.context.jsx";
+import { getUserById } from "../../../services/UserService.js";
 
 export default function OwnerDashboard() {
-  const {token, userId, role} = useContext(AuthenticationContext)
+  const { token, userId, role } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
-  const { 
-    data: posts,
-    loading,
-    loadMore,
-    hasMore,
-    setData,
-  } = usePagination(`/posts/owner/${userId}`, token);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [modalShow, setModalShow] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [user, setUser] = useState({});
+
+  // Traer datos del usuario
   useEffect(() => {
     const fetchUser = async () => {
-        try {
-          const userData = await getUserById(userId, "users", token);
-          setUser(userData);
-        } catch (error) {
-          console.error('algo pasó....', error);
-        }
+      try {
+        const userData = await getUserById(userId, "users", token);
+        setUser(userData);
+      } catch (error) {
+        console.error("algo pasó....", error);
+      }
     };
     fetchUser();
+  }, [userId, token]);
+
+  // Traer POSTS del owner
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const result = await PostService.getPostsByOwner(userId, token);
+        setPosts(result);
+      } catch (error) {
+        console.error("Error al obtener posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
   }, [userId, token]);
 
   const handlePauseResume = async (post) => {
     const newStatus = post.status === "active" ? "paused" : "active";
     try {
       await PostService.updateStatus(post.id, newStatus, token);
-      setData((prev) =>
+      setPosts((prev) =>
         prev.map((p) => (p.id === post.id ? { ...p, status: newStatus } : p))
       );
       toastSuccess(
-        `Publicación ${newStatus === "paused" ? "pausada" : "reactivada"} correctamente`
+        `Publicación ${
+          newStatus === "paused" ? "pausada" : "reactivada"
+        } correctamente`
       );
     } catch (error) {
       console.error("Error al cambiar estado:", error);
@@ -58,7 +82,7 @@ export default function OwnerDashboard() {
   const confirmDelete = async () => {
     try {
       await PostService.deletePost(selectedId, token);
-      setData((prev) => prev.filter((p) => p.id !== selectedId));
+      setPosts((prev) => prev.filter((p) => p.id !== selectedId));
       toastSuccess("Publicación eliminada correctamente");
     } catch (error) {
       console.error("Error al eliminar publicación:", error);
@@ -76,23 +100,15 @@ export default function OwnerDashboard() {
   return (
     <div>
       <Notifications />
-      <Navbar bg="primary" variant="dark" expand="lg" className="px-3">
-        <Container fluid>
-          <Navbar.Brand>AlquilAR</Navbar.Brand>
-          <div className="d-flex align-items-center text-white">
-            <span className="me-2">{user.name} ({role})</span>
-          </div>
-        </Container>
-      </Navbar>
 
       <Container className="mt-4">
         <h3>Bienvenido/a {user.name},</h3>
         <p className="text-muted">Estas son tus publicaciones:</p>
 
-        {loading && posts.length === 0 ? (
-          <p>Cargando propiedades...</p>
+        {loading ? (
+          <p>Cargando publicaciones...</p>
         ) : posts.length === 0 ? (
-          <p>No tienes propiedades registradas todavía.</p>
+          <p>No tienes publicaciones todavía.</p>
         ) : (
           <Table striped bordered hover responsive>
             <thead>
@@ -107,13 +123,13 @@ export default function OwnerDashboard() {
               {posts.map((p) => (
                 <tr key={p.id}>
                   <td>{p.title}</td>
-                  <td>{p.price}</td>
+                  <td>${p.Property?.rentPrice}</td>
                   <td>
                     {p.status === "active"
                       ? "🟢 Activa"
                       : p.status === "paused"
-                        ? "⏸️ Pausada"
-                        : "🏠 Alquilada"}
+                      ? "⏸️ Pausada"
+                      : "🏠 Alquilada"}
                   </td>
                   <td>
                     <Button
@@ -148,22 +164,11 @@ export default function OwnerDashboard() {
           </Table>
         )}
 
-        {hasMore && (
-          <div className="text-center my-3">
-            <Button variant="secondary" onClick={loadMore} disabled={loading}>
-              {loading ? (
-                <>
-                  <Spinner animation="border" size="sm" className="me-2" /> Cargando...
-                </>
-              ) : (
-                "Cargar más"
-              )}
-            </Button>
-          </div>
-        )}
-
         <div className="mt-3">
-          <Button variant="primary" onClick={() => navigate("/propiedad/create")}>
+          <Button
+            variant="primary"
+            onClick={() => navigate("/propiedad/create")}
+          >
             + Agregar nueva propiedad
           </Button>
         </div>
@@ -172,13 +177,13 @@ export default function OwnerDashboard() {
       <ConfirmModal
         show={modalShow}
         title="Eliminar publicación"
-        message="¿Seguro que querés eliminar esta publicación? Esta acción no se puede deshacer."
+        message="¿Seguro que querés eliminar esta publicación?"
         onConfirm={confirmDelete}
         onClose={() => setModalShow(false)}
         confirmText="Eliminar"
         cancelText="Cancelar"
         variant="danger"
-        />
+      />
     </div>
   );
 }

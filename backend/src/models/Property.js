@@ -58,4 +58,36 @@ export const Property = sequelize.define("Property", {
       key: "provinceId",
     },
   },
+  
+});
+
+Property.afterCreate(async (property, options) => {
+  try {
+    const { Post } = await import("./Post.js");
+
+    await Post.create({
+      propertyId: property.idProperty,
+      ownerId: property.ownerId,
+      title: `${property.propertyType} - ${property.address}`,
+      description: "",
+      status: "paused",
+    }, { transaction: options.transaction });
+
+  } catch (error) {
+    console.error("Error creando Post:", error);
+  }
+});
+
+Property.beforeDestroy(async (property, options) => {
+  try {
+    const { Post } = await import("./Post.js");
+
+    await Post.destroy({
+      where: { propertyId: property.idProperty },
+      transaction: options.transaction
+    });
+
+  } catch (error) {
+    console.error("Error eliminando Post:", error);
+  }
 });

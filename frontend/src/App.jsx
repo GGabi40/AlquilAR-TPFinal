@@ -9,7 +9,6 @@ import PropertyFeatures from "./components/propertyForm/tabs/PropertyFeatures.js
 import PropertyImages from "./components/propertyForm/tabs/PropertyImages.jsx";
 import Register from "./components/auth/register/Register";
 import OwnerDashboard from "./components/dashboards/ownerDashboard/OwnerDashboard";
-import PropertyDetail from "./components/propertyDetail/PropertyDetail";
 import UserDashboard from "./components/dashboards/userDashboard/UserDashboard";
 import SuperadminDashboard from "./components/dashboards/superadminDashboard/SuperadminDashboard";
 import AboutUs from "./components/pages/AboutUs";
@@ -34,6 +33,7 @@ import PropertyPreview from "./components/propertyForm/tabs/PropertyPreview.jsx"
 import Favorites from "./components/pages/Favorites.jsx";
 import PropertyList from "./components/propertyList/PropertyList.jsx";
 import VerifyEmail from "./components/auth/verifyEmail/VerifyEmail.jsx";
+import EditPost from "./components/dashboards/ownerDashboard/EditPost.jsx";
 
 function App() {
   return (
@@ -70,9 +70,7 @@ function App() {
           {/* Owner */}
           <Route element={<Protected allowedRoles={["owner", "superadmin"]} />}>
             <Route path="/owner/dashboard" element={<OwnerDashboard />} />{" "}
-
-            {/* Falta id de usuario */}
-            <Route path="/owner/property/:id" element={<PropertyDetail />} />
+            <Route path="/posts/edit/:id" element={<EditPost />} />
           </Route>
 
           {/* Superadmin */}

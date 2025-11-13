@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useContext } from "react";
 
 const usePagination = (endpoint, limit = 10) => {
+  const { token } = useContext(AuthenticationContext);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
-  const token = localStorage.getItem("token");
 
   const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
