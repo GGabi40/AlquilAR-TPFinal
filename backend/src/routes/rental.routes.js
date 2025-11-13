@@ -2,7 +2,6 @@ import { Router } from "express";
 import { verifyToken, roleMiddleware } from "../middleware/authMiddleware.js";
 
 import { 
-    getAllRentals,
     getRentalById,
     getRentalsByTenant,
     getRentalsByOwner,
@@ -17,7 +16,6 @@ const router = Router();
 router.get("/status/active", verifyToken, getActiveRentals);
 
 /* Superadmin */
-router.get("/", verifyToken, roleMiddleware(["superadmin"]), getAllRentals);
 router.get("/:id", verifyToken, roleMiddleware(["superadmin"]), getRentalById);
 
 /* Owner */
