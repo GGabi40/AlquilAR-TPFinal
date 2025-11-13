@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router";
 import Slider from "react-slick";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,6 +20,17 @@ import { AuthenticationContext } from "../../../services/auth.context.jsx";
 
 const PropertyImages = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const locationData = JSON.parse(localStorage.getItem("propertyLocationData"));
+    const featuresData = JSON.parse(localStorage.getItem("propertyFeaturesData"));
+    if (!locationData) {
+      navigate("/add-property/location");
+    } else if (!featuresData) {
+      navigate("/add-property/features");
+    }
+  }, [navigate]); 
+
   const { updateSection, formData } = useContext(PropertyContext);
   const { token } = useContext(AuthenticationContext);
 
@@ -92,7 +103,6 @@ const PropertyImages = () => {
 
   const handlePreview = async () => {
     if (handleValidation()) {
-      console.log("Datos: ", data);
 
       // img
       const uploadedImages = await Promise.all(
@@ -109,6 +119,8 @@ const PropertyImages = () => {
         images: uploadedImages,
         documents: uploadedDocs,
       };
+
+      localStorage.setItem("propertyImagesData", JSON.stringify(updatedData))
       
       updateSection("images", updatedData);
 
@@ -136,6 +148,7 @@ const PropertyImages = () => {
         <label className="form-label">
           <FontAwesomeIcon icon={faCamera} className="me-2 text-success" />
           Subí las mejores fotos de tu propiedad
+          <span className="required-star"> *</span>
         </label>
         <small className="text-muted d-block mb-2">(Hasta 10 imágenes)</small>
         <input
@@ -172,7 +185,6 @@ const PropertyImages = () => {
         <label className="form-label">
           <FontAwesomeIcon icon={faVideo} className="me-2 text-success" />
           Agregá un video de la propiedad
-          <span className="required-star"> *</span>
         </label>
         <input
           type="url"
@@ -207,6 +219,7 @@ const PropertyImages = () => {
             className="me-2 text-success"
           />
           Documentación / Escritura de la propiedad
+          <span className="required-star"> *</span>
         </label>
 
         <small className="text-muted d-block mb-2">

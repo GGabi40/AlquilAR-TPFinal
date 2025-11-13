@@ -55,6 +55,23 @@ const PropertyForm = () => {
   const [localidades, setLocalidades] = useState([]);
 
   useEffect(() => {
+    const savedData = localStorage.getItem("propertyLocationData");
+    if (savedData) {
+      try {
+        // 2️⃣ Parsear el JSON
+        const parsedData = JSON.parse(savedData);
+
+        // 3️⃣ Rellenar los campos con lo que estaba guardado
+        setData((prevData) => ({
+          ...prevData,
+          ...parsedData,
+        }));
+
+        toastSuccess("Datos de ubicación recuperados 🏠");
+      } catch (error) {
+        console.error("Error al cargar localStorage:", error);
+      }
+    }
     const fetchProvincias = async () => {
       try {
         const provs = await getProvinces();
@@ -127,6 +144,8 @@ const PropertyForm = () => {
         ...data,
         direccion: direccionNormalizada,
       };
+
+      localStorage.setItem("propertyLocationData", JSON.stringify(updatedData));
 
       updateSection("location", updatedData);
       toastSuccess("Datos guardados correctamente 🚀");
