@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   Card,
@@ -28,9 +28,12 @@ import { PostService } from "../../services/PostService";
 import { MapContainer, TileLayer, Marker, Circle } from "react-leaflet";
 import L from "leaflet";
 import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notifications";
+import { AuthenticationContext } from "../../services/auth.context";
+import axios from "axios";
 
 const PropertyDetail = () => {
   const { id } = useParams();
+  const { token } = useContext(AuthenticationContext);
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [property, setProperty] = useState(null);
@@ -93,7 +96,7 @@ const PropertyDetail = () => {
           postData.property.longitude = coords.lon;
         }
         setPost(postData);
-        setProperty(postData.property);
+        setProperty(postData["property"]);
       } catch (error) {
         console.error("Error al obtener propiedad:", error);
       } finally {
@@ -149,20 +152,16 @@ const PropertyDetail = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-    console.log(formData);
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`/api/contact/${property.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error enviando mensaje");
+      if(!token) {
+        toastError("Debes iniciar sesión para enviar un mensaje.");
+      }
+
+      await axios.post(`${API_URL}/contact/${property.ownerId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       toastSuccess("¡Enviamos tu mensaje con éxito!");
       setFormData({
@@ -175,9 +174,7 @@ const PropertyDetail = () => {
 
     } catch (error) {
       console.error(error);
-      toastError(
-        error.response?.data?.message || "Error al enviar el email."
-      );
+      toastError("Error al enviar el email.");
     }
   };
 
@@ -205,7 +202,7 @@ const PropertyDetail = () => {
           ← Volver
         </Button>
         <h3 className="fw-bold mb-0 text-primary">
-          {postData.property.address || "Dirección no disponible"}
+          {property.address || "Dirección no disponible"}
         </h3>
         <Button
           variant="link"
@@ -243,8 +240,8 @@ const PropertyDetail = () => {
       {/* IMÁGENES */}
       <Card className="shadow-lg border-0 rounded-4 overflow-hidden mb-4">
         <Carousel>
-          {postData.property.PropertyDetail?.PropertyImages?.length > 0 ? (
-            postData.property.PropertyDetail.PropertyImages.map((img, index) => (
+          {property.PropertyDetail?.PropertyImages?.length > 0 ? (
+            property.PropertyDetail.PropertyImages.map((img, index) => (
               <Carousel.Item key={index}>
                 <img
                   src={img.URLImages}
