@@ -96,7 +96,6 @@ export const registerUser = async (req, res) => {
     isBlocked,
     avatarColor,
     role,
-    verified,
   } = req.body;
 
   try {
@@ -121,7 +120,7 @@ export const registerUser = async (req, res) => {
       isBlocked,
       avatarColor: avatarColor || "#ffc107",
       role: role || "user",
-      verified: verified || false,
+      verified: false,
       verificationToken,
       verificationTokenExpiry,
     });

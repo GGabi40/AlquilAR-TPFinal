@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import Notifications, { toastError, toastSuccess } from "../../ui/toaster/Notifications";
-import { PostService } from "../../../services/PostService";
+import { rentalService } from "../../../services/rentalServices";
 import { searchUsers } from '../../../services/userService';
 import { AuthenticationContext } from "../../../services/auth.context";
 import { useParams } from "react-router";
@@ -64,7 +64,7 @@ const TenantAssignment = () => {
     };
 
     try {
-      await PostService.createRental(payload, token);
+      await rentalService.createRental(payload, token);
       toastSuccess("Alquiler creado correctamente 🎉");
     } catch (err) {
       console.error(err);
