@@ -50,6 +50,7 @@ function App() {
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/my-rent" element={<UserDashboard />} />
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/terms-conditions" element={<TermsAndCondicions />} />
@@ -78,11 +79,6 @@ function App() {
           {/* Superadmin */}
           <Route element={<Protected allowedRoles={["superadmin"]} />}>
             <Route path="/admin/dashboard" element={<SuperadminDashboard />} />
-          </Route>
-
-          {/* User */}
-          <Route element={<Protected allowedRoles={["user"]} />}>
-            <Route path="/user/dashboard" element={<UserDashboard />} />
           </Route>
 
           <Route element={<Protected allowedRoles={["user", "owner", "superadmin"]} />}>

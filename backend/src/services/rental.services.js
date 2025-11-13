@@ -26,12 +26,17 @@ export const getRentalById = async (req,res) => {
 export const getRentalsByTenant = async (req,res) => {
     try {
         const tenantId = req.user.id;
+
         const rentals = await Rental.findAll({
             where: { tenantId },
-            include: [{ model: Post, as: "post" }, { model: Property }]
+            include: [
+                { model: Post, as: "post" },
+                { model: Property }
+            ]
         });
 
-        if(!rentals.length) return res.status(404).json({ message: "No tenés alquileres registrados." });
+        if(!rentals.length) 
+            return res.status(404).json({ message: "No tenés alquileres registrados." });
 
         res.status(200).json(rentals);
     } catch (error) {
@@ -39,6 +44,7 @@ export const getRentalsByTenant = async (req,res) => {
         res.status(500).json({ message: "Error al obtener alquileres de inquilino." });
     }
 };
+
 
 /* Owner */
 export const createRental = async (req, res) => {
@@ -63,7 +69,7 @@ export const createRental = async (req, res) => {
 
     const newRental = await Rental.create({
       postId,
-      propertyId: post.Property.idProperty, // ← FIX AQUÍ !!!
+      propertyId: post.Property.idProperty,
       tenantId,
       startDate,
       endDate,
