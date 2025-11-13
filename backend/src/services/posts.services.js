@@ -1,6 +1,12 @@
 import { Post } from "../models/Post.js";
 import { Property } from "../models/Property.js";
 import { User } from "../models/User.js";
+import { PropertyDetails } from "../models/PropertyDetails.js";
+import { PropertyImages } from "../models/PropertyImages.js";
+import { PropertyVideos } from "../models/PropertyVideos.js";
+import { PropertyLocality } from "../models/PropertyLocality.js";
+import { PropertyProvince } from "../models/PropertyProvince.js";
+
 
 export const assertPostOwner = (post, user) => {
   const isOwner = post.property.ownerId === user.id;
@@ -41,21 +47,33 @@ export const getAllPosts = async (req, res) => {
 
 export const getPostById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const post = await Post.findByPk(id, {
-      include: [{ model: Property, as: "property" }],
+    const post = await Post.findByPk(req.params.id, {
+      include: [
+        {
+          model: Property,
+          as: "property",
+          include: [
+            {
+              model: PropertyDetails,
+              include: [
+                { model: PropertyImages },
+                { model: PropertyVideos }
+              ]
+            },
+            { model: PropertyLocality, as: "locality" },
+            { model: PropertyProvince, as: "province" },
+            { model: User, as: "owner" }
+          ]
+        }
+      ]
     });
 
-    if (!post)
-      return res
-        .status(404)
-        .json({ message: "No se encontró esta publicación." });
+    if (!post) return res.status(404).json({ message: "Post no encontrado" });
 
-    res.status(200).json(post);
+    res.json(post);
   } catch (error) {
-    console.error("Error al obtener publicación: ", error);
-    res.status(500).json({ message: "Error al obtener publicación." });
+    console.log(error);
+    res.status(500).json({ message: "Error al obtener post" });
   }
 };
 
