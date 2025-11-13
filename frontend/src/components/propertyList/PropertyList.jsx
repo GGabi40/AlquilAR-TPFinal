@@ -27,9 +27,9 @@ const PropertyList = ({ token }) => {
     rentType: "",
   });
   const [loading, setLoading] = useState(false);
+  const [noResults, setNoResults] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState(null);
   const [gridView, setGridView] = useState(false);
 
   const { user } = useContext(AuthenticationContext) || {};
@@ -41,7 +41,6 @@ const PropertyList = ({ token }) => {
       const data = await PostService.getAllPosts();
       const safe = Array.isArray(data) ? data : [];
 
-      // Filtrar solo posts con propiedad
       const valid = safe.filter(
         (post) => post.property && post.status === "active"
       );
@@ -57,20 +56,34 @@ const PropertyList = ({ token }) => {
   };
 
   // Buscador (searchbar)
-  const handleSearch = async (filters) => {
-    setLoading(true);
-    try {
-      const data = await PostService.searchPosts(filters);
-      const safe = Array.isArray(data) ? data : [];
+  const handleSearch = ({ q }) => {
+    const query = q?.toLowerCase().trim();
 
-      const valid = safe.filter((post) => post.property);
-      setPosts(valid);
-      setFilteredPosts(valid);
-    } catch (err) {
-      console.error(err);
-      toastError("Error al realizar la búsqueda.");
-    } finally {
-      setLoading(false);
+    if (!query) {
+      setFilteredPosts(posts);
+      return;
+    }
+
+    const results = posts.filter((p) => {
+      const prop = p.property || {};
+
+      const matches =
+        p.title?.toLowerCase().includes(query) ||
+        prop.address?.toLowerCase().includes(query) ||
+        prop.propertyType?.toLowerCase().includes(query) ||
+        prop.locality?.name?.toLowerCase().includes(query) ||
+        prop.province?.name?.toLowerCase().includes(query);
+
+      return matches && p.status === "active";
+    });
+
+    // Si no hay resultados → mostrar todos pero marcar estado especial
+    if (results.length === 0) {
+      setFilteredPosts([]);
+      setNoResults(query);
+    } else {
+      setFilteredPosts(results);
+      setNoResults(null);
     }
   };
 
@@ -171,7 +184,7 @@ const PropertyList = ({ token }) => {
     setFilteredPosts(filtered);
   };
 
-  // 🔹 Favoritos
+  // Favoritos
   const loadFavorites = async () => {
     try {
       const res = await favoriteService.getFavorites();
@@ -181,7 +194,7 @@ const PropertyList = ({ token }) => {
     }
   };
 
-  // 🔹 Efecto inicial
+  // Efecto inicial
   useEffect(() => {
     loadAllPosts();
     if (user) loadFavorites();
@@ -201,7 +214,7 @@ const PropertyList = ({ token }) => {
     }
   };
 
-  // 🔹 Render
+  // Render
   return (
     <Container className="py-4">
       <h2 className="fw-bold mb-4 text-center">Propiedades disponibles</h2>
@@ -225,85 +238,30 @@ const PropertyList = ({ token }) => {
         <div className="text-center py-5">
           <Spinner animation="border" />
         </div>
+      ) : noResults ? (
+        <>
+          <p className="text-center text-muted fs-5">
+            No encontramos resultados para: <strong>"{noResults}"</strong>
+          </p>
+          <p className="text-center text-muted mb-4">
+            Pero tenemos estas propiedades disponibles:
+          </p>
+
+          <Row className={gridView ? "g-4" : "justify-content-center g-3 px-3"}>
+            {posts.map((post) => (
+              <Col key={post.id} md={gridView ? 4 : 12}>
+                <PropertyCard post={post} view={gridView ? "grid" : "list"} />
+              </Col>
+            ))}
+          </Row>
+        </>
       ) : filteredPosts.length > 0 ? (
         <Row className={gridView ? "g-4" : "justify-content-center g-3 px-3"}>
-          {filteredPosts.map((post) => {
-            const property = post.property;
-            const detail = property?.PropertyDetail;
-
-            const image =
-              detail?.PropertyImages?.[0]?.URLImages || "/photos/no-image.png";
-
-            return (
-              <Col key={post.id} md={gridView ? 4 : 12}>
-                {gridView ? (
-                  <PropertyCard post={post} />
-                ) : (
-                  <Card
-                    className="shadow-sm mx-auto"
-                    style={{ maxWidth: "800px" }}
-                  >
-                    <Row className="g-0">
-                      <Col md={4}>
-                        <Card.Img
-                          src={image}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </Col>
-
-                      <Col md={8} className="p-2 d-flex flex-column">
-                        <Card.Body className="position-relative">
-                          <Card.Title>{post.title}</Card.Title>
-
-                          <Card.Text>
-                            <strong>Dirección:</strong> {property.address}{" "}
-                            <br />
-                            <strong>Precio:</strong> ${property.rentPrice}{" "}
-                            <br />
-                            <strong>Habitaciones:</strong>{" "}
-                            {detail?.numBedrooms || "-"}
-                          </Card.Text>
-
-                          <button
-                            className="position-absolute top-0 end-0 m-2"
-                            style={{
-                              background: "transparent",
-                              border: "none",
-                            }}
-                            onClick={() =>
-                              handleFavoriteClick(property.idProperty)
-                            }
-                          >
-                            <FontAwesomeIcon
-                              icon={
-                                favorites.includes(property.idProperty)
-                                  ? faHeart
-                                  : faHeartRegular
-                              }
-                              style={{ color: "red" }}
-                              size="lg"
-                            />
-                          </button>
-
-                          <Button
-                            as={Link}
-                            to={`/properties/${property.idProperty}`}
-                            variant="primary"
-                          >
-                            + Información
-                          </Button>
-                        </Card.Body>
-                      </Col>
-                    </Row>
-                  </Card>
-                )}
-              </Col>
-            );
-          })}
+          {filteredPosts.map((post) => (
+            <Col key={post.id} md={gridView ? 4 : 12}>
+              <PropertyCard post={post} view={gridView ? "grid" : "list"} />
+            </Col>
+          ))}
         </Row>
       ) : (
         <p className="text-center text-muted">No se encontraron propiedades.</p>

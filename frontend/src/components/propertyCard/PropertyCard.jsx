@@ -1,77 +1,72 @@
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Row, Col } from "react-bootstrap";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate } from "react-router";
 
-const PropertyCard = ({ post }) => {
+const PropertyCard = ({ post, view = "grid" }) => {
   const navigate = useNavigate();
-  const property = post.property || {};
-  const detail = property.PropertyDetail || {};
 
-  // Datos principales
-  const idProperty = property.idProperty;
-  const address = property.address || "Dirección no disponible";
-  const rentPrice = property.rentPrice || 0;
-  const propertyType = property.propertyType || "Propiedad";
-  const locality = property.locality?.name || "";
-  const province = property.province?.name || "";
+  const prop = post.property || {};
+  const detail = prop.PropertyDetail || {};
 
-  // Imagen principal
   const mainImage =
-    detail?.PropertyImages?.[0]?.URLImages || "/photos/no-image.png";
+    detail.PropertyImages?.[0]?.URLImages || "/photos/no-image.png";
 
-  const [isFavorite, setIsFavorite] = useState(false);
+  if (view === "list") {
+    return (
+      <Card className="shadow-sm mx-auto mb-3" style={{ maxWidth: "850px" }}>
+        <Row className="g-0">
+          <Col md={4}>
+            <Card.Img
+              src={mainImage}
+              style={{ height: "100%", objectFit: "cover" }}
+            />
+          </Col>
 
+          <Col md={8} className="p-3 d-flex flex-column justify-content-between">
+            <div>
+              <h5 className="fw-bold">{post.title}</h5>
+
+              <p className="mb-1"><strong>Dirección:</strong> {prop.address}</p>
+              <p className="mb-1"><strong>Ambientes:</strong> {detail.numRooms || "-"}</p>
+              <p className="mb-1"><strong>Ciudad:</strong> {prop.locality?.name}</p>
+              <p className="mb-1 text-primary fw-bold">Precio: ${prop.rentPrice}</p>
+            </div>
+
+            <Button
+              variant="primary"
+              className="rounded-pill mt-2"
+              onClick={() => navigate(`/properties/${prop.idProperty}`)}
+            >
+              Ver detalles
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+    );
+  }
+
+  // MODO GRID
   return (
     <Card className="h-100 shadow-sm rounded-4 overflow-hidden">
       <div className="ratio ratio-4x3">
         <Card.Img
-          variant="top"
           src={mainImage}
-          alt={address}
           style={{ objectFit: "cover" }}
         />
       </div>
 
-      <Card.Body className="d-flex flex-column justify-content-between">
-        <div>
-          {/* Título */}
-          <Card.Title className="fw-bold d-flex justify-content-between">
-            {post.title || propertyType}
-            <button
-              style={{ background: "transparent", border: "none" }}
-              onClick={() => setIsFavorite(!isFavorite)}
-            >
-              <FontAwesomeIcon
-                icon={isFavorite ? faHeart : faHeartRegular}
-                style={{ color: "red" }}
-                size="lg"
-              />
-            </button>
-          </Card.Title>
-
-          <Card.Text className="text-muted mb-1">{address}</Card.Text>
-
-          <Card.Text className="text-muted">
-            {locality} {province ? `- ${province}` : ""}
-          </Card.Text>
-
-          <Card.Text className="mb-1">
-            <strong>Ambientes:</strong>{" "}
-            {detail?.numRooms || "-"}
-          </Card.Text>
-
-          <Card.Text className="text-primary fw-bold fs-5">
-            ${rentPrice}
-          </Card.Text>
-        </div>
+      <Card.Body>
+        <h5 className="fw-bold">{post.title}</h5>
+        <p className="text-muted">{prop.address}</p>
+        <p className="fw-bold text-primary">${prop.rentPrice}</p>
 
         <Button
           variant="outline-primary"
-          className="mt-3 rounded-pill"
-          onClick={() => navigate(`/properties/${idProperty}`)}
+          className="rounded-pill"
+          onClick={() => navigate(`/properties/${prop.idProperty}`)}
         >
           Ver detalles
         </Button>
