@@ -19,7 +19,7 @@ import {
   faRoute,
 } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "../search/SearchBar";
-import { getAllProperties } from "../../services/propertyServices";
+import { PostService } from "../../services/PostService";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
@@ -37,24 +37,30 @@ export default function Home() {
   useEffect(() => {
     const fetchRecent = async () => {
       try {
-        const data = await getAllProperties();
-        const available = data.filter((p) => p.status === "available");
-        const sorted = [...available].sort(
+        const data = await PostService.getAllPosts();
+
+        const validPosts = data.filter((post) => post.property);
+
+        const sorted = [...validPosts].sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
+
         setRecent(sorted.slice(0, 5));
       } catch (err) {
+        console.error(err);
         setRecent([]);
       }
     };
-    
+
     fetchRecent();
   }, []);
 
   const recentChunks = chunkArray(
-    Array.isArray(recent)
-      ? recent.filter((p) => p.propertyType.toLowerCase() === tipo.slice(0, -1).toLowerCase())
-      : [],
+    recent.filter(
+      (post) =>
+        post.property.propertyType.toLowerCase() ===
+        tipo.slice(0, -1).toLowerCase()
+    ),
     3
   );
 
@@ -83,7 +89,7 @@ export default function Home() {
           <h4 className="text-start text-white mb-3 fw-bold text-shadow fs-6">
             Encontrá tu próximo hogar
           </h4>
-        <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} />
         </div>
       </div>
 
@@ -161,45 +167,49 @@ export default function Home() {
         </Nav>
 
         {recentChunks.length > 0 ? (
-          <Carousel
-            variant="dark"
-            className="mt-3 recent-carousel"
-            indicators={false}
-          >
+          <Carousel variant="dark" indicators={false} className="mt-3 recent-carousel">
             {recentChunks.map((chunk, i) => (
               <Carousel.Item key={i}>
                 <Row className="justify-content-center g-4 px-4">
-                  {chunk.map((p) => (
-                    <Col key={p.idProperty} xs={10} sm={6} md={4} lg={3}>
+                  {chunk.map((post) => (
+                    <Col key={post.idPost} xs={10} sm={6} md={4} lg={3}>
                       <Card className="shadow-sm h-100 position-relative">
-                        {p.status === "available" && (
-                          <span className="status-badge">Disponible</span>
-                        )}
+
+                        <span
+                          className={`status-badge ${
+                            post.status === "available"
+                              ? "bg-success"
+                              : "bg-danger"
+                          }`}
+                        >
+                          {post.status === "available"
+                            ? "Disponible"
+                            : "Alquilado"}
+                        </span>
 
                         <Card.Img
                           variant="top"
-                          src={p.URLImage || "/photos/no-image.png"}
-                          alt={p.address}
-                          style={{
-                            height: "200px",
-                            objectFit: "cover",
-                          }}
+                          src={post.property.URLImage || "/photos/no-image.png"}
+                          alt={post.property.address}
+                          style={{ height: "200px", objectFit: "cover" }}
                         />
+
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <div>
                             <Card.Title className="fw-semibold">
-                              {p.address || "Dirección oculta"}
+                              {post.property.address || "Dirección oculta"}
                             </Card.Title>
                             <Card.Text className="text-success fw-bold mb-3">
-                              ${p.rentPrice} / mes
+                              ${post.property.rentPrice} / mes
                             </Card.Text>
                           </div>
+
                           <Button
                             variant="primary"
                             size="sm"
                             className="rounded-pill"
                             onClick={() =>
-                              navigate(`/properties/${p.idProperty}`)
+                              navigate(`/properties/${post.property.idProperty}`)
                             }
                           >
                             Ver más
@@ -235,8 +245,7 @@ export default function Home() {
       <div
         className="d-flex flex-column text-center mt-2 img-width-100 for-mobile gap-3"
         style={{
-          backgroundImage:
-            "url('/illustrations/bg-protruding-squares-2.svg')",
+          backgroundImage: "url('/illustrations/bg-protruding-squares-2.svg')",
           backgroundSize: "auto",
         }}
       >
