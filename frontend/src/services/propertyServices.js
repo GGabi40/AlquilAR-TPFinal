@@ -35,12 +35,12 @@ const PropertyServices = {
     }
   },
 
-  searchProperties: async (query) => {
+  searchProperties: async (filters) => {
     try {
       const response = await axios.get(`${API_URL}/search`, { 
-        params: { q: query },
+        params: filters,
       });
-      return response.data;
+      return response;
     } catch (error) {
       console.error("Error en búsqueda de propiedades:", error);
       throw error;
