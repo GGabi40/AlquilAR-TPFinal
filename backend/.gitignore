@@ -3,3 +3,7 @@ database.db
 .env
 *.db
 uploads/
+
+# SQLite database files
+database.db-shm
+database.db-wal
