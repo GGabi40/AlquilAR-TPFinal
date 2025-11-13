@@ -15,8 +15,8 @@ import { User } from "./User.js";
 User.hasMany(Property, { foreignKey: "ownerId", sourceKey: 'id', as: 'ownedProperties' });
 Property.belongsTo(User, { foreignKey: "ownerId", targetKey: 'id', as: 'owner' });
 
-Property.hasMany(Post, { foreignKey: "propertyId" });
-Post.belongsTo(Property, { foreignKey: "propertyId" });
+Property.hasMany(Post, { foreignKey: "propertyId", as: 'posts' });
+Post.belongsTo(Property, { foreignKey: "propertyId", as: 'property' });
 
 Property.hasMany(Rental, { foreignKey: "propertyId" });
 Rental.belongsTo(Property, { foreignKey: "propertyId" });

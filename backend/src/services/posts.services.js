@@ -3,7 +3,7 @@ import { Property } from "../models/Property.js";
 import { User } from "../models/User.js";
 
 export const assertPostOwner = (post, user) => {
-  const isOwner = post.Property.ownerId === user.id;
+  const isOwner = post.property.ownerId === user.id;
   const isSuperadmin = user.role === "superadmin";
 
   if (!isOwner && !isSuperadmin) {
@@ -13,23 +13,24 @@ export const assertPostOwner = (post, user) => {
   }
 };
 
-
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.findAll({
       include: [
         {
           model: Property,
+          as: "property",
           include: [
-            { model: User, attributes: ["id"] }
-          ]
-        }
+            {
+              model: User,
+              as: "owner",
+              attributes: ["id", "name", "surname"],
+            },
+          ],
+        },
       ],
-      order: [["createdAt", "DESC"]]
+      order: [["createdAt", "DESC"]],
     });
-
-    if (!posts.length)
-      return res.status(200).json([]);
 
     res.status(200).json(posts);
   } catch (error) {
@@ -41,7 +42,10 @@ export const getAllPosts = async (req, res) => {
 export const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await Post.findByPk(id, { include: [{ model: Property }] });
+
+    const post = await Post.findByPk(id, {
+      include: [{ model: Property, as: "property" }],
+    });
 
     if (!post)
       return res
@@ -60,7 +64,7 @@ export const updatePost = async (req, res) => {
     const { id } = req.params;
 
     const post = await Post.findByPk(id, {
-      include: Property
+      include: [{ model: Property, as: "property" }],
     });
 
     if (!post)
@@ -94,7 +98,10 @@ export const updatePostStatus = async (req, res) => {
     if (!validStatus.includes(status))
       return res.status(400).json({ message: "Status inválido." });
 
-    const post = await Post.findByPk(id, { include: Property });
+    const post = await Post.findByPk(id, {
+      include: [{ model: Property, as: "property" }],
+    });
+
     if (!post)
       return res.status(404).json({ message: "Publicación no encontrada." });
 
@@ -112,12 +119,13 @@ export const updatePostStatus = async (req, res) => {
   }
 };
 
-
 export const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const post = await Post.findByPk(id, { include: Property });
+    const post = await Post.findByPk(id, {
+      include: [{ model: Property, as: "property" }],
+    });
 
     if (!post)
       return res.status(404).json({ message: "Publicación no encontrada." });
@@ -135,14 +143,13 @@ export const deletePost = async (req, res) => {
   }
 };
 
-
 export const getPostsByOwner = async (req, res) => {
   try {
     const { ownerId } = req.params;
 
     if (req.user.id != ownerId && req.user.role !== "superadmin") {
       return res.status(403).json({
-        message: "No tenés autorización para ver estos posts."
+        message: "No tenés autorización para ver estos posts.",
       });
     }
 
@@ -150,6 +157,7 @@ export const getPostsByOwner = async (req, res) => {
       include: [
         {
           model: Property,
+          as: "property",
           where: { ownerId },
           include: [
             {
@@ -171,4 +179,3 @@ export const getPostsByOwner = async (req, res) => {
       .json({ message: "Error al buscar publicaciones de propietario" });
   }
 };
-
