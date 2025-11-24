@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
 import Slider from "react-slick";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -33,7 +32,7 @@ import {
 import Notifications from "../../ui/toaster/Notifications";
 
 const PropertyPreview = () => {
-  // const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { formData } = useContext(PropertyContext);
   const { token } = useContext(AuthenticationContext);
@@ -68,8 +67,7 @@ const PropertyPreview = () => {
   const handlePublish = async (e) => {
     e.preventDefault();
 
-    // if (isSubmitting) return;
-    // setIsSubmitting(true);
+    setIsSubmitting(true);
 
     if (!token) {
       toastError("Debe iniciar sesión para publicar una propiedad.");
@@ -94,13 +92,9 @@ const PropertyPreview = () => {
       documents: images.documents || [],
     };
 
-    console.log("Datos enviados: ", sendToDatabase);
-
-    const toastId = toastLoading("Subiendo propiedad...");
-
     try {
       await requestNewProperty(sendToDatabase, token);
-      toastSuccess("Propiedad publicada", { id: toastId });
+      toastSuccess("Propiedad publicada");
       toastInfo("La revisaremos pronto.");
 
       localStorage.removeItem("propertyLocationData");
@@ -109,8 +103,9 @@ const PropertyPreview = () => {
 
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
-      console.error("Error al pubicar: ", error);
-      toastError("Error al publicar 😢", { id: toastId });
+      toastError("Error al publicar 😢");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -325,8 +320,9 @@ const PropertyPreview = () => {
           type="submit"
           className="btn btn-success w-25"
           onClick={handlePublish}
+          disabled={isSubmitting}
         >
-          Publicar
+          {isSubmitting ? 'Publicando...' : 'Publicar'}
         </button>
       </div>
     </div>

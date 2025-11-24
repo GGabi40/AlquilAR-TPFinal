@@ -125,7 +125,7 @@ const PropertyFeatures = () => {
       updateSection("features", data);
       localStorage.setItem("propertyFeaturesData", JSON.stringify(data));
 
-      toastSuccess("Datos guardados correctamente 🚀");
+      toastSuccess("Datos guardados correctamente");
       navigate("/add-property/images");
     } else {
       toastError("Por favor, complete correctamente los campos requeridos");
