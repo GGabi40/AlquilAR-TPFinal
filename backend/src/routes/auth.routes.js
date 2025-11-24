@@ -10,7 +10,8 @@ import {
   updateUser,
   deleteUser,
   verifyEmail,
-  searchUser
+  searchUser,
+  resendVerificationEmail
 } from "../services/auth.services.js";
 
 import { blockUser, updateUserRole } from "../services/superadmin.services.js";
@@ -30,6 +31,7 @@ router.delete("/:id/delete", verifyToken, deleteUser);
 
 router.post("/reset-password", resetPassword);
 router.post("/verify-email", verifyEmail);
+router.post("/resend-verification", resendVerificationEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/login", loginUser);
 router.post("/register", registerUser);

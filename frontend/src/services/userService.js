@@ -3,6 +3,41 @@ import { toastError } from "../components/ui/toaster/Notifications";
 
 const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
 
+export const register = async (userData) => {
+  try {
+    const response = await axios.post(`${API_URL}/users/register`, userData, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const login = async (userData) => {
+  try {
+    const response = await axios.post(`${API_URL}/users/login`, userData, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return response.data;
+  } catch (error) {
+    toastError("Error al obtener datos: ", error);
+    throw error;
+  }
+};
+
+export const resendVerification = async (email) => {
+  const { data } = await axios.post(
+    `${API_URL}/users/resend-verification`,
+    {
+      email,
+    }
+  );
+  return data;
+};
+
 export const getAllUsers = async (endpoint, token) => {
   try {
     const response = await axios.get(`${API_URL}/${endpoint}`, {

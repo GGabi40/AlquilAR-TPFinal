@@ -20,6 +20,7 @@ import {
 
 import { AuthenticationContext } from "../../../services/auth.context";
 import AuthLayout from "../AuthLayout";
+import { login } from "../../../services/userService.js";
 
 const Login = () => {
   const { handleUserLogin } = useContext(AuthenticationContext);
@@ -88,23 +89,15 @@ const Login = () => {
     const validation = validations();
     if (!validation) return;
 
-    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
-
     const toastId = toastLoading("Conectando...");
 
     try {
-      const response = await axios.post(
-        `${API_URL}/users/login`,
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const response = await login(formData);
 
-      if (response.data.token) {
-        handleUserLogin(response.data.token);
+      if (response.token) {
+        handleUserLogin(response.token);
       }
-
+      
       toastSuccess("Sesión iniciada correctamente.", { id: toastId });
 
       setTimeout(() => {
@@ -180,6 +173,9 @@ const Login = () => {
           )}
           <small className="d-block mt-1">
             <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
+          </small>
+          <small className="d-block mt-2">
+            <Link to="/resend-verification">¿No recibiste el código de verificación?</Link>
           </small>
         </div>
 

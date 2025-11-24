@@ -36,6 +36,7 @@ import VerifyEmail from "./components/auth/verifyEmail/VerifyEmail.jsx";
 import EditPost from "./components/dashboards/ownerDashboard/EditPost.jsx";
 import PropertyEditor from "./components/dashboards/ownerDashboard/PropertyEditor.jsx";
 import ProtectedStep from "./components/protectedStep/ProtectedStep.jsx";
+import ResendVerification from "./components/auth/resendVerification/ResendVerification.jsx";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/create-account" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/publish-steps" element={<PublishSteps />} />

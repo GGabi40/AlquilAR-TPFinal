@@ -5,6 +5,8 @@ import { toastError, toastSuccess } from "../../ui/toaster/Notifications";
 import { Spinner } from "react-bootstrap";
 import AuthLayout from "../AuthLayout";
 
+import verifiedImage from '/illustrations/verify-email/verified.webp';
+
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -45,7 +47,7 @@ const VerifyEmail = () => {
   }, [token, navigate]);
 
   return (
-    <AuthLayout title="Verificación de correo electrónico">
+    <AuthLayout image={verifiedImage} title="Verificación de correo electrónico">
       <div className="text-center mt-5">
         {status === "verifying" && (
           <>
