@@ -28,6 +28,16 @@ export const login = async (userData) => {
   }
 };
 
+export const resendVerification = async (email) => {
+  const { data } = await axios.post(
+    `${API_URL}/users/resend-verification`,
+    {
+      email,
+    }
+  );
+  return data;
+};
+
 export const getAllUsers = async (endpoint, token) => {
   try {
     const response = await axios.get(`${API_URL}/${endpoint}`, {

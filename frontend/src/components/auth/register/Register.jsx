@@ -32,6 +32,8 @@ import { register } from "../../../services/userService.js";
 
 const Register = () => {
   const [showTerms, setShowTerms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -156,6 +158,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const validation = validations();
     if (!validation) return;
@@ -166,6 +169,8 @@ const Register = () => {
       toastSuccess("Te enviamos un correo para verificar tu cuenta.");
     } catch (error) {
       toastError(error.response?.data?.message || "Error al crear la cuenta. Intenta de nuevo.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -317,8 +322,8 @@ const Register = () => {
         </Modal>
 
         <div className="d-grid">
-          <button className="btn btn-primary" type="submit">
-            Crear Cuenta
+          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Registrando usuario..." : "Crear Cuenta"}
           </button>
         </div>
       </form>

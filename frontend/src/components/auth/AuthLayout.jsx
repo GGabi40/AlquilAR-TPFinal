@@ -9,6 +9,7 @@ const AuthLayout = ({ image, title, children }) => {
             src={image}
             alt={`Ilustración ${title}`}
             className="illustration-login img-fluid d-none d-md-block"
+            style={{ objectFit: "cover" }}
           />
           <h2 className="d-block d-md-none text-center fw-bold mt-3">
             {title}

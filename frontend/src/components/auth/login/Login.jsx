@@ -174,6 +174,9 @@ const Login = () => {
           <small className="d-block mt-1">
             <Link to="/forgot-password">¿Olvidaste tu contraseña?</Link>
           </small>
+          <small className="d-block mt-2">
+            <Link to="/resend-verification">¿No recibiste el código de verificación?</Link>
+          </small>
         </div>
 
         <div className="d-grid">

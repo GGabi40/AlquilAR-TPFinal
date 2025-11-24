@@ -132,7 +132,7 @@ export const registerUser = async (req, res) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-      },
+      }
     });
 
     const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
@@ -314,7 +314,6 @@ export const deleteUser = async (req, res) => {
 export const verifyEmail = async (req, res) => {
   try {
     const { token } = req.body;
-    console.log(token);
 
     if (!token) return res.status(400).json({ message: "Token faltante." });
 
@@ -346,6 +345,68 @@ export const verifyEmail = async (req, res) => {
       .json({ message: "Error al verificar el correo electrónico." });
   }
 };
+
+export const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email)
+      return res.status(400).json({ message: "Debe proporcionar un email." });
+
+    const user = await User.findOne({ where: { email } });
+
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado." });
+
+    if (user.verified)
+      return res.status(400).json({ message: "La cuenta ya está verificada." });
+
+    const newToken = crypto.randomBytes(32).toString("hex");
+    const newExpiry = Date.now() + 60 * 60 * 1000;
+
+    user.verificationToken = newToken;
+    user.verificationTokenExpiry = newExpiry;
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      }
+    });
+
+    const link = `${process.env.FRONTEND_URL}/verify-email?token=${newToken}`;
+
+    await transporter.sendMail({
+      from: `"AlquilAR" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Nuevo código de verificación",
+      html: `
+        <div style="font-family: Arial; text-align:center;">
+          <h2>Reenviado: Verificá tu cuenta</h2>
+          <p>Hacé clic en el botón para verificar tu cuenta:</p>
+
+          <a href="${link}"
+             style="background:#2596be; color:white; padding:10px 20px; border-radius:5px; text-decoration:none;">
+            Verificar mi cuenta
+          </a>
+
+          <p style="margin-top:20px;">Este enlace expirará en 1 hora.</p>
+        </div>
+      `,
+    });
+
+    return res.status(200).json({ message: "Email reenviado correctamente." });
+
+  } catch (error) {
+    console.error("Error al reenviar email:", error);
+    res.status(500).json({ message: "Error al reenviar el correo." });
+  }
+};
+
 
 export const searchUser = async (req, res) => {
   const { query } = req.query;
