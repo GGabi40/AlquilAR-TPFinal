@@ -144,6 +144,11 @@ const Nav = () => {
                       )}
                     </>
                   </li>
+                  {/* <li>
+                    <Link className="dropdown-item" to="/my-rent">
+                      Mi Alquiler
+                    </Link>
+                  </li> */}
                   <li>
                     <Link className="dropdown-item" to="/faq">
                       FAQ
