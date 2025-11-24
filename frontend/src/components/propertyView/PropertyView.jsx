@@ -31,6 +31,7 @@ import L from "leaflet";
 import Notifications, { toastError, toastSuccess } from "../ui/toaster/Notifications";
 import { AuthenticationContext } from "../../services/auth.context";
 import axios from "axios";
+import { formatApproxAddress } from "../../services/formatAddress";
 
 const PropertyDetail = () => {
   const { id } = useParams();
@@ -97,7 +98,7 @@ const PropertyDetail = () => {
 
         // Geolocalización
         const coords = await getCoordinates(
-          postData.property.address,
+          formatApproxAddress(postData.property.address),
           postData.property.locality?.name,
           postData.property.province?.name
         );
@@ -205,7 +206,7 @@ const PropertyDetail = () => {
           ← Volver
         </Button>
 
-        <h3 className="fw-bold mb-0 text-primary">{property.address}</h3>
+        <h3 className="fw-bold mb-0 text-primary">{formatApproxAddress(property.address)}</h3>
 
         <Button
           variant="link"

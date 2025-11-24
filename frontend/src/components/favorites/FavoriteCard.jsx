@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
+import { formatApproxAddress } from "../../services/formatAddress";
 
 const FavoriteCard = ({ property, onRemove, isFavorite }) => {
     return (
@@ -12,7 +13,7 @@ const FavoriteCard = ({ property, onRemove, isFavorite }) => {
             />
             <div className="p-4">
                 <h2 className="font-medium text-lg truncate">{property.title}</h2>
-                <p className="text-sm text-gray-600 truncate">{property.address}</p>
+                <p className="text-sm text-gray-600 truncate">{formatApproxAddress(property.address)}</p>
                 <p className="font-semibold mt-2">${property.price}</p>
             </div>
 
