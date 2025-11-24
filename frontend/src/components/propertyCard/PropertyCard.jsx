@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate } from "react-router";
+import { formatApproxAddress } from "../../services/formatAddress";
 
 const PropertyCard = ({ post, view = "grid" }) => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const PropertyCard = ({ post, view = "grid" }) => {
             <div>
               <h5 className="fw-bold">{post.title}</h5>
 
-              <p className="mb-1"><strong>Dirección:</strong> {prop.address}</p>
+              <p className="mb-1"><strong>Dirección:</strong> {formatApproxAddress(prop.address)}</p>
               <p className="mb-1"><strong>Ambientes:</strong> {detail.numRooms || "-"}</p>
               <p className="mb-1"><strong>Ciudad:</strong> {prop.locality?.name}</p>
               <p className="mb-1 text-primary fw-bold">Precio: ${prop.rentPrice}</p>
@@ -60,7 +61,7 @@ const PropertyCard = ({ post, view = "grid" }) => {
 
       <Card.Body>
         <h5 className="fw-bold">{post.title}</h5>
-        <p className="text-muted">{prop.address}</p>
+        <p className="text-muted">{formatApproxAddress(prop.address)}</p>
         <p className="fw-bold text-primary">${prop.rentPrice}</p>
 
         <Button

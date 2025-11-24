@@ -7,9 +7,7 @@ import {
   Nav,
   Card,
   Button,
-  Form,
   Carousel,
-  NavItem,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -19,7 +17,8 @@ import {
   faRoute,
 } from "@fortawesome/free-solid-svg-icons";
 import SearchBar from "../search/SearchBar";
-import { PostService } from "../../services/PostService";
+import { PostService } from "../../services/PostService.js";
+import { formatApproxAddress } from "../../services/formatAddress.js";
 
 export default function Home() {
   const [tipo, setTipo] = useState("casas");
@@ -203,14 +202,14 @@ export default function Home() {
                                   .URLImages
                               : "/photos/no-image.png"
                           }
-                          alt={post.property.address}
+                          alt={formatApproxAddress(post.property.address)}
                           style={{ height: "200px", objectFit: "cover" }}
                         />
 
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <div>
                             <Card.Title className="fw-semibold">
-                              {post.property.address || "Dirección oculta"}
+                              {formatApproxAddress(post.property.address) || "Dirección oculta"}
                             </Card.Title>
                             <Card.Text className="text-success fw-bold mb-3">
                               ${post.property.rentPrice} / mes

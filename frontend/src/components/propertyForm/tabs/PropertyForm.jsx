@@ -18,28 +18,6 @@ import {
 
 import Notifications from "../../ui/toaster/Notifications";
 
-const formatApproxAddress = (address) => {
-  if (!address) return "";
-
-  // Busca el número en la dirección
-  const match = address.match(/^(.*?)(\d+)$/);
-  if (!match) return address;
-
-  const street = match[1].trim();
-  const number = parseInt(match[2], 10);
-
-  let rounded;
-  if (number >= 100) {
-    rounded = Math.floor(number / 100) * 100; // redondea a la centena
-  } else if (number >= 10) {
-    rounded = Math.floor(number / 10) * 10; // redondea a la decena
-  } else {
-    rounded = 10; // si es menor a 10, deja 10
-  }
-
-  return `${street} ${rounded}`;
-};
-
 const PropertyForm = () => {
   const { updateSection } = useContext(PropertyContext);
   const navigate = useNavigate();
@@ -57,20 +35,14 @@ const PropertyForm = () => {
   useEffect(() => {
     const savedData = localStorage.getItem("propertyLocationData");
     if (savedData) {
-      try {
-        // 2️⃣ Parsear el JSON
-        const parsedData = JSON.parse(savedData);
+      const parsedData = JSON.parse(savedData);
 
-        // 3️⃣ Rellenar los campos con lo que estaba guardado
         setData((prevData) => ({
           ...prevData,
           ...parsedData,
         }));
 
         toastSuccess("Datos de ubicación recuperados 🏠");
-      } catch (error) {
-        console.error("Error al cargar localStorage:", error);
-      }
     }
     const fetchProvincias = async () => {
       try {
@@ -138,11 +110,8 @@ const PropertyForm = () => {
     e.preventDefault();
 
     if (validateForm()) {
-      const direccionNormalizada = formatApproxAddress(data.direccion);
-
       const updatedData = {
-        ...data,
-        direccion: direccionNormalizada,
+        ...data
       };
 
       localStorage.setItem("propertyLocationData", JSON.stringify(updatedData));
