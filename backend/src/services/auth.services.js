@@ -307,7 +307,6 @@ export const deleteUser = async (req, res) => {
 
     res.json({ message: "Cuenta eliminada correctamente." });
   } catch (error) {
-    console.error("Error al eliminar usuario:", error);
     res.status(500).json({ message: "Error del servidor." });
   }
 };

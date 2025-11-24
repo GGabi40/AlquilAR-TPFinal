@@ -109,7 +109,7 @@ const Profile = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteUser(userId, 'users', token);
+      await deleteUser(userId, token);
       toastSuccess("Cuenta eliminada");
 
       setTimeout(() => {
@@ -117,7 +117,6 @@ const Profile = () => {
       }, 800);
     } catch (error) {
       console.error("Error al eliminar cuenta:", error);
-      alert("No se pudo eliminar la cuenta ❌");
     }
   };
 
