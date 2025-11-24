@@ -4,8 +4,7 @@ import axios from "axios";
 
 import Notifications, {
   toastSuccess,
-  toastError,
-  toastLoading,
+  toastError
 } from "../../ui/toaster/Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
@@ -24,7 +23,7 @@ import { login } from "../../../services/userService.js";
 
 const Login = () => {
   const { handleUserLogin } = useContext(AuthenticationContext);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({ email: "", password: "" });
   const emailRef = useRef(null);
@@ -89,8 +88,7 @@ const Login = () => {
     const validation = validations();
     if (!validation) return;
 
-    const toastId = toastLoading("Conectando...");
-
+    setIsSubmitting(true);
     try {
       const response = await login(formData);
 
@@ -98,18 +96,19 @@ const Login = () => {
         handleUserLogin(response.token);
       }
       
-      toastSuccess("Sesión iniciada correctamente.", { id: toastId });
+      toastSuccess("Sesión iniciada correctamente.");
 
       setTimeout(() => {
         navigate("/");
       }, 1000);
     } catch (error) {
       toastError(
-        error.response?.data?.message || "Error al iniciar sesión. Intenta de nuevo.", 
-        { id: toastId }
+        error.response?.data?.message || "Error al iniciar sesión. Intenta de nuevo."
       );
       emailRef.current.classList.add("is-invalid");
       passwordRef.current.classList.add("is-invalid");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -180,8 +179,8 @@ const Login = () => {
         </div>
 
         <div className="d-grid">
-          <button className="btn btn-primary" type="submit">
-            Iniciar Sesión
+          <button className="btn btn-primary" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
           </button>
         </div>
       </form>
