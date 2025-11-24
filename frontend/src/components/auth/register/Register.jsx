@@ -28,6 +28,7 @@ import {
 import TermsAndConditions from "../../pages/TermsAndCondicions";
 import { Button, Modal } from "react-bootstrap";
 import AuthLayout from "../AuthLayout";
+import { register } from "../../../services/userService.js";
 
 const Register = () => {
   const [showTerms, setShowTerms] = useState(false);
@@ -159,18 +160,12 @@ const Register = () => {
     const validation = validations();
     if (!validation) return;
 
-    const API_URL = import.meta.env.VITE_BACKEND_ROUTE;
-
     try {
-      const response = await axios.post(`${API_URL}/users/register`, formData, {
-        headers: { "Content-Type": "application/json" },
-      });
-
+      await register(formData);
       setShowVerificationModal(true);
-
       toastSuccess("Te enviamos un correo para verificar tu cuenta.");
     } catch (error) {
-      toastError("Error al crear la cuenta. Intenta de nuevo.");
+      toastError(error.response?.data?.message || "Error al crear la cuenta. Intenta de nuevo.");
     }
   };
 
