@@ -10,7 +10,7 @@ const SearchBar = ({ onSearch }) => {
     e.preventDefault();
 
     const clean = query.trim();
-    onSearch({ q: clean }); // 👈 Se envía al padre
+    onSearch({ q: clean }); // Se envía al padre
   };
 
   return (
