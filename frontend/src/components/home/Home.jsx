@@ -76,14 +76,14 @@ export default function Home() {
   return (
     <>
       <div
-        className="text-center p-5 my-3 img-width-100"
+        className="home-hero img-width-100 text-center"
         style={{
           backgroundImage: "url('/photos/living-HomePage.png')",
         }}
       >
         <div
-          className="bg-white bg-opacity-25 rounded-3 p-3 p-md-4 p-lg-5"
-          style={{ width: "70%" }}
+          className="bg-white bg-opacity-25 rounded-4 p-3 p-md-4 p-lg-5 mx-auto"
+          style={{ width: "100%", maxWidth: "720px" }}
         >
           <h4 className="text-start text-white mb-3 fw-bold text-shadow fs-6">
             Encontrá tu próximo hogar
@@ -209,7 +209,8 @@ export default function Home() {
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <div>
                             <Card.Title className="fw-semibold">
-                              {formatApproxAddress(post.property.address) || "Dirección oculta"}
+                              {formatApproxAddress(post.property.address) ||
+                                "Dirección oculta"}
                             </Card.Title>
                             <Card.Text className="text-success fw-bold mb-3">
                               ${post.property.rentPrice} / mes
