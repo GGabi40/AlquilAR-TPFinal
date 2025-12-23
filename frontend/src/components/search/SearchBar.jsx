@@ -14,36 +14,29 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="search-container position-relative">
-      <Container>
-        <Form
-          onSubmit={handleSubmit}
-          className="p-3 rounded shadow-sm bg-light mb-4"
-        >
-          <Row className="g-2 align-items-center">
-            <Col md={10}>
-              <Form.Control
-                type="text"
-                placeholder="Buscar por ciudad, provincia, dirección o tipo..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="shadow-none"
-              />
-            </Col>
+    <Form
+      onSubmit={handleSubmit}
+      className="p-3 rounded-4 shadow-sm bg-light mb-0"
+    >
+      <Row className="g-2 align-items-center">
+        <Col xs={12} md={9}>
+          <Form.Control
+            type="text"
+            placeholder="Buscar por ciudad, provincia, dirección o tipo..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="shadow-none"
+          />
+        </Col>
 
-            <Col md={2}>
-              <Button
-                type="submit"
-                className="w-100 btn-primary rounded-pill"
-              >
-                <FontAwesomeIcon icon={faSearch} className="me-2" />
-                Buscar
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Container>
-    </div>
+        <Col xs={12} md={3}>
+          <Button type="submit" className="w-100 search-btn">
+            <FontAwesomeIcon icon={faSearch} className="me-2" />
+            Buscar
+          </Button>
+        </Col>
+      </Row>
+    </Form>
   );
 };
 
