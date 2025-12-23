@@ -1,20 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dropdown, Form, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
-const Filters = ({ onFilterChange }) => {
+const Filters = ({ value, onFilterChange }) => {
     const [open, setOpen] = useState(false);
-    const [filters, setFilters] = useState({
-        rooms: "",
-        bedrooms: "",
-        bathrooms: "",
-        totalArea: "",
-        age: "",
-        minPrice: "",
-        maxPrice: "",
-        rentType: ""
-    });
+    const [filters, setFilters] = useState(value);
+
+    useEffect(() => {
+        setFilters(value);
+    }, [value]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,6 +34,7 @@ const Filters = ({ onFilterChange }) => {
         };
         setFilters(cleared);
         onFilterChange(cleared);
+        setOpen(false);
     };
 
     return (

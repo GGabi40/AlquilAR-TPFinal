@@ -13,6 +13,20 @@ import PropertyCard from "../propertyCard/PropertyCard";
 import { PostService } from "../../services/PostService";
 import Filters from "../filters/Filters.jsx";
 
+const emptyFilters = {
+  rooms: "",
+  bedrooms: "",
+  bathrooms: "",
+  totalArea: "",
+  age: "",
+  minPrice: "",
+  maxPrice: "",
+  rentType: "",
+};
+
+const hasAnyFilter = (f) =>
+  Object.values(f).some((v) => String(v ?? "").trim() !== "");
+
 const PropertyList = ({ token }) => {
   const [posts, setPosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
@@ -70,162 +84,35 @@ const PropertyList = ({ token }) => {
   };
 
   useEffect(() => {
-    const query = (qFromUrl || "").toLowerCase().trim();
+    const combined = applySearchAndFilters(posts, qFromUrl, filtersA);
+    setFilteredPosts(combined);
 
-    if (!query) {
-      setFilteredPosts(posts);
-      setNoResults(null);
-      return;
-    }
+    const query = (qFromUrl || "").trim();
+    const anyFilter = hasAnyFilter(filtersA);
 
-    const results = posts.filter((p) => {
-      const prop = p.property || {};
+    if ((query || anyFilter) && combined.length === 0) {
+      const searchOnly = applySearchAndFilters(posts, qFromUrl, emptyFilters);
 
-      const matches =
-        p.title?.toLowerCase().includes(query) ||
-        prop.address?.toLowerCase().includes(query) ||
-        prop.propertyType?.toLowerCase().includes(query) ||
-        prop.locality?.name?.toLowerCase().includes(query) ||
-        prop.province?.name?.toLowerCase().includes(query);
-
-      return matches && p.status === "active";
-    });
-
-    if (results.length === 0) {
-      setFilteredPosts([]);
-      setNoResults(query);
+      if (query && anyFilter && searchOnly.length > 0) {
+        setNoResults(
+          `Hay resultados para "${query}", pero ninguno coincide con los filtros actuales.`
+        );
+      } else if (query) {
+        setNoResults(`No encontramos resultados para "${query}".`);
+      } else {
+        setNoResults(
+          `No encontramos resultados con los filtros seleccionados.`
+        );
+      }
     } else {
-      setFilteredPosts(results);
       setNoResults(null);
     }
-  }, [qFromUrl, posts]);
-
-  /* const handleSearch = ({ q }) => {
-    const query = q?.toLowerCase().trim();
-
-    if (!query) {
-      setFilteredPosts(posts);
-      return;
-    }
-
-    const results = posts.filter((p) => {
-      const prop = p.property || {};
-
-      const matches =
-        p.title?.toLowerCase().includes(query) ||
-        prop.address?.toLowerCase().includes(query) ||
-        prop.propertyType?.toLowerCase().includes(query) ||
-        prop.locality?.name?.toLowerCase().includes(query) ||
-        prop.province?.name?.toLowerCase().includes(query);
-
-      return matches && p.status === "active";
-    });
-
-    // Si no hay resultados → mostrar todos pero marcar estado especial
-    if (results.length === 0) {
-      setFilteredPosts([]);
-      setNoResults(query);
-    } else {
-      setFilteredPosts(results);
-      setNoResults(null);
-    }
-  }; */
+  }, [posts, qFromUrl, filtersA]);
 
   // Filtros del frontend (rooms, etc.)
   const handleFilterChange = (newFilters) => {
+    console.log("newFilters:", newFilters);
     setFiltersA(newFilters);
-
-    let filtered = [...posts];
-
-    // Filtros basados en p.property.PropertyDetail
-    const getDetail = (p) => p.property?.PropertyDetail || {};
-
-    if (newFilters.rooms) {
-      const isPlus = newFilters.rooms.includes("+");
-      const min = Number(newFilters.rooms.replace("+", ""));
-      filtered = filtered.filter((p) => {
-        const val = getDetail(p).numRooms || 0;
-        return isPlus ? val >= min : val === min;
-      });
-    }
-
-    if (newFilters.bedrooms) {
-      const isPlus = newFilters.bedrooms.includes("+");
-      const min = Number(newFilters.bedrooms.replace("+", ""));
-
-      filtered = filtered.filter((p) => {
-        const val = getDetail(p).numBedrooms || 0;
-        return isPlus ? val >= min : val === min;
-      });
-    }
-
-    if (newFilters.bathrooms) {
-      const value = newFilters.bathrooms;
-
-      filtered = filtered.filter((p) => {
-        const baths = getDetail(p).numBathrooms || 0;
-
-        if (value.endsWith("+")) {
-          const min = Number(value.replace("+", ""));
-          return baths >= min;
-        }
-
-        return baths === Number(value);
-      });
-    }
-
-    if (newFilters.totalArea) {
-      const value = newFilters.totalArea;
-
-      filtered = filtered.filter((p) => {
-        const area = getDetail(p).totalArea || 0;
-
-        if (value.includes("-")) {
-          const [min, max] = value.split("-").map(Number);
-          return area >= min && area <= max;
-        }
-
-        if (value.endsWith("+")) {
-          return area >= Number(value.replace("+", ""));
-        }
-
-        return true;
-      });
-    }
-
-    if (newFilters.age) {
-      const value = newFilters.age;
-
-      filtered = filtered.filter((p) => {
-        const age = getDetail(p).propertyAge || 0;
-
-        if (value.includes("-")) {
-          const [min, max] = value.split("-").map(Number);
-          return age >= min && age <= max;
-        }
-
-        if (value.endsWith("+")) {
-          const min = Number(value.replace("+", ""));
-          return age >= min;
-        }
-
-        return true;
-      });
-    }
-
-    if (newFilters.minPrice) {
-      filtered = filtered.filter(
-        (p) => p.property?.rentPrice >= Number(newFilters.minPrice)
-      );
-    }
-
-    if (newFilters.maxPrice) {
-      filtered = filtered.filter(
-        (p) => p.property?.rentPrice <= Number(newFilters.maxPrice)
-      );
-    }
-
-    setFilteredPosts(filtered);
   };
 
   // Favoritos
@@ -236,6 +123,97 @@ const PropertyList = ({ token }) => {
     } catch (err) {
       toastError("Error cargando favoritos");
     }
+  };
+
+  const applySearchAndFilters = (allPosts, q, f) => {
+    let filtered = [...allPosts];
+
+    filtered = filtered.filter((p) => p.property && p.status === "active");
+
+    // búsqueda
+    const query = (q || "").toLowerCase().trim();
+    if (query) {
+      filtered = filtered.filter((p) => {
+        const prop = p.property || {};
+        return (
+          p.title?.toLowerCase().includes(query) ||
+          prop.address?.toLowerCase().includes(query) ||
+          prop.propertyType?.toLowerCase().includes(query) ||
+          prop.locality?.name?.toLowerCase().includes(query) ||
+          prop.province?.name?.toLowerCase().includes(query)
+        );
+      });
+    }
+
+    // filtros
+    const getDetail = (p) => p.property?.PropertyDetail || {};
+
+    if (f.rooms) {
+      const isPlus = f.rooms.includes("+");
+      const min = Number(f.rooms.replace("+", ""));
+      filtered = filtered.filter((p) => {
+        const val = Number(getDetail(p).numRooms || 0);
+        return isPlus ? val >= min : val === min;
+      });
+    }
+
+    if (f.bedrooms) {
+      const isPlus = f.bedrooms.includes("+");
+      const min = Number(f.bedrooms.replace("+", ""));
+      filtered = filtered.filter((p) => {
+        const val = Number(getDetail(p).numBedrooms || 0);
+        return isPlus ? val >= min : val === min;
+      });
+    }
+
+    if (f.bathrooms) {
+      const value = f.bathrooms;
+      filtered = filtered.filter((p) => {
+        const baths = Number(getDetail(p).numBathrooms || 0);
+        if (value.endsWith("+")) return baths >= Number(value.replace("+", ""));
+        return baths === Number(value);
+      });
+    }
+
+    if (f.totalArea) {
+      const value = f.totalArea;
+      filtered = filtered.filter((p) => {
+        const area = Number(getDetail(p).totalArea || 0);
+        if (value.includes("-")) {
+          const [min, max] = value.split("-").map(Number);
+          return area >= min && area <= max;
+        }
+        if (value.endsWith("+")) return area >= Number(value.replace("+", ""));
+        return true;
+      });
+    }
+
+    if (f.age) {
+      const value = f.age;
+      filtered = filtered.filter((p) => {
+        const age = Number(getDetail(p).propertyAge || 0);
+        if (value.includes("-")) {
+          const [min, max] = value.split("-").map(Number);
+          return age >= min && age <= max;
+        }
+        if (value.endsWith("+")) return age >= Number(value.replace("+", ""));
+        return true;
+      });
+    }
+
+    if (f.minPrice) {
+      filtered = filtered.filter(
+        (p) => Number(p.property?.rentPrice ?? 0) >= Number(f.minPrice)
+      );
+    }
+
+    if (f.maxPrice) {
+      filtered = filtered.filter(
+        (p) => Number(p.property?.rentPrice ?? 0) <= Number(f.maxPrice)
+      );
+    }
+
+    return filtered;
   };
 
   // Efecto inicial
@@ -266,7 +244,7 @@ const PropertyList = ({ token }) => {
       <SearchBar onSearch={handleSearch} />
 
       <div className="d-flex justify-content-center mb-3 flex-wrap">
-        <Filters onFilterChange={handleFilterChange} />
+        <Filters value={filtersA} onFilterChange={handleFilterChange} />
       </div>
 
       <div className="d-flex justify-content-center mb-4">
@@ -284,9 +262,16 @@ const PropertyList = ({ token }) => {
         </div>
       ) : noResults ? (
         <>
-          <p className="text-center text-muted fs-5">
-            No encontramos resultados para: <strong>"{noResults}"</strong>
-          </p>
+          <p className="text-center text-muted fs-5">{noResults}</p>
+          <div className="d-flex justify-content-center gap-2 mb-4">
+            <Button
+              variant="outline-secondary"
+              onClick={() => setFiltersA(emptyFilters)}
+            >
+              Limpiar filtros
+            </Button>
+          </div>
+
           <p className="text-center text-muted mb-4">
             Pero tenemos estas propiedades disponibles:
           </p>
