@@ -20,7 +20,7 @@ router.get("/:id", verifyToken, roleMiddleware(["superadmin"]), getRentalById);
 
 /* Owner */
 router.post("/", verifyToken, createRental);
-router.get("/owner/my-rentals", verifyToken, getRentalsByOwner);
+router.get("/owner/my-rentals", verifyToken, roleMiddleware(["owner", "superadmin"]), getRentalsByOwner);
 router.put("/:id/status", verifyToken, updateRentalStatus);
 router.put("/:id/finish", verifyToken, finishRental);
 

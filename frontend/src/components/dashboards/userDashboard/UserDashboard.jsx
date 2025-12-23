@@ -1,92 +1,145 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState, useContext } from "react";
+import { Container, Card, Row, Col, Button, Spinner } from "react-bootstrap";
+import { AuthenticationContext } from "../../../services/auth.context";
+import { rentalService } from "../../../services/rentalServices";
+import Notifications from "../../ui/toaster/Notifications";
 
 export default function UserDashboard() {
-    const [user, setUser] = useState(null);
+  const { userId, token } = useContext(AuthenticationContext);
+  const [rent, setRent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const savedUser = JSON.parse(localStorage.getItem("user"));
-        const token = localStorage.getItem("token");
+  // Traer el alquiler del usuario
+  useEffect(() => {
+    const fetchRent = async () => {
+      try {
+        const data = await rentalService.getMyRent(token);
 
-        if (!savedUser || !token) return;
+        console.log('Obtengo:', data);
 
-        axios.get(`http://localhost:3000/api/users/${savedUser.id}`, {
-            headers: { Authorization: `Bearer ${token}`, },
-        })
-            .then((res) => setUser(res.data))
-            .catch((err) => console.error("Error al cargar usuario:", err));
-    }, []);
-
-    const property = {
-        direccion: "7 de Julio 1288",
-        ambientes: 2,
-        banos: 1,
-        descripcion: "Living y Comedor - Espacio Amplio",
-        alquiler: 520000,
-        expensas: 100000,
-        rating: 4.8,
+        setRent(data);
+      } catch (err) {
+        console.error("Error al traer alquiler del inquilino:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (!user) return <p>Cargando datos...</p>;
+    fetchRent();
+  }, [userId, token]);
 
-    return (
-        <div className="container py-4">
+  console.log(userId);
 
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary rounded mb-4">
-                <div className="container-fluid">
-                    <span className="navbar-brand">AlquilAR</span>
-                    <div className="d-flex align-items-center">
-                        <div
-                            className="rounded-circle bg-light me-2"
-                            style={{ width: "30px", height: "30px" }}
-                        ></div>
-                        <span className="text-white">{user.name}{user.surname}</span>
+  if (loading)
+    return <p className="text-center mt-5">Cargando tu alquiler...</p>;
+
+  return (
+    <div style={{ maxWidth: "900px", margin: "auto" }}>
+      <Notifications />
+
+      <Container className="mt-4">
+        <h3 className="fw-bold">Mi Alquiler</h3>
+        <p className="text-muted">Aquí podés ver tu propiedad alquilada.</p>
+
+        {/* Si NO tiene alquiler */}
+        {!rent ? (
+          <Card className="p-4 shadow-sm text-center">
+            <h5>No tenés ningún alquiler activo.</h5>
+            <p>Explorá propiedades y encontrá tu nuevo hogar 🏠</p>
+            <Button href="/properties" variant="primary">
+              Ver Propiedades
+            </Button>
+          </Card>
+        ) : (
+          <>
+            {/* CARD */}
+            <Card className="shadow-sm rounded-4 mt-3 p-3">
+              <Row className="g-0">
+                {/* Imagen */}
+                <Col
+                  md={4}
+                  className="d-flex align-items-center justify-content-center"
+                >
+                  {rent.Property?.images?.length > 0 ? (
+                    <img
+                      src={rent.Property.images[0]}
+                      alt="Propiedad"
+                      className="img-fluid rounded-3"
+                    />
+                  ) : (
+                    <div className="bg-light rounded-3 text-center p-4 w-100">
+                      <span className="text-muted">Sin imagen</span>
                     </div>
-                </div>
-            </nav>
+                  )}
+                </Col>
 
-            <h2 className="mb-4">Bienvenido/a {user.name},</h2>
-
-            <div className="card shadow">
-                <div className="row g-0">
-                    <div className="col-md-4 d-flex align-items-center justify-content-center bg-light">
-                        <span className="text-muted">Imagen Propiedad</span>
+                {/* Info */}
+                <Col md={8}>
+                  <div className="p-3">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <h4 className="fw-bold mb-0">{rent.Property.title}</h4>
+                      <span className="text-warning fw-bold">
+                        {rent.Property.rating} ★
+                      </span>
                     </div>
 
-                    <div className="col-md-8">
-                        <div className="card-body">
-                            <div className="d-flex justify-content-between align-items-center">
-                                <h5 className="card-title mb-0">
-                                    Propiedad {property.direccion}
-                                </h5>
-                                <span className="text-warning fw-bold">
-                                    {property.rating} ★
-                                </span>
-                            </div>
-                            <p className="card-text mt-2">
-                                {property.ambientes} Amb. | {property.banos} baño
-                            </p>
-                            <p className="card-text">{property.descripcion}</p>
-                            <p className="card-text">
-                                <strong>Alq:</strong> $
-                                {property.alquiler.toLocaleString("es-AR")}
-                            </p>
-                            <p className="card-text">
-                                <strong>Exp:</strong> $
-                                {property.expensas.toLocaleString("es-AR")}
-                            </p>
+                    <p className="text-muted">{rent.Property.address}</p>
 
-                            <div className="mt-3">
-                                <button className="btn btn-danger me-2">Reportar</button>
-                                <button className="btn btn-outline-primary me-2">
-                                    Ver Contrato
-                                </button>
-                                <button className="btn btn-secondary">Datos del Propietario</button>
-                            </div>
-                        </div>
+                    <p className="mb-1">
+                      <strong>Ambientes:</strong> {rent.Property.rooms}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Baños:</strong> {rent.Property.bathrooms}
+                    </p>
+
+                    <p className="mb-1">{rent.Property.description}</p>
+
+                    <hr />
+
+                    <p className="mb-1">
+                      <strong>Alquiler:</strong> $
+                      {rent.Property.rentPrice.toLocaleString("es-AR")}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Expensas:</strong> $
+                      {rent.Property.expensesPrice.toLocaleString("es-AR")}
+                    </p>
+
+                    <p className="mb-1">
+                      <strong>Inicio:</strong>{" "}
+                      {new Date(rent.Rental.startDate).toLocaleDateString()}
+                    </p>
+
+                    <p className="mb-3">
+                      <strong>Fin:</strong>{" "}
+                      {new Date(rent.Rental.endDate).toLocaleDateString()}
+                    </p>
+
+                    {/* Botones */}
+                    <div className="mt-3">
+                      <Button variant="danger" className="me-2">
+                        Reportar
+                      </Button>
+
+                      <Button variant="outline-primary" className="me-2">
+                        Ver Contrato
+                      </Button>
+
+                      {/* Datos del Propietario */}
+                      <Button variant="secondary">
+                        Propietario: {rent.Rental.owner.name}{" "}
+                        {rent.Rental.owner.surname}
+                      </Button>
                     </div>
-                </div>
-            </div>
-        </div>
-    );
+                  </div>
+                </Col>
+              </Row>
+            </Card>
+          </>
+        )}
+      </Container>
+    </div>
+  );
 }
