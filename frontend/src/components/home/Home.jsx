@@ -38,7 +38,9 @@ export default function Home() {
       try {
         const data = await PostService.getAllPosts();
 
-        const validPosts = data.filter((post) => post.property);
+        const validPosts = data.filter(
+          (post) => post.property && post.status === "active"
+        );
 
         const sorted = [...validPosts].sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -72,6 +74,22 @@ export default function Home() {
     const query = new URLSearchParams(filters).toString();
     navigate(`/properties?${query}`);
   };
+
+  const tiposDisponibles = {
+    casas: recent.some((p) => p.property.propertyType.toLowerCase() === "casa"),
+    departamentos: recent.some(
+      (p) => p.property.propertyType.toLowerCase() === "departamento"
+    ),
+  };
+
+  useEffect(() => {
+    if (!tiposDisponibles[tipo]) {
+      const primeroDisponible = Object.keys(tiposDisponibles).find(
+        (t) => tiposDisponibles[t]
+      );
+      if (primeroDisponible) setTipo(primeroDisponible);
+    }
+  }, [recent, tipo]);
 
   return (
     <>
@@ -151,19 +169,26 @@ export default function Home() {
 
       <Container className="my-5">
         <h3 className="mb-3 fw-bold text-center">Propiedades Recientes</h3>
-        <Nav
-          variant="tabs"
-          defaultActiveKey="casas"
-          onSelect={(k) => setTipo(k)}
-          className="justify-content-center mb-3"
-        >
-          <Nav.Item>
-            <Nav.Link eventKey="casas">Casas</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link eventKey="departamentos">Departamentos</Nav.Link>
-          </Nav.Item>
-        </Nav>
+        {Object.values(tiposDisponibles).filter(Boolean).length > 1 && (
+          <Nav
+            variant="tabs"
+            activeKey={tipo}
+            onSelect={(k) => setTipo(k)}
+            className="justify-content-center mb-3"
+          >
+            {tiposDisponibles.casas && (
+              <Nav.Item>
+                <Nav.Link eventKey="casas">Casas</Nav.Link>
+              </Nav.Item>
+            )}
+
+            {tiposDisponibles.departamentos && (
+              <Nav.Item>
+                <Nav.Link eventKey="departamentos">Departamentos</Nav.Link>
+              </Nav.Item>
+            )}
+          </Nav>
+        )}
 
         {recentChunks.length > 0 ? (
           <Carousel
