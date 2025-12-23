@@ -7,7 +7,7 @@ import { Container, Row, Col, Spinner, Button, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import SearchBar from "../search/SearchBar";
 import PropertyCard from "../propertyCard/PropertyCard";
 import { PostService } from "../../services/PostService";
@@ -31,6 +31,9 @@ const PropertyList = ({ token }) => {
   const [favorites, setFavorites] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [gridView, setGridView] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const qFromUrl = searchParams.get("q") || "";
 
   const { user } = useContext(AuthenticationContext) || {};
 
@@ -57,6 +60,47 @@ const PropertyList = ({ token }) => {
 
   // Buscador (searchbar)
   const handleSearch = ({ q }) => {
+    const clean = q?.trim() || "";
+
+    if (!clean) {
+      setSearchParams({});
+    } else {
+      setSearchParams({ q: clean });
+    }
+  };
+
+  useEffect(() => {
+    const query = (qFromUrl || "").toLowerCase().trim();
+
+    if (!query) {
+      setFilteredPosts(posts);
+      setNoResults(null);
+      return;
+    }
+
+    const results = posts.filter((p) => {
+      const prop = p.property || {};
+
+      const matches =
+        p.title?.toLowerCase().includes(query) ||
+        prop.address?.toLowerCase().includes(query) ||
+        prop.propertyType?.toLowerCase().includes(query) ||
+        prop.locality?.name?.toLowerCase().includes(query) ||
+        prop.province?.name?.toLowerCase().includes(query);
+
+      return matches && p.status === "active";
+    });
+
+    if (results.length === 0) {
+      setFilteredPosts([]);
+      setNoResults(query);
+    } else {
+      setFilteredPosts(results);
+      setNoResults(null);
+    }
+  }, [qFromUrl, posts]);
+
+  /* const handleSearch = ({ q }) => {
     const query = q?.toLowerCase().trim();
 
     if (!query) {
@@ -85,7 +129,7 @@ const PropertyList = ({ token }) => {
       setFilteredPosts(results);
       setNoResults(null);
     }
-  };
+  }; */
 
   // Filtros del frontend (rooms, etc.)
   const handleFilterChange = (newFilters) => {
