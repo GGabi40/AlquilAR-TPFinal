@@ -1,10 +1,4 @@
-import {
-  Navbar,
-  Container,
-  Table,
-  Button,
-  Spinner
-} from "react-bootstrap";
+import { Navbar, Container, Table, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router";
 import { PostService } from "../../../services/PostService.js";
 import Notifications, {
@@ -59,8 +53,12 @@ export default function OwnerDashboard() {
   }, [userId, token]);
 
   const hasDescription = (post) => {
-    return typeof post.description === "string" && post.description.trim().length > 0;
-  }
+    return (
+      typeof post.description === "string" && post.description.trim().length > 0
+    );
+  };
+
+  const isPendingApproval = (post) => post.property?.status === "pending";
 
   const handlePauseResume = async (post) => {
     const newStatus = post.status === "active" ? "paused" : "active";
@@ -110,12 +108,20 @@ export default function OwnerDashboard() {
   };
 
   return (
-    <div style={{ maxWidth: '900px', margin:'auto' }}>
+    <div style={{ maxWidth: "900px", margin: "auto" }}>
       <Notifications />
 
-      <Button variant="secondary" className="m-2 rounded-3" onClick={() => setShow(!show)}>{show ? 'X' : ''} 📊</Button>
+      <Button
+        variant="secondary"
+        className="m-2 rounded-3"
+        onClick={() => setShow(!show)}
+      >
+        {show ? "X" : ""} 📊
+      </Button>
 
-      {!loading && posts.length > 0 && show && <OwnerStats posts={posts} show={show} />}
+      {!loading && posts.length > 0 && show && (
+        <OwnerStats posts={posts} show={show} />
+      )}
 
       <Container className="mt-4">
         <h3>Bienvenido/a {user.name},</h3>
@@ -141,7 +147,9 @@ export default function OwnerDashboard() {
                   <td>{p.title}</td>
                   <td>${p.property?.rentPrice}</td>
                   <td>
-                    {p.status === "active"
+                    {isPendingApproval(p)
+                      ? "⏳ Pendiente de aprobación"
+                      : p.status === "active"
                       ? "🟢 Activa"
                       : p.status === "paused"
                       ? "⏸️ Pausada"
@@ -150,11 +158,24 @@ export default function OwnerDashboard() {
                   <td>
                     <Button
                       size="sm"
-                      variant={p.status === "active" ? "warning" : "success"}
+                      variant={
+                        isPendingApproval(p)
+                          ? "secondary"
+                          : p.status === "active"
+                            ? "warning"
+                            : "success"
+                      }
                       className="me-2"
-                      onClick={() => handlePauseResume(p)}
+                      disabled={isPendingApproval(p)}
+                      onClick={() =>
+                        !isPendingApproval(p) && handlePauseResume(p)
+                      }
                     >
-                      {p.status === "active" ? "Pausar" : "Reanudar"}
+                      {isPendingApproval(p)
+                        ? "⏳ Pendiente de aprobación"
+                        : p.status === "active"
+                          ? "Pausar"
+                          : "Reanudar"}
                     </Button>
 
                     <Button
@@ -181,10 +202,7 @@ export default function OwnerDashboard() {
         )}
 
         <div className="mt-3">
-          <Button
-            variant="primary"
-            onClick={() => navigate("/add-property/")}
-          >
+          <Button variant="primary" onClick={() => navigate("/add-property/")}>
             + Agregar nueva propiedad
           </Button>
         </div>
