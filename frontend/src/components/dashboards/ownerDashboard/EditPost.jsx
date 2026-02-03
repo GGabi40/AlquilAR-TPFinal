@@ -178,9 +178,9 @@ export default function EditPost() {
         </Form>
       </Card>
 
-      <hr className="my-5" style={{ opacity: 0.15 }} />
+      {/* <hr className="my-5" style={{ opacity: 0.15 }} />
       <h4 className="fw-bold mb-3">Asignar inquilino</h4>
-      <TenantAsignament />
+      <TenantAsignament /> */}
 
       <hr className="my-5" style={{ opacity: 0.15 }} />
 
