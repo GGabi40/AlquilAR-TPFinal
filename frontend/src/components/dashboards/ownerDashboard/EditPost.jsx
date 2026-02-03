@@ -61,6 +61,13 @@ export default function EditPost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const desc = form.description?.trim() ?? "";
+
+    if (form.status === "active" && desc.length === 0) {
+      toastError("No podés activar la publicación si falta la descripción.");
+      return;
+    }
+
     try {
       await PostService.updatePost(id, form, token);
       toastSuccess("Publicación actualizada");
@@ -178,7 +185,7 @@ export default function EditPost() {
       <hr className="my-5" style={{ opacity: 0.15 }} />
 
       <h4 className="fw-bold mb-3 text-center">Datos de la Propiedad</h4>
-      <PropertyMiniEditor propertyId={post?.Property?.idProperty} />
+      <PropertyMiniEditor propertyId={post?.propertyId} />
     </Container>
   );
 }

@@ -58,8 +58,18 @@ export default function OwnerDashboard() {
     fetchPosts();
   }, [userId, token]);
 
+  const hasDescription = (post) => {
+    return typeof post.description === "string" && post.description.trim().length > 0;
+  }
+
   const handlePauseResume = async (post) => {
     const newStatus = post.status === "active" ? "paused" : "active";
+
+    if (newStatus === "active" && !hasDescription(post)) {
+      toastError("No podés reanudar la publicación: falta la descripción.");
+      return;
+    }
+
     try {
       await PostService.updateStatus(post.id, newStatus, token);
       setPosts((prev) =>
@@ -129,7 +139,7 @@ export default function OwnerDashboard() {
               {posts.map((p) => (
                 <tr key={p.id}>
                   <td>{p.title}</td>
-                  <td>${p.Property?.rentPrice}</td>
+                  <td>${p.property?.rentPrice}</td>
                   <td>
                     {p.status === "active"
                       ? "🟢 Activa"
