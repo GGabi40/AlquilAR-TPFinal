@@ -204,6 +204,7 @@ const PropertyForm = () => {
               placeholder="Ingrese el barrio de la propiedad"
               value={data.barrio}
               onChange={(e) => handleChange("barrio", e.target.value)}
+              required
             />
           </div>
           {errors.barrio && (
@@ -226,6 +227,7 @@ const PropertyForm = () => {
               placeholder="Ejemplo: San Martín 1234"
               value={data.direccion}
               onChange={(e) => handleChange("direccion", e.target.value)}
+              required
             />
           </div>
           {errors.direccion && (

@@ -102,6 +102,16 @@ const PropertyImages = () => {
   };
 
   const handlePreview = async () => {
+    if (data.images.length === 0) {
+      toastError("Subí al menos 1 imagen.");
+      return;
+    }
+
+    if (data.documents.length === 0) {
+      toastError("Subí al menos 1 documento.");
+      return;
+    }
+    
     if (handleValidation()) {
 
       // img
