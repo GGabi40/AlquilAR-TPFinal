@@ -41,7 +41,6 @@ const PropertyDetail = () => {
   // Estados
   const [post, setPost] = useState(null);
   const [property, setProperty] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -208,13 +207,8 @@ const PropertyDetail = () => {
 
         <h3 className="fw-bold mb-0 text-primary">{formatApproxAddress(property.address)}</h3>
 
-        <Button
-          variant="link"
-          onClick={() => setIsFavorite(!isFavorite)}
-          style={{ color: isFavorite ? "red" : "#aaa" }}
-        >
-          <FontAwesomeIcon icon={isFavorite ? faHeart : faHeartRegular} size="xl" />
-        </Button>
+        
+        <div></div>
       </div>
 
       {/* BADGE ESTADO */}
@@ -452,11 +446,6 @@ const PropertyDetail = () => {
           </Card>
         </Col>
       </Row>
-
-      <div className="text-end mt-4">
-        <FontAwesomeIcon icon={faStar} style={{ color: "gold" }} />{" "}
-        <small>4.8 / 5 basado en reseñas</small>
-      </div>
     </Container>
   );
 };
