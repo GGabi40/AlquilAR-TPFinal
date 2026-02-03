@@ -10,11 +10,11 @@ export default function OwnerStats({ posts, show }) {
 
   const ingresos = posts
     .filter((p) => p.status === "rented")
-    .reduce((acc, p) => acc + (p.Property?.rentPrice || 0), 0);
+    .reduce((acc, p) => acc + (p.property?.rentPrice || 0), 0);
 
   const gastos = posts
     .filter((p) => p.status !== "rented")
-    .reduce((acc, p) => acc + (p.Property?.expensesPrice || 0), 0);
+    .reduce((acc, p) => acc + (p.property?.expensesPrice || 0), 0);
 
   return (
     <Card className="shadow-sm p-4 mb-4 rounded-4 fade-in" style={{ opacity: 0, fontSize: '13px' }}>
